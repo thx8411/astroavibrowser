@@ -32,6 +32,7 @@ class MainWindow : public QMainWindow
       void MenuProperties();
       void MenuFormat();
       void MenuCodec();
+      void MenuAbout();
       // buttons slots
       void ButtonSelectAll();
       void ButtonUnSelectAll();
@@ -46,6 +47,7 @@ class MainWindow : public QMainWindow
       QAction* properties;
       QAction* format;
       QAction* codec;
+      QAction* about;
       // buttons
       QPushButton* selectAll;
       QPushButton* unSelectAll;
