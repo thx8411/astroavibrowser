@@ -9,6 +9,8 @@
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QFileDialog>
 
+#include "version.hpp"
+
 #include "Qmainwindow.moc"
 
 using namespace std;
@@ -23,9 +25,10 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    open = new QAction("&Open...",this);
    save = new QAction("&Save...",this);
    quit = new QAction("&Quit", this);
-   properties = new QAction("&Properties...",this);
-   format = new QAction("Output F&ormat...",this);
-   codec = new QAction("Output &Codec...",this);
+   properties = new QAction("Get &Properties...",this);
+   format = new QAction("Choose Fo&rmat...",this);
+   codec = new QAction("Choose &Codec...",this);
+   about = new QAction("&About...",this);
    // file menu
    QMenu* file;
    file = menuBar()->addMenu("&File");
@@ -33,12 +36,19 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    file->addAction(save);
    file->addSeparator();
    file->addAction(quit);
-   // video menu
-   QMenu* video;
-   video = menuBar()->addMenu("&Video");
-   video->addAction(properties);
-   video->addAction(format);
-   video->addAction(codec);
+   // input menu
+   QMenu* input;
+   input = menuBar()->addMenu("&Input");
+   input->addAction(properties);
+   // output menu
+   QMenu* output;
+   output = menuBar()->addMenu("O&utput");
+   output->addAction(format);
+   output->addAction(codec);
+   // help menu
+   QMenu* help;
+   help = menuBar()->addMenu("&Help");
+   help->addAction(about);
    // signal connections
    connect(open, SIGNAL(triggered()), this, SLOT(MenuOpen()));
    connect(save, SIGNAL(triggered()), this, SLOT(MenuSave()));
@@ -46,6 +56,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    connect(properties, SIGNAL(triggered()), this, SLOT(MenuProperties()));
    connect(format, SIGNAL(triggered()), this, SLOT(MenuFormat()));
    connect(codec, SIGNAL(triggered()), this, SLOT(MenuCodec()));
+   connect(about, SIGNAL(triggered()), this, SLOT(MenuAbout()));
 
    // CENTRAL ZONE
    // widgets and layouts
@@ -239,7 +250,48 @@ void MainWindow::MenuSave() {
 
 // GET INPUT STREAM PROPERTIES
 void MainWindow::MenuProperties() {
-   //cout << "properties" << endl;
+   QString message;
+   QString tmp;
+   // display stream properties
+   // frame size
+   message+="Size : ";
+   tmp.setNum(inputFileCodecContext->width,10);
+   message+=tmp;
+   message+="x";
+   tmp.setNum(inputFileCodecContext->height,10);
+   message+=tmp;
+   message+="\n";
+   // sequence duration
+   message+="Duration : ";
+   tmp.setNum(inputFileFormatContext->duration/AV_TIME_BASE,10);
+   message+=tmp;
+   message+=" s \n";
+   // stream bitrate
+   message+="Bitrate : ";
+   tmp.setNum(inputFileFormatContext->bit_rate/1024,10);
+   message+=tmp;
+   message+=" Kbps \n";
+   // stream codec
+   message+="Codec : ";
+   tmp=inputFileCodec->name;
+   message+=tmp;
+   message+="\n";
+   // picture format
+   message+="Format : ";
+   tmp=avcodec_get_pix_fmt_name(inputFileCodecContext->pix_fmt);
+   message+=tmp;
+   message+="\n";
+   // stream framerate
+   message+="Framerate : ";
+   tmp.setNum(inputFileFormatContext->streams[inputStreamNumber]->r_frame_rate.num/inputFileFormatContext->streams[inputStreamNumber]->r_frame_rate.den,10);
+   message+=tmp;
+   message+=" fps\n";
+   // frame numbers
+   message+="Frames : ";
+   tmp.setNum(frameList->getFrameNumber(),10);
+   message+=tmp;
+   message+="\n";
+   QMessageBox::information(this, tr("AstroAviBrowser"),tr(message.toStdString().c_str()));
 }
 
 // SET OUTPUT STREAM FORMAT (YUV, RGB, etc...)
@@ -250,6 +302,26 @@ void MainWindow::MenuFormat() {
 // SET OUTPUT STREAM FORMAT (RAW, LOSSLESS)
 void MainWindow::MenuCodec() {
    //cout << "codec" << endl;
+}
+
+// ABOUT...
+void MainWindow::MenuAbout() {
+   QString message;
+   QString tmp;
+
+   message+=Name;
+   message+="\n";
+   message+=Version;
+   message+="\n";
+   message+="Build : ";
+   tmp.setNum(Build,10);
+   message+=tmp;
+   message+="\n\n";
+   message+=Web;
+   message+="\n";
+   message+=Mail;
+   message+="\n";
+   QMessageBox::information(this, tr("AstroAviBrowser"),tr(message.toStdString().c_str()));
 }
 
 //
