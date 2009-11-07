@@ -14,10 +14,10 @@ using namespace std;
 int main(int argc, char *argv[])
 {
    // init messages
-   cout << "<init>" << Name << " " << Version << endl;
-   cout << "<init>" << "Build "<< Build << endl;
-   cout << "<init>" << Web << endl;
-   cout << "<init>" << Mail << endl << endl;
+   //cout << "<init>" << Name << " " << Version << endl;
+   //cout << "<init>" << "Build "<< Build << endl;
+   //cout << "<init>" << Web << endl;
+   //cout << "<init>" << Mail << endl << endl;
    // qapp creation
    QApplication app(argc, argv);
    MainWindow w;
