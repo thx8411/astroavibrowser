@@ -169,7 +169,7 @@ void MainWindow::MenuOpen() {
       QMessageBox::critical(this, tr("AstroAviBrowser"),tr("Unable to open the file"));
       return;
    }
-   cerr << "Opening file " << inputFileName.toStdString().c_str() << endl;
+   //cerr << "Opening file " << inputFileName.toStdString().c_str() << endl;
 
    // get streams
    if(av_find_stream_info(inputFileFormatContext)<0) {
