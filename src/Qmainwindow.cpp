@@ -160,6 +160,7 @@ void MainWindow::MenuOpen() {
    // open new file
    // getting file name
    inputFileName = QFileDialog::getOpenFileName(this,tr("Open Video"),"/home", tr("Avi Files (*.avi)"));
+   sleep(1);
    if(inputFileName=="")
       return;
 
@@ -221,6 +222,7 @@ void MainWindow::MenuOpen() {
    // frame list update
    frameList->setFormatContext(inputFileFormatContext);
    frameList->setCodecContext(inputFileCodecContext);
+   frameList->setStreamNumber(inputStreamNumber);
    // it could be long...
    setCursor(Qt::BusyCursor);
    frameList->fill();
