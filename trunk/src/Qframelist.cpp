@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include <QtGui/QProgressDialog>
+
 #include "Qframelist.moc"
 
 using namespace std;
@@ -81,6 +83,10 @@ void FrameList::setCodecContext(AVCodecContext* cc) {
    avpicture_fill((AVPicture *)frameRGB, buffer, PIX_FMT_RGB24,codecContext->width, codecContext->height);
 }
 
+void FrameList::setStreamNumber(int sn) {
+   streamNumber=sn;
+}
+
 void FrameList::setFrameDisplay(FrameDisplay* fd) {
    frameDisplay=fd;
 }
@@ -89,7 +95,9 @@ void FrameList::fill() {
    // init
    int i=1;
    int res=0;
+   int frameNumberEstimation;
    QListWidgetItem* current;
+   QProgressDialog* progress;
    // base frame name
    QString itemName("Frame ");
    // var init
@@ -105,9 +113,14 @@ void FrameList::fill() {
    frameDisplay->setMaximumWidth(codecContext->width);
    frameDisplay->setMinimumHeight(codecContext->height);
    frameDisplay->setMaximumHeight(codecContext->height);
+   // frame number estimation
+   frameNumberEstimation=formatContext->duration/AV_TIME_BASE*(formatContext->streams[streamNumber]->r_frame_rate.num/formatContext->streams[streamNumber]->r_frame_rate.den);
+   // setting progress dialog
+   progress = new QProgressDialog(QString("File scanning..."),QString(),0,frameNumberEstimation);
    // read each frame and add item in the list
    while (res==0) {
-       // read new frame
+      progress->setValue(i);
+      // read new frame
       res=av_read_frame(formatContext, pkt);
       // add item...
       current= new QListWidgetItem(itemName+QString::number(i),this);
@@ -116,6 +129,8 @@ void FrameList::fill() {
       current->setCheckState(Qt::Checked);
       i++;
    }
+   // progress closing
+   progress->close();
    // back to stream beginning
    av_seek_frame(formatContext, -1, 0, AVSEEK_FLAG_ANY);
    // compute frame number
@@ -125,6 +140,8 @@ void FrameList::fill() {
    // init the first item
    current=item(0);
    current->setSelected(true);
+   // and display it
+   displayFrame(0);
 }
 
 void FrameList::reset() {

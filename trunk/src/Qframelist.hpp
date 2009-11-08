@@ -26,6 +26,7 @@ class FrameList : public QListWidget
       // init the list with the stream handlers
       void setFormatContext(AVFormatContext* fc);
       void setCodecContext(AVCodecContext* cc);
+      void setStreamNumber(int sn);
       // set the display widget
       void setFrameDisplay(FrameDisplay* fd);
       // scans the stream and fill the list
@@ -52,6 +53,7 @@ class FrameList : public QListWidget
       // ffmpeg stuff
       AVFormatContext* formatContext;
       AVCodecContext* codecContext;
+      int streamNumber;
       // original frame
       AVFrame* frame;
       // converted frame
