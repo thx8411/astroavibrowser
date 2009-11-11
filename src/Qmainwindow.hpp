@@ -10,6 +10,7 @@
 #include <Qt/qaction.h>
 #include <Qt/qmainwindow.h>
 #include <Qt/qpushbutton.h>
+#include <Qt/qradiobutton.h>
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -30,7 +31,7 @@ class MainWindow : public QMainWindow
       void MenuOpen();
       void MenuSave();
       void MenuProperties();
-      void MenuFormat();
+      //void MenuFormat();
       void MenuCodec();
       void MenuAbout();
       // buttons slots
@@ -38,6 +39,9 @@ class MainWindow : public QMainWindow
       void ButtonUnSelectAll();
       void ButtonInvert();
    private :
+      // format and codec menu tools
+      //void createFormatMenu();
+      void createCodecMenu();
       // release an opened file
       void freeFile();
       // menu actions
@@ -45,9 +49,12 @@ class MainWindow : public QMainWindow
       QAction* save;
       QAction* quit;
       QAction* properties;
-      QAction* format;
-      QAction* codec;
+      QMenu* codec;
       QAction* about;
+      // codec menu radio buttons
+      QRadioButton* same;
+      QRadioButton* rawrgb;
+      QRadioButton* lossless;
       // buttons
       QPushButton* selectAll;
       QPushButton* unSelectAll;
@@ -62,7 +69,7 @@ class MainWindow : public QMainWindow
       AVFormatContext* inputFileFormatContext;
       AVCodecContext* inputFileCodecContext;
       AVCodec* inputFileCodec;
-      // vidoe sequence frame number
+      // video sequence frame number
       int inputStreamNumber;
 };
 
