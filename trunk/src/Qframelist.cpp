@@ -21,11 +21,13 @@ FrameList::FrameList(QWidget* parent) : QListWidget(parent) {
    pkt=(AVPacket*)av_malloc(sizeof(AVPacket));
    // set max list width
    setMaximumWidth(128);
+   // init frame number
+   frameNumber=0;
 }
 
 FrameList::~FrameList() {
    // clears the list
-   //reset();
+   reset();
    // free mem
    av_free(frame);
    av_free(frameRGB);
@@ -100,14 +102,13 @@ void FrameList::fill() {
    QProgressDialog* progress;
    // base frame name
    QString itemName("Frame ");
-   // var init
-   frameNumber=0;
-   framePosition=0;
-
    // stop display on change
    connect(this,SIGNAL(currentRowChanged(int)),this,SLOT(nop(int)));
    // clears the list
    reset();
+   // var init
+   frameNumber=0;
+   framePosition=0;
    // set display size
    frameDisplay->setMinimumWidth(codecContext->width);
    frameDisplay->setMaximumWidth(codecContext->width);
