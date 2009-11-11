@@ -1,0 +1,4 @@
+Known Bugs :
+
+ - Browsing frames back is very slow because we have to scan all the stream
+   to get the real frame number (no index used)

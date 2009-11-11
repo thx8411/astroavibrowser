@@ -55,13 +55,13 @@ class MainWindow : public QMainWindow
       QAction* about;
       // bayer menu radio buttons
       QAction* bayerNone;
-      QAction* bayerGrey;
       QAction* bayerBg;
       QAction* bayerGb;
       QAction* bayerRg;
       QAction* bayerGr;
       // codec menu radio buttons
       QAction* codecSame;
+      QAction* codecRawgrey;
       QAction* codecRawrgb;
       QAction* codecLossless;
       // buttons

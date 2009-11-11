@@ -166,7 +166,7 @@ void MainWindow::MenuOpen() {
    freeFile();
    // open new file
    // getting file name
-   inputFileName = QFileDialog::getOpenFileName(this,tr("Open Video"),"/home", tr("Video Files (*.avi *.mpg *.mpeg *.divx *.mkv *.mov *.AVI *.MPG *.MPEG *.DIVX *.MKV *.MOV)"));
+   inputFileName = QFileDialog::getOpenFileName(this,tr("Open Video"),"/home", tr("Video Files (*.avi *.mpg *.mpeg *.divx *.mkv *.mov *.wmv *.AVI *.MPG *.MPEG *.DIVX *.MKV *.MOV *.WMV)"));
    sleep(1);
    if(inputFileName=="")
       return;
@@ -364,19 +364,16 @@ void MainWindow::ButtonInvert() {
 
 void MainWindow::createBayerMenu() {
    bayerNone=new QAction("None",bayer);
-   bayerGrey=new QAction("Grey",bayer);
    bayerBg=new QAction("Raw BG",bayer);
    bayerGb=new QAction("Raw GB",bayer);
    bayerRg=new QAction("Raw RG",bayer);
    bayerGr=new QAction("Raw GR",bayer);
    bayerNone->setCheckable(true);
-   bayerGrey->setCheckable(true);
    bayerBg->setCheckable(true);
    bayerGb->setCheckable(true);
    bayerRg->setCheckable(true);
    bayerGr->setCheckable(true);
    bayer->addAction(bayerNone);
-   bayer->addAction(bayerGrey);
    bayer->addAction(bayerBg);
    bayer->addAction(bayerGb);
    bayer->addAction(bayerRg);
@@ -390,12 +387,15 @@ void MainWindow::createBayerMenu() {
 void MainWindow::createCodecMenu() {
    codecSame=new QAction("Unchanged",codec);
    codecRawrgb=new QAction("Raw RGB",codec);
-   codecLossless=new QAction("LossLess Huffman",codec);
+   codecRawgrey=new QAction("Raw Grey",codec);
+   codecLossless=new QAction("FFV1 RGB",codec);
    codecSame->setCheckable(true);
    codecRawrgb->setCheckable(true);
+   codecRawgrey->setCheckable(true);
    codecLossless->setCheckable(true);
    codec->addAction(codecSame);
    codec->addAction(codecRawrgb);
+   codec->addAction(codecRawgrey);
    codec->addAction(codecLossless);
 
    codecSame->setChecked(true);
