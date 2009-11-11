@@ -19,13 +19,13 @@ clean :
 $(BIN) : main.o Qmainwindow.o Qframedisplay.o Qframelist.o
 	$(LD) $(LDFLAGS) -o $(BIN) main.o Qmainwindow.o Qframedisplay.o Qframelist.o $(LIBS)
 
-main.o : main.cpp
+main.o : main.cpp version.hpp
 	$(CC) $(CCFLAGS) main.cpp -I $(INCS)
 
 Qmainwindow.moc : Qmainwindow.hpp
 	$(MOC) Qmainwindow.hpp -o Qmainwindow.moc
 
-Qmainwindow.o : Qmainwindow.cpp Qmainwindow.moc Qframedisplay.hpp Qframelist.hpp
+Qmainwindow.o : Qmainwindow.cpp Qmainwindow.moc Qframedisplay.hpp Qframelist.hpp version.hpp
 	$(CC) $(CCFLAGS) Qmainwindow.cpp -I $(INCS)
 
 Qframedisplay.moc : Qframedisplay.hpp

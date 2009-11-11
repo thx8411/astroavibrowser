@@ -26,8 +26,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    save = new QAction("&Save...",this);
    quit = new QAction("&Quit", this);
    properties = new QAction("Get &Properties...",this);
-   format = new QAction("Choose Fo&rmat...",this);
-   codec = new QAction("Choose &Codec...",this);
    about = new QAction("&About...",this);
    // file menu
    QMenu* file;
@@ -43,8 +41,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    // output menu
    QMenu* output;
    output = menuBar()->addMenu("O&utput");
-   output->addAction(format);
-   output->addAction(codec);
+   codec= output->addMenu("Codec");
    // help menu
    QMenu* help;
    help = menuBar()->addMenu("&Help");
@@ -54,8 +51,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    connect(save, SIGNAL(triggered()), this, SLOT(MenuSave()));
    connect(quit, SIGNAL(triggered()), qApp, SLOT(quit()));
    connect(properties, SIGNAL(triggered()), this, SLOT(MenuProperties()));
-   connect(format, SIGNAL(triggered()), this, SLOT(MenuFormat()));
-   connect(codec, SIGNAL(triggered()), this, SLOT(MenuCodec()));
    connect(about, SIGNAL(triggered()), this, SLOT(MenuAbout()));
 
    // CENTRAL ZONE
@@ -78,7 +73,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    // disabling widgets (no file loaded at this time)
    save->setEnabled(false);
    properties->setEnabled(false);
-   format->setEnabled(false);
    codec->setEnabled(false);
    selectAll->setEnabled(false);
    unSelectAll->setEnabled(false);
@@ -122,6 +116,13 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
 
    // register all formats and codecs
    av_register_all();
+
+   //
+   //   OUTPUT MENU UPDATE
+   //
+   //createFormatMenu();
+   createCodecMenu();
+
    // ffmpeg datas init
    inputFileFormatContext=NULL;
    inputFileCodec=NULL;
@@ -142,7 +143,6 @@ void MainWindow::freeFile() {
    // disabling widgets (no more file opened)
    save->setEnabled(false);
    properties->setEnabled(false);
-   format->setEnabled(false);
    codec->setEnabled(false);
    selectAll->setEnabled(false);
    unSelectAll->setEnabled(false);
@@ -159,7 +159,7 @@ void MainWindow::MenuOpen() {
    freeFile();
    // open new file
    // getting file name
-   inputFileName = QFileDialog::getOpenFileName(this,tr("Open Video"),"/home", tr("Avi Files (*.avi)"));
+   inputFileName = QFileDialog::getOpenFileName(this,tr("Open Video"),"/home", tr("Video Files (*.avi *.mpg *.mpeg *.divx *.mkv)"));
    sleep(1);
    if(inputFileName=="")
       return;
@@ -231,8 +231,7 @@ void MainWindow::MenuOpen() {
    // enabling widgets
    save->setEnabled(true);
    properties->setEnabled(true);
-   //format->setEnabled(true);
-   //codec->setEnabled(true);
+   codec->setEnabled(true);
    selectAll->setEnabled(true);
    unSelectAll->setEnabled(true);
    invertSelection->setEnabled(true);
@@ -296,11 +295,6 @@ void MainWindow::MenuProperties() {
    QMessageBox::information(this, tr("AstroAviBrowser"),tr(message.toStdString().c_str()));
 }
 
-// SET OUTPUT STREAM FORMAT (YUV, RGB, etc...)
-void MainWindow::MenuFormat() {
-   //cout << "format" << endl;
-}
-
 // SET OUTPUT STREAM FORMAT (RAW, LOSSLESS)
 void MainWindow::MenuCodec() {
    //cout << "codec" << endl;
@@ -320,6 +314,11 @@ void MainWindow::MenuAbout() {
    message+=tmp;
    message+="\n\n";
    message+=Web;
+   message+="\n";
+   message+=Author;
+   message+="\n";
+   message+="(c) ";
+   message+=Year;
    message+="\n";
    message+=Mail;
    message+="\n";
@@ -343,4 +342,14 @@ void MainWindow::ButtonUnSelectAll() {
 void MainWindow::ButtonInvert() {
    // invert frame selection
    frameList->invertSelection();
+}
+
+//
+// MENU CREATION TOOLS
+//
+
+void MainWindow::createCodecMenu() {
+   same=new QRadioButton("Unchanged",codec);
+   rawrgb=new QRadioButton("Raw RGB",codec);
+   lossless=new QRadioButton("LossLess Huffman",codec);
 }
