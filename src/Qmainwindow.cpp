@@ -26,6 +26,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    save = new QAction("&Save...",this);
    quit = new QAction("&Quit", this);
    properties = new QAction("Get &Properties...",this);
+   separateRgb= new QAction("RGB Separation",this);
+   separateRgb->setCheckable(true);
    about = new QAction("&About...",this);
    // file menu
    QMenu* file;
@@ -38,10 +40,16 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    QMenu* input;
    input = menuBar()->addMenu("&Input");
    input->addAction(properties);
+   input->addSeparator();
+   bayer= input->addMenu("Bayer Mode");
+   createBayerMenu();
    // output menu
    QMenu* output;
    output = menuBar()->addMenu("O&utput");
-   codec= output->addMenu("Codec");
+   output->addAction(separateRgb);
+   output->addSeparator();
+   codec= output->addMenu("Output Codec");
+   createCodecMenu();
    // help menu
    QMenu* help;
    help = menuBar()->addMenu("&Help");
@@ -51,6 +59,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    connect(save, SIGNAL(triggered()), this, SLOT(MenuSave()));
    connect(quit, SIGNAL(triggered()), qApp, SLOT(quit()));
    connect(properties, SIGNAL(triggered()), this, SLOT(MenuProperties()));
+   // add connection to slot for rgb separate
    connect(about, SIGNAL(triggered()), this, SLOT(MenuAbout()));
 
    // CENTRAL ZONE
@@ -73,6 +82,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    // disabling widgets (no file loaded at this time)
    save->setEnabled(false);
    properties->setEnabled(false);
+   bayer->setEnabled(false);
+   separateRgb->setEnabled(false);
    codec->setEnabled(false);
    selectAll->setEnabled(false);
    unSelectAll->setEnabled(false);
@@ -117,12 +128,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    // register all formats and codecs
    av_register_all();
 
-   //
-   //   OUTPUT MENU UPDATE
-   //
-   //createFormatMenu();
-   createCodecMenu();
-
    // ffmpeg datas init
    inputFileFormatContext=NULL;
    inputFileCodec=NULL;
@@ -143,6 +148,8 @@ void MainWindow::freeFile() {
    // disabling widgets (no more file opened)
    save->setEnabled(false);
    properties->setEnabled(false);
+   bayer->setEnabled(false);
+   separateRgb->setEnabled(false);
    codec->setEnabled(false);
    selectAll->setEnabled(false);
    unSelectAll->setEnabled(false);
@@ -159,7 +166,7 @@ void MainWindow::MenuOpen() {
    freeFile();
    // open new file
    // getting file name
-   inputFileName = QFileDialog::getOpenFileName(this,tr("Open Video"),"/home", tr("Video Files (*.avi *.mpg *.mpeg *.divx *.mkv)"));
+   inputFileName = QFileDialog::getOpenFileName(this,tr("Open Video"),"/home", tr("Video Files (*.avi *.mpg *.mpeg *.divx *.mkv *.mov *.AVI *.MPG *.MPEG *.DIVX *.MKV *.MOV)"));
    sleep(1);
    if(inputFileName=="")
       return;
@@ -231,6 +238,8 @@ void MainWindow::MenuOpen() {
    // enabling widgets
    save->setEnabled(true);
    properties->setEnabled(true);
+   bayer->setEnabled(true);
+   separateRgb->setEnabled(true);
    codec->setEnabled(true);
    selectAll->setEnabled(true);
    unSelectAll->setEnabled(true);
@@ -295,6 +304,11 @@ void MainWindow::MenuProperties() {
    QMessageBox::information(this, tr("AstroAviBrowser"),tr(message.toStdString().c_str()));
 }
 
+// SET INPUT BAYER MODE
+void MainWindow::MenuBayer() {
+   // cout << "bayer" << endl;
+}
+
 // SET OUTPUT STREAM FORMAT (RAW, LOSSLESS)
 void MainWindow::MenuCodec() {
    //cout << "codec" << endl;
@@ -348,8 +362,43 @@ void MainWindow::ButtonInvert() {
 // MENU CREATION TOOLS
 //
 
+void MainWindow::createBayerMenu() {
+   bayerNone=new QAction("None",bayer);
+   bayerGrey=new QAction("Grey",bayer);
+   bayerBg=new QAction("Raw BG",bayer);
+   bayerGb=new QAction("Raw GB",bayer);
+   bayerRg=new QAction("Raw RG",bayer);
+   bayerGr=new QAction("Raw GR",bayer);
+   bayerNone->setCheckable(true);
+   bayerGrey->setCheckable(true);
+   bayerBg->setCheckable(true);
+   bayerGb->setCheckable(true);
+   bayerRg->setCheckable(true);
+   bayerGr->setCheckable(true);
+   bayer->addAction(bayerNone);
+   bayer->addAction(bayerGrey);
+   bayer->addAction(bayerBg);
+   bayer->addAction(bayerGb);
+   bayer->addAction(bayerRg);
+   bayer->addAction(bayerGr);
+
+   bayerNone->setChecked(true);
+
+   // add connections to slots
+}
+
 void MainWindow::createCodecMenu() {
-   same=new QRadioButton("Unchanged",codec);
-   rawrgb=new QRadioButton("Raw RGB",codec);
-   lossless=new QRadioButton("LossLess Huffman",codec);
+   codecSame=new QAction("Unchanged",codec);
+   codecRawrgb=new QAction("Raw RGB",codec);
+   codecLossless=new QAction("LossLess Huffman",codec);
+   codecSame->setCheckable(true);
+   codecRawrgb->setCheckable(true);
+   codecLossless->setCheckable(true);
+   codec->addAction(codecSame);
+   codec->addAction(codecRawrgb);
+   codec->addAction(codecLossless);
+
+   codecSame->setChecked(true);
+
+   // add connections to slots
 }

@@ -13,8 +13,15 @@ void FrameDisplay::setFrame(int width, int height, AVFrame* f) {
    frameData=f;
 }
 
+void FrameDisplay::setRawMode(int mode) {
+   rawMode=mode;
+   applyRawMode();
+   repaint();
+}
+
 void FrameDisplay::paintEvent(QPaintEvent * ev) {
    if (frameData!=NULL) {
+      applyRawMode();
       painter_->begin(this);
       painter_->setClipRegion(ev->region());
       painter_->drawImage(0,0,QImage((unsigned char*)frameData->data[0],frameWidth,frameHeight,QImage::Format_RGB888));
@@ -22,3 +29,6 @@ void FrameDisplay::paintEvent(QPaintEvent * ev) {
    }
 }
 
+void FrameDisplay::applyRawMode() {
+   // add frame conversion
+}

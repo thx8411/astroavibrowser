@@ -31,7 +31,7 @@ class MainWindow : public QMainWindow
       void MenuOpen();
       void MenuSave();
       void MenuProperties();
-      //void MenuFormat();
+      void MenuBayer();
       void MenuCodec();
       void MenuAbout();
       // buttons slots
@@ -40,7 +40,7 @@ class MainWindow : public QMainWindow
       void ButtonInvert();
    private :
       // format and codec menu tools
-      //void createFormatMenu();
+      void createBayerMenu();
       void createCodecMenu();
       // release an opened file
       void freeFile();
@@ -49,12 +49,21 @@ class MainWindow : public QMainWindow
       QAction* save;
       QAction* quit;
       QAction* properties;
+      QAction* separateRgb;
+      QMenu* bayer;
       QMenu* codec;
       QAction* about;
+      // bayer menu radio buttons
+      QAction* bayerNone;
+      QAction* bayerGrey;
+      QAction* bayerBg;
+      QAction* bayerGb;
+      QAction* bayerRg;
+      QAction* bayerGr;
       // codec menu radio buttons
-      QRadioButton* same;
-      QRadioButton* rawrgb;
-      QRadioButton* lossless;
+      QAction* codecSame;
+      QAction* codecRawrgb;
+      QAction* codecLossless;
       // buttons
       QPushButton* selectAll;
       QPushButton* unSelectAll;
