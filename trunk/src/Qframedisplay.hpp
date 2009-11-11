@@ -19,13 +19,18 @@ class FrameDisplay : public QWidget
       FrameDisplay(QWidget* parent=0);
       // Set the frame to diplay
       void setFrame(int width, int height, AVFrame* f);
+      void setRawMode(int mode);
    protected:
       void paintEvent(QPaintEvent * ev);
    private :
+      // attributs
+      int rawMode;
       int frameWidth;
       int frameHeight;
       AVFrame* frameData;
       QPainter * painter_;
+      // functions
+      void applyRawMode();
 };
 
 #endif
