@@ -42,14 +42,12 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    input->addAction(properties);
    input->addSeparator();
    bayer= input->addMenu("Bayer Mode");
-   createBayerMenu();
    // output menu
    QMenu* output;
    output = menuBar()->addMenu("O&utput");
    output->addAction(separateRgb);
    output->addSeparator();
    codec= output->addMenu("Output Codec");
-   createCodecMenu();
    // help menu
    QMenu* help;
    help = menuBar()->addMenu("&Help");
@@ -112,6 +110,9 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    central->addLayout(left);
    central->addWidget(frameDisplay);
    centralZone->setLayout(central);
+   // update menu
+   createBayerMenu();
+   createCodecMenu();
    // set and display
    setCentralWidget(centralZone);
    QPixmap* pixmap = new QPixmap("../icons/main-icon.png");
@@ -248,6 +249,10 @@ void MainWindow::MenuOpen() {
    // fixing new size (to times to get refresh...)
    setFixedSize(sizeHint());
    setFixedSize(sizeHint());
+
+   // set bayer and codec
+   setNone();
+   setSame();
 }
 
 // SAVE

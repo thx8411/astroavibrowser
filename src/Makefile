@@ -1,3 +1,5 @@
+# part of AstroAviBrowser, (c) Blaise-Florentin Collin 2009
+
 CC=gcc -c
 LD=gcc
 MOC=/usr/share/qt4/bin/moc
@@ -16,8 +18,8 @@ clean :
 	rm -rf *.moc
 	rm -f $(BIN)
 
-$(BIN) : main.o Qmainwindow.o Qframedisplay.o Qframelist.o
-	$(LD) $(LDFLAGS) -o $(BIN) main.o Qmainwindow.o Qframedisplay.o Qframelist.o $(LIBS)
+$(BIN) : main.o Qmainwindow.o Qframedisplay.o Qframelist.o bayer.o
+	$(LD) $(LDFLAGS) -o $(BIN) main.o Qmainwindow.o Qframedisplay.o Qframelist.o bayer.o $(LIBS)
 
 main.o : main.cpp version.hpp
 	$(CC) $(CCFLAGS) main.cpp -I $(INCS)
@@ -31,7 +33,7 @@ Qmainwindow.o : Qmainwindow.cpp Qmainwindow.moc Qframedisplay.hpp Qframelist.hpp
 Qframedisplay.moc : Qframedisplay.hpp
 	$(MOC) Qframedisplay.hpp -o Qframedisplay.moc
 
-Qframedisplay.o : Qframedisplay.cpp Qframedisplay.moc
+Qframedisplay.o : Qframedisplay.cpp Qframedisplay.moc bayer.hpp
 	$(CC) $(CCFLAGS) Qframedisplay.cpp -I $(INCS)
 
 Qframelist.moc : Qframelist.hpp
@@ -39,3 +41,6 @@ Qframelist.moc : Qframelist.hpp
 
 Qframelist.o : Qframelist.cpp Qframelist.moc
 	$(CC) $(CCFLAGS) Qframelist.cpp -I $(INCS)
+
+bayer.o : bayer.hpp bayer.cpp
+	$(CC) $(CCFLAGS) bayer.cpp -I $(INCS)

@@ -24,6 +24,8 @@ FrameList::FrameList(QWidget* parent) : QListWidget(parent) {
    setMaximumWidth(128);
    // init frame number
    frameNumber=0;
+   // no file
+   fileOpened=false;
 }
 
 FrameList::~FrameList() {
@@ -145,6 +147,8 @@ void FrameList::fill() {
    current->setSelected(true);
    // and display it
    displayFrame(0);
+   // file is open
+   fileOpened=true;
 }
 
 void FrameList::reset() {
@@ -176,7 +180,7 @@ void FrameList::seekFrame(int number) {
 }
 
 void FrameList::refreshFrame() {
-   if(img_convert_ctx!=NULL&&frame!=NULL) {
+   if(fileOpened) {
       sws_scale(img_convert_ctx, frame->data,frame->linesize,0,codecContext->height,frameRGB->data, frameRGB->linesize);
       frameDisplay->setFrame(codecContext->width,codecContext->height,frameRGB);
       frameDisplay->update();
