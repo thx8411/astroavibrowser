@@ -7,10 +7,18 @@ FrameDisplay::FrameDisplay(QWidget* parent) : QWidget(parent) {
    frameData=NULL;
 }
 
+FrameDisplay::~FrameDisplay() {
+}
+
 void FrameDisplay::setFrame(int width, int height, AVFrame* f) {
    frameWidth=width;
    frameHeight=height;
    frameData=f;
+   cerr << "set frame" << endl;
+}
+
+AVFrame* FrameDisplay::getFrame() {
+   return(frameData);
 }
 
 void FrameDisplay::setRawmode(int mode) {
@@ -30,20 +38,27 @@ void FrameDisplay::paintEvent(QPaintEvent * ev) {
 }
 
 void FrameDisplay::applyRawMode() {
-   // add frame conversion
-   switch(rawMode) {
-      case RAW_NONE : break;
-      case RAW_BG :
-         cerr << "frame convertion bg" << endl;
-         break;
-      case RAW_GB :
-         cerr << "frame convertion gb" << endl;
-         break;
-      case RAW_RG :
-         cerr << "frame convertion rg" << endl;
-         break;
-      case RAW_GR :
-         cerr << "frame convertion gr" << endl;
-         break;
+   if (frameData!=NULL) {
+      switch(rawMode) {
+         case RAW_NONE :
+            cerr << "none" << endl;
+            break;
+         case RAW_BG :
+            cerr << "bg" << endl;
+            //
+            break;
+         case RAW_GB :
+            cerr << "gb" << endl;
+            //
+            break;
+         case RAW_RG :
+            cerr << "rg" << endl;
+            //
+            break;
+         case RAW_GR :
+            cerr << "gr" << endl;
+            //
+            break;
+      }
    }
 }

@@ -10,6 +10,7 @@ using namespace std;
 
 FrameList::FrameList(QWidget* parent) : QListWidget(parent) {
    // init
+   img_convert_ctx=NULL;
    frameDisplay=NULL;
    codecContext=NULL;
    buffer=NULL;
@@ -75,7 +76,7 @@ void FrameList::setCodecContext(AVCodecContext* cc) {
 
    codecContext=cc;
    // release buffer if needed
-   if(buffer==NULL)
+   if(buffer!=NULL)
       av_free(buffer);
    // buffer and frameRGB settings
    numBytes=avpicture_get_size(PIX_FMT_RGB24, codecContext->width,codecContext->height);
@@ -174,9 +175,16 @@ void FrameList::seekFrame(int number) {
    }
 }
 
+void FrameList::refreshFrame() {
+   if(img_convert_ctx!=NULL&&frame!=NULL) {
+      sws_scale(img_convert_ctx, frame->data,frame->linesize,0,codecContext->height,frameRGB->data, frameRGB->linesize);
+      frameDisplay->setFrame(codecContext->width,codecContext->height,frameRGB);
+      frameDisplay->update();
+   }
+}
+
 void FrameList::displayFrame(int number) {
    int frameDecoded;
-   static struct SwsContext *img_convert_ctx;
 
    seekFrame(number);
    avcodec_decode_video(codecContext, frame, &frameDecoded, pkt->data, pkt->size);
