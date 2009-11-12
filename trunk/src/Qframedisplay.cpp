@@ -13,7 +13,7 @@ void FrameDisplay::setFrame(int width, int height, AVFrame* f) {
    frameData=f;
 }
 
-void FrameDisplay::setRawMode(int mode) {
+void FrameDisplay::setRawmode(int mode) {
    rawMode=mode;
    applyRawMode();
    repaint();
@@ -31,4 +31,19 @@ void FrameDisplay::paintEvent(QPaintEvent * ev) {
 
 void FrameDisplay::applyRawMode() {
    // add frame conversion
+   switch(rawMode) {
+      case RAW_NONE : break;
+      case RAW_BG :
+         cerr << "frame convertion bg" << endl;
+         break;
+      case RAW_GB :
+         cerr << "frame convertion gb" << endl;
+         break;
+      case RAW_RG :
+         cerr << "frame convertion rg" << endl;
+         break;
+      case RAW_GR :
+         cerr << "frame convertion gr" << endl;
+         break;
+   }
 }
