@@ -41,9 +41,13 @@ class FrameList : public QListWidget
    public slots :
       // display the frame (CAUTION, starts at frame 0, not 1)
       void displayFrame(int number);
+      // refresh frame
+      void refreshFrame();
       // dummy slot, to do nothing
       void nop(int tmp);
    private :
+      // scale context
+      struct SwsContext* img_convert_ctx;
       // total stream frame number
       int frameNumber;
       // actual frame

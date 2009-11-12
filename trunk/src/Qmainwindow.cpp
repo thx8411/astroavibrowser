@@ -369,6 +369,7 @@ void MainWindow::setNone() {
    bayerRg->setChecked(false);
    bayerGr->setChecked(false);
    frameDisplay->setRawmode(RAW_NONE);
+   frameList->refreshFrame();
 }
 
 void MainWindow::setBg() {
@@ -378,6 +379,7 @@ void MainWindow::setBg() {
    bayerRg->setChecked(false);
    bayerGr->setChecked(false);
    frameDisplay->setRawmode(RAW_BG);
+   frameList->refreshFrame();
 }
 
 void MainWindow::setGb() {
@@ -387,6 +389,7 @@ void MainWindow::setGb() {
    bayerRg->setChecked(false);
    bayerGr->setChecked(false);
    frameDisplay->setRawmode(RAW_GB);
+   frameList->refreshFrame();
 }
 
 void MainWindow::setRg() {
@@ -396,6 +399,7 @@ void MainWindow::setRg() {
    bayerRg->setChecked(true);
    bayerGr->setChecked(false);
    frameDisplay->setRawmode(RAW_RG);
+   frameList->refreshFrame();
 }
 
 void MainWindow::setGr() {
@@ -405,6 +409,7 @@ void MainWindow::setGr() {
    bayerRg->setChecked(false);
    bayerGr->setChecked(true);
    frameDisplay->setRawmode(RAW_GR);
+   frameList->refreshFrame();
 }
 
 //

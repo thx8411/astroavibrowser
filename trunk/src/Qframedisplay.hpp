@@ -11,8 +11,10 @@
 
 #include <QtGui/QPaintEvent>
 
+extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
+}
 
 using namespace std;
 
@@ -27,8 +29,11 @@ class FrameDisplay : public QWidget
       Q_OBJECT
    public :
       FrameDisplay(QWidget* parent=0);
-      // Set the frame to display
+      ~FrameDisplay();
+      // set the frame to display
       void setFrame(int width, int height, AVFrame* f);
+      // get the frame
+      AVFrame* getFrame();
       // set raw mode
       void setRawmode(int mode);
    protected:
