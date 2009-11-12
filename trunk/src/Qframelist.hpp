@@ -46,6 +46,8 @@ class FrameList : public QListWidget
       // dummy slot, to do nothing
       void nop(int tmp);
    private :
+      // is a file open ?
+      bool fileOpened;
       // scale context
       struct SwsContext* img_convert_ctx;
       // total stream frame number

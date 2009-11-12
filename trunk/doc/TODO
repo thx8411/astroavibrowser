@@ -1,8 +1,7 @@
 TODO :
 
-- format choise
-- codec choice
 - video save
 - code cleaning/reorganisation
 - better error detection
 - speed up frame seeking
+- write debayer code
