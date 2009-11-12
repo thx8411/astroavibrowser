@@ -20,6 +20,11 @@ extern "C" {
 #include "Qframedisplay.hpp"
 #include "Qframelist.hpp"
 
+#define	CODEC_SAME	0
+#define CODEC_RAWGREY	1
+#define CODEC_RAWRGB	2
+#define CODEC_LOSSLESS	3
+
 class MainWindow : public QMainWindow
 {
       Q_OBJECT
@@ -34,6 +39,19 @@ class MainWindow : public QMainWindow
       void MenuBayer();
       void MenuCodec();
       void MenuAbout();
+      // input mode slots
+      void setNone();
+      void setBg();
+      void setGb();
+      void setRg();
+      void setGr();
+      // rgb sepearation slot
+      void setSeparate();
+      // ouput codecs slots
+      void setSame();
+      void setRawgrey();
+      void setRawrgb();
+      void setLossless();
       // buttons slots
       void ButtonSelectAll();
       void ButtonUnSelectAll();

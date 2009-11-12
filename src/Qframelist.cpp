@@ -26,8 +26,6 @@ FrameList::FrameList(QWidget* parent) : QListWidget(parent) {
 }
 
 FrameList::~FrameList() {
-   // clears the list
-   reset();
    // free mem
    av_free(frame);
    av_free(frameRGB);
@@ -95,7 +93,7 @@ void FrameList::setFrameDisplay(FrameDisplay* fd) {
 
 void FrameList::fill() {
    // init
-   int i=1;
+   int i=0;
    int res=0;
    int frameNumberEstimation;
    QListWidgetItem* current;
@@ -119,23 +117,26 @@ void FrameList::fill() {
    // setting progress dialog
    progress = new QProgressDialog(QString("File scanning..."),QString(),0,frameNumberEstimation);
    // read each frame and add item in the list
+   // read a new frame
+   av_seek_frame(formatContext, -1, 0, AVSEEK_FLAG_ANY);
+   res=av_read_frame(formatContext, pkt);
    while (res==0) {
+      i++;
       progress->setValue(i);
-      // read new frame
-      res=av_read_frame(formatContext, pkt);
       // add item...
       current= new QListWidgetItem(itemName+QString::number(i),this);
       // and check it
       current->setFlags(current->flags()|Qt::ItemIsUserCheckable);
       current->setCheckState(Qt::Checked);
-      i++;
+      // read new frame
+      res=av_read_frame(formatContext, pkt);
    }
    // progress closing
    progress->close();
    // back to stream beginning
    av_seek_frame(formatContext, -1, 0, AVSEEK_FLAG_ANY);
    // compute frame number
-   frameNumber=i-1;
+   frameNumber=i;
    // set the slot back
    connect(this,SIGNAL(currentRowChanged(int)),this,SLOT(displayFrame(int)));
    // init the first item
@@ -147,30 +148,28 @@ void FrameList::fill() {
 
 void FrameList::reset() {
    // remove all items
-   QListWidgetItem* current;
-   for(int i=0;i<frameNumber;i++) {
-      current=takeItem(0);
-      delete current;
-   }
+   if(0!=count())
+      clear();
 }
 
 void FrameList::seekFrame(int number) {
    int res=0;
-   int i=1;
 
    if(number>framePosition) {
       // go forward
+      res=av_read_frame(formatContext, pkt);
       while ((res==0)&&(framePosition!=number)) {
-         res=av_read_frame(formatContext, pkt);
          framePosition++;
+         res=av_read_frame(formatContext, pkt);
       }
    } else {
       // we must start at stream beginning to get the real frame num index
       av_seek_frame(formatContext, -1, 0, AVSEEK_FLAG_ANY);
       framePosition=0;
+      res=av_read_frame(formatContext, pkt);
       while ((res==0)&&(framePosition!=number)) {
-         res=av_read_frame(formatContext, pkt);
          framePosition++;
+         res=av_read_frame(formatContext, pkt);
       }
    }
 }
@@ -178,9 +177,6 @@ void FrameList::seekFrame(int number) {
 void FrameList::displayFrame(int number) {
    int frameDecoded;
    static struct SwsContext *img_convert_ctx;
-
-   // item numbering starts a 0, and frames at 1
-   number++;
 
    seekFrame(number);
    avcodec_decode_video(codecContext, frame, &frameDecoded, pkt->data, pkt->size);
@@ -198,7 +194,7 @@ void FrameList::nop(int tmp) {
 bool FrameList::skeepFrame(int number) {
    // check item state
    QListWidgetItem* current;
-   current=item(number-1);
+   current=item(number);
    if(current->checkState()==Qt::Checked)
       return(true);
    return(false);

@@ -359,6 +359,102 @@ void MainWindow::ButtonInvert() {
 }
 
 //
+// bayer modes callbacks
+//
+
+void MainWindow::setNone() {
+   bayerNone->setChecked(true);
+   bayerBg->setChecked(false);
+   bayerGb->setChecked(false);
+   bayerRg->setChecked(false);
+   bayerGr->setChecked(false);
+   frameDisplay->setRawmode(RAW_NONE);
+}
+
+void MainWindow::setBg() {
+   bayerNone->setChecked(false);
+   bayerBg->setChecked(true);
+   bayerGb->setChecked(false);
+   bayerRg->setChecked(false);
+   bayerGr->setChecked(false);
+   frameDisplay->setRawmode(RAW_BG);
+}
+
+void MainWindow::setGb() {
+   bayerNone->setChecked(false);
+   bayerBg->setChecked(false);
+   bayerGb->setChecked(true);
+   bayerRg->setChecked(false);
+   bayerGr->setChecked(false);
+   frameDisplay->setRawmode(RAW_GB);
+}
+
+void MainWindow::setRg() {
+   bayerNone->setChecked(false);
+   bayerBg->setChecked(false);
+   bayerGb->setChecked(false);
+   bayerRg->setChecked(true);
+   bayerGr->setChecked(false);
+   frameDisplay->setRawmode(RAW_RG);
+}
+
+void MainWindow::setGr() {
+   bayerNone->setChecked(false);
+   bayerBg->setChecked(false);
+   bayerGb->setChecked(false);
+   bayerRg->setChecked(false);
+   bayerGr->setChecked(true);
+   frameDisplay->setRawmode(RAW_GR);
+}
+
+//
+// rgb separation callback
+//
+
+void MainWindow::setSeparate() {
+}
+
+//
+// output codec callbacks
+//
+
+void MainWindow::setSame() {
+   codecSame->setChecked(true);
+   codecRawgrey->setChecked(false);
+   codecRawrgb->setChecked(false);
+   codecLossless->setChecked(false);
+
+   // update codec
+}
+
+void MainWindow::setRawgrey() {
+   codecSame->setChecked(false);
+   codecRawgrey->setChecked(true);
+   codecRawrgb->setChecked(false);
+   codecLossless->setChecked(false);
+
+   // update codec
+}
+
+void MainWindow::setRawrgb() {
+   codecSame->setChecked(false);
+   codecRawgrey->setChecked(false);
+   codecRawrgb->setChecked(true);
+   codecLossless->setChecked(false);
+
+   // update codec
+}
+
+void MainWindow::setLossless() {
+   codecSame->setChecked(false);
+   codecRawgrey->setChecked(false);
+   codecRawrgb->setChecked(false);
+   codecLossless->setChecked(true);
+
+   // update codec
+}
+
+//
 // MENU CREATION TOOLS
 //
 
@@ -379,9 +475,13 @@ void MainWindow::createBayerMenu() {
    bayer->addAction(bayerRg);
    bayer->addAction(bayerGr);
 
-   bayerNone->setChecked(true);
+   setNone();
 
-   // add connections to slots
+   connect(bayerNone,SIGNAL(triggered()),this,SLOT(setNone()));
+   connect(bayerBg,SIGNAL(triggered()),this,SLOT(setBg()));
+   connect(bayerGb,SIGNAL(triggered()),this,SLOT(setGb()));
+   connect(bayerRg,SIGNAL(triggered()),this,SLOT(setRg()));
+   connect(bayerGr,SIGNAL(triggered()),this,SLOT(setGr()));
 }
 
 void MainWindow::createCodecMenu() {
@@ -398,7 +498,10 @@ void MainWindow::createCodecMenu() {
    codec->addAction(codecRawgrey);
    codec->addAction(codecLossless);
 
-   codecSame->setChecked(true);
+   setSame();
 
-   // add connections to slots
+   connect(codecSame,SIGNAL(triggered()),this,SLOT(setSame()));
+   connect(codecRawrgb,SIGNAL(triggered()),this,SLOT(setRawrgb()));
+   connect(codecRawgrey,SIGNAL(triggered()),this,SLOT(setRawgrey()));
+   connect(codecLossless,SIGNAL(triggered()),this,SLOT(setLossless()));
 }
