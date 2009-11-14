@@ -192,7 +192,8 @@ void FrameList::displayFrame(int number) {
 
    seekFrame(number);
    avcodec_decode_video(codecContext, frame, &frameDecoded, pkt->data, pkt->size);
-   img_convert_ctx = sws_getContext(codecContext->width,codecContext->height,codecContext->pix_fmt,codecContext->width,codecContext->height,PIX_FMT_RGB24,SWS_BICUBIC,NULL, NULL, NULL);
+   img_convert_ctx = sws_getContext(codecContext->width,codecContext->height,codecContext->pix_fmt,codecContext->width,codecContext->height
+      ,PIX_FMT_RGB24,SWS_FAST_BILINEAR|SWS_CPU_CAPS_MMX,NULL, NULL, NULL);
    sws_scale(img_convert_ctx, frame->data,frame->linesize,0,codecContext->height,frameRGB->data, frameRGB->linesize);
    frameDisplay->setFrame(codecContext->width,codecContext->height,frameRGB);
    frameDisplay->update();

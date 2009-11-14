@@ -91,6 +91,7 @@ class MainWindow : public QMainWindow
       FrameDisplay* frameDisplay;
       FrameList* frameList;
       // ffmpeg datas
+      int inputCodecId;
       AVFormatContext* inputFileFormatContext;
       AVCodecContext* inputFileCodecContext;
       AVCodec* inputFileCodec;

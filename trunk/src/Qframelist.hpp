@@ -49,7 +49,7 @@ class FrameList : public QListWidget
       // is a file open ?
       bool fileOpened;
       // scale context
-      struct SwsContext* img_convert_ctx;
+      SwsContext* img_convert_ctx;
       // total stream frame number
       int frameNumber;
       // actual frame
