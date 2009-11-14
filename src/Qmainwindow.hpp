@@ -36,8 +36,6 @@ class MainWindow : public QMainWindow
       void MenuOpen();
       void MenuSave();
       void MenuProperties();
-      void MenuBayer();
-      void MenuCodec();
       void MenuAbout();
       // input mode slots
       void setNone();
