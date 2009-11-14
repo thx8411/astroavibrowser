@@ -57,7 +57,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    connect(save, SIGNAL(triggered()), this, SLOT(MenuSave()));
    connect(quit, SIGNAL(triggered()), qApp, SLOT(quit()));
    connect(properties, SIGNAL(triggered()), this, SLOT(MenuProperties()));
-   // add connection to slot for rgb separate
+   connect(separateRgb, SIGNAL(triggered()), this, SLOT(setSeparate()));
    connect(about, SIGNAL(triggered()), this, SLOT(MenuAbout()));
 
    // CENTRAL ZONE
@@ -261,6 +261,9 @@ void MainWindow::MenuSave() {
    outputFileName = QFileDialog::getSaveFileName(this, tr("Save Video"),"/home",tr("Avi Files (*.avi)"));
    if(outputFileName=="")
       return;
+   //
+   // to be done
+   //
 }
 
 // GET INPUT STREAM PROPERTIES
@@ -307,16 +310,6 @@ void MainWindow::MenuProperties() {
    message+=tmp;
    message+="\n";
    QMessageBox::information(this, tr("AstroAviBrowser"),tr(message.toStdString().c_str()));
-}
-
-// SET INPUT BAYER MODE
-void MainWindow::MenuBayer() {
-   // cout << "bayer" << endl;
-}
-
-// SET OUTPUT STREAM FORMAT (RAW, LOSSLESS)
-void MainWindow::MenuCodec() {
-   //cout << "codec" << endl;
 }
 
 // ABOUT...
@@ -422,6 +415,17 @@ void MainWindow::setGr() {
 //
 
 void MainWindow::setSeparate() {
+   if(separateRgb->isChecked()) {
+      setRawgrey();
+      codecSame->setEnabled(false);
+      codecRawrgb->setEnabled(false);
+      codecLossless->setEnabled(false);
+   } else {
+      setSame();
+      codecSame->setEnabled(true);
+      codecRawrgb->setEnabled(true);
+      codecLossless->setEnabled(true);
+   }
 }
 
 //
