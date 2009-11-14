@@ -261,9 +261,16 @@ void MainWindow::MenuSave() {
    outputFileName = QFileDialog::getSaveFileName(this, tr("Save Video"),"/home",tr("Avi Files (*.avi)"));
    if(outputFileName=="")
       return;
+
+   if(separateRgb->isChecked()) {
    //
    // to be done
    //
+   } else {
+   //
+   // to be done
+   //
+   }
 }
 
 // GET INPUT STREAM PROPERTIES
@@ -439,6 +446,8 @@ void MainWindow::setSame() {
    codecLossless->setChecked(false);
 
    // update codec
+   if(inputFileCodecContext!=NULL)
+      inputCodecId=inputFileCodecContext->codec_id;
 }
 
 void MainWindow::setRawgrey() {
@@ -448,6 +457,9 @@ void MainWindow::setRawgrey() {
    codecLossless->setChecked(false);
 
    // update codec
+   inputCodecId=CODEC_ID_RAWVIDEO;
+   // set 8 bits grey
+   //
 }
 
 void MainWindow::setRawrgb() {
@@ -457,6 +469,9 @@ void MainWindow::setRawrgb() {
    codecLossless->setChecked(false);
 
    // update codec
+   inputCodecId=CODEC_ID_RAWVIDEO;
+   // set 24 bits rgb
+   //
 }
 
 void MainWindow::setLossless() {
@@ -466,6 +481,7 @@ void MainWindow::setLossless() {
    codecLossless->setChecked(true);
 
    // update codec
+   inputCodecId=CODEC_ID_FFV1;
 }
 
 //
