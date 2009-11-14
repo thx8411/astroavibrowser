@@ -45,7 +45,7 @@ void FrameDisplay::applyRawMode() {
    if ((frameData!=NULL)&&(rawMode!=RAW_NONE)) {
          buffer=(unsigned char*)malloc(frameWidth*frameHeight*3);
          memcpy(buffer,frameData->data[0],frameWidth*frameHeight*3);
-         cerr << "raw " << rawMode << endl;
+         //cerr << "raw " << rawMode << endl;
          raw2rgb(frameData->data[0],buffer,frameWidth,frameHeight,rawMode);
          free(buffer);
    }
