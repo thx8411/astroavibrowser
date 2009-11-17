@@ -31,10 +31,8 @@ class FrameList : public QListWidget
       void setFrameDisplay(FrameDisplay* fd);
       // scans the stream and fill the list
       void fill();
-      // when saving output stream, says if a frame shoudld be
-      // skeeped or notm depanding on the frame selection
-      // starts at frame 1
-      bool skeepFrame(int number);
+      // dump selected frames in the given codec
+      void dump();
       // returns the total stream frame number
       // real number, no approx.
       int getFrameNumber();

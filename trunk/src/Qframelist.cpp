@@ -136,6 +136,7 @@ void FrameList::fill() {
    }
    // progress closing
    progress->close();
+   delete progress;
    // back to stream beginning
    av_seek_frame(formatContext, -1, 0, AVSEEK_FLAG_ANY);
    // compute frame number
@@ -172,11 +173,41 @@ void FrameList::seekFrame(int number) {
       av_seek_frame(formatContext, -1, 0, AVSEEK_FLAG_ANY);
       framePosition=0;
       res=av_read_frame(formatContext, pkt);
+      // counting
       while ((res==0)&&(framePosition!=number)) {
          framePosition++;
          res=av_read_frame(formatContext, pkt);
       }
    }
+}
+
+void FrameList::dump() {
+   AVFrame* savedFrame;
+   QProgressDialog* progress;
+   QListWidgetItem* current;
+
+   // setting progress dialog
+   progress = new QProgressDialog(QString("File saving..."),QString(),0,frameNumber);
+   // loop
+   for(int i=0;i<frameNumber;i++) {
+      progress->setValue(i);
+      current=item(i);
+      if(current->checkState()==Qt::Checked) {
+         current->setSelected(true);
+         displayFrame(i);
+         savedFrame=frameDisplay->getFrame();
+         //
+         // add the frame in the stream
+         //
+      }
+   }
+   // back to the beginning
+   current=item(0);
+   current->setSelected(true);
+   displayFrame(0);
+   // closing progress window
+   progress->close();
+   delete progress;
 }
 
 void FrameList::refreshFrame() {
@@ -202,15 +233,6 @@ void FrameList::displayFrame(int number) {
 
 void FrameList::nop(int tmp) {
    // nop
-}
-
-bool FrameList::skeepFrame(int number) {
-   // check item state
-   QListWidgetItem* current;
-   current=item(number);
-   if(current->checkState()==Qt::Checked)
-      return(true);
-   return(false);
 }
 
 int FrameList::getFrameNumber() {

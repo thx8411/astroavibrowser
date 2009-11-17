@@ -6,7 +6,7 @@ MOC=/usr/share/qt4/bin/moc
 CCFLAGS=-O3 -march=i686
 LDFLAGS=-O3 -march=i686
 INCS=/usr/include/qt4
-LIBS=-lQtCore -lQtGui -lavformat -lavcodec -lswscale
+LIBS=-lQtCore -lQtGui -lavformat -lavcodec -lswscale -laviplay
 BIN= AstroAviBrowser
 
 all : $(BIN)
