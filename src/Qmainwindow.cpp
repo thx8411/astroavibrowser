@@ -9,6 +9,8 @@
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QFileDialog>
 
+#include <avifile/avifile.h>
+
 #include "version.hpp"
 
 #include "Qmainwindow.moc"
@@ -163,14 +165,15 @@ void MainWindow::freeFile() {
 
 // OPEN
 void MainWindow::MenuOpen() {
-   // release opened file
-   freeFile();
    // open new file
    // getting file name
    inputFileName = QFileDialog::getOpenFileName(this,tr("Open Video"),"/home", tr("Video Files (*.avi *.mpg *.mpeg *.divx *.mkv *.mov *.wmv *.AVI *.MPG *.MPEG *.DIVX *.MKV *.MOV *.WMV)"));
    sleep(1);
    if(inputFileName=="")
       return;
+
+   // release opened file
+   freeFile();
 
    // opening file
    if(av_open_input_file(&inputFileFormatContext, inputFileName.toStdString().c_str(), NULL, 0, NULL)!=0) {
@@ -257,20 +260,37 @@ void MainWindow::MenuOpen() {
 
 // SAVE
 void MainWindow::MenuSave() {
+
+   // temp
+   FILE* fd;
+   //
+
    // query file name
-   outputFileName = QFileDialog::getSaveFileName(this, tr("Save Video"),"/home",tr("Avi Files (*.avi)"));
+   outputFileName = QFileDialog::getSaveFileName(this, tr("Save Video"),"/home",tr("Avi Files (*.avi *.AVI)"));
+   // removes ".avi" postfix if needed
+   if(outputFileName.contains(".avi",Qt::CaseInsensitive))
+      outputFileName.remove(".avi",Qt::CaseInsensitive);
+
+   // is the name valid ?
    if(outputFileName=="")
       return;
 
+   setCursor(Qt::BusyCursor);
    if(separateRgb->isChecked()) {
-   //
-   // to be done
-   //
+   // R plan
+   // G plan
+   // B plan
    } else {
-   //
-   // to be done
-   //
+      avm::IWriteFile* outputFile;
+      outputFile=avm::CreateWriteFile((outputFileName.toStdString()+".avi").c_str());
+
+      // frame list dump
+      frameList->dump();
+
+      // closing
+      delete outputFile;
    }
+   setCursor(Qt::ArrowCursor);
 }
 
 // GET INPUT STREAM PROPERTIES
@@ -446,8 +466,11 @@ void MainWindow::setSame() {
    codecLossless->setChecked(false);
 
    // update codec
-   if(inputFileCodecContext!=NULL)
-      inputCodecId=inputFileCodecContext->codec_id;
+   if(inputFileCodecContext!=NULL) {
+      outputCodecId=inputFileCodecContext->codec_id;
+      // set pix format
+      outputFmt=inputFileCodecContext->pix_fmt;
+   }
 }
 
 void MainWindow::setRawgrey() {
@@ -457,9 +480,9 @@ void MainWindow::setRawgrey() {
    codecLossless->setChecked(false);
 
    // update codec
-   inputCodecId=CODEC_ID_RAWVIDEO;
+   outputCodecId=CODEC_ID_RAWVIDEO;
    // set 8 bits grey
-   //
+   outputFmt=PIX_FMT_GRAY8;
 }
 
 void MainWindow::setRawrgb() {
@@ -469,9 +492,9 @@ void MainWindow::setRawrgb() {
    codecLossless->setChecked(false);
 
    // update codec
-   inputCodecId=CODEC_ID_RAWVIDEO;
+   outputCodecId=CODEC_ID_RAWVIDEO;
    // set 24 bits rgb
-   //
+   outputFmt=PIX_FMT_RGB24;
 }
 
 void MainWindow::setLossless() {
@@ -481,7 +504,9 @@ void MainWindow::setLossless() {
    codecLossless->setChecked(true);
 
    // update codec
-   inputCodecId=CODEC_ID_FFV1;
+   outputCodecId=CODEC_ID_FFV1;
+   // set 24 bits rgb
+   outputFmt=PIX_FMT_RGB24;
 }
 
 //

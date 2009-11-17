@@ -4,4 +4,6 @@ TODO :
 - code cleaning/reorganisation
 - better error detection
 - speed up frame seeking
-
+- add autoconf
+- add debian package
+- add gnome desktop

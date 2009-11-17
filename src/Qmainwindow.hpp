@@ -55,11 +55,11 @@ class MainWindow : public QMainWindow
       void ButtonUnSelectAll();
       void ButtonInvert();
    private :
+      // release an opened file
+      void freeFile();
       // format and codec menu tools
       void createBayerMenu();
       void createCodecMenu();
-      // release an opened file
-      void freeFile();
       // menu actions
       QAction* open;
       QAction* save;
@@ -91,7 +91,8 @@ class MainWindow : public QMainWindow
       FrameDisplay* frameDisplay;
       FrameList* frameList;
       // ffmpeg datas
-      int inputCodecId;
+      CodecID outputCodecId;
+      PixelFormat outputFmt;
       AVFormatContext* inputFileFormatContext;
       AVCodecContext* inputFileCodecContext;
       AVCodec* inputFileCodec;
