@@ -181,24 +181,77 @@ void FrameList::seekFrame(int number) {
    }
 }
 
-void FrameList::dump() {
+void getPlan(unsigned char* dest, unsigned char* source, int size, int colorPlan) {
+   // red plan is RED=1
+   colorPlan--;
+   for(int i=0;i<size;i++) {
+      dest[i]=source[(i*3)+colorPlan];
+   }
+}
+
+void FrameList::dump(IAviVideoWriteStream* stream, BITMAPINFOHEADER* bi, int colorPlan) {
+   unsigned char* datas;
+   int size;
    AVFrame* savedFrame;
    QProgressDialog* progress;
    QListWidgetItem* current;
 
    // setting progress dialog
-   progress = new QProgressDialog(QString("File saving..."),QString(),0,frameNumber);
+   switch(colorPlan) {
+      case ALL :
+         progress = new QProgressDialog(QString("File saving..."),QString(),0,frameNumber);
+         break;
+      case RED :
+         progress = new QProgressDialog(QString("Saving red plan..."),QString(),0,frameNumber);
+         break;
+      case GREEN :
+         progress = new QProgressDialog(QString("Saving green plan..."),QString(),0,frameNumber);
+         break;
+      case BLUE :
+         progress = new QProgressDialog(QString("Saving blue plan..."),QString(),0,frameNumber);
+         break;
+   }
+   // alloc datas if needed
+   if(colorPlan!=ALL) {
+      size=codecContext->width*codecContext->height;
+      datas=(unsigned char*)malloc(size);
+   }
    // loop
    for(int i=0;i<frameNumber;i++) {
       progress->setValue(i);
       current=item(i);
       if(current->checkState()==Qt::Checked) {
+         CImage* img;
+         BitmapInfo info(*bi);
          current->setSelected(true);
          displayFrame(i);
          savedFrame=frameDisplay->getFrame();
-         //
          // add the frame in the stream
-         //
+         switch(colorPlan) {
+            case ALL :
+               datas=savedFrame->data[0];
+               break;
+            case RED :
+               // get red plan
+               getPlan(datas,savedFrame->data[0],size,RED);
+               break;
+            case GREEN :
+               // get green plan
+               getPlan(datas,savedFrame->data[0],size,GREEN);
+               break;
+            case BLUE :
+               // get blue plan
+               getPlan(datas,savedFrame->data[0],size,BLUE);
+               break;
+         }
+         // add frame
+         img= new CImage(&info, datas, false);
+         stream->AddFrame(img);
+         // free image
+         delete img;
+         // free datas if needed
+         if(colorPlan!=ALL)
+            free(datas);
       }
    }
    // back to the beginning
@@ -238,4 +291,15 @@ void FrameList::nop(int tmp) {
 int FrameList::getFrameNumber() {
    // returns frameNumber
    return(frameNumber);
+}
+
+int FrameList::getSelectedFrames() {
+   int num=0;
+   QListWidgetItem* current;
+   for(int i=0;i<frameNumber;i++) {
+      current=item(i);
+      if(current->checkState()==Qt::Checked)
+         num++;
+   }
+   return(num);
 }

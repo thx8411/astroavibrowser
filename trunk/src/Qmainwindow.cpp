@@ -9,8 +9,6 @@
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QFileDialog>
 
-#include <avifile/avifile.h>
-
 #include "version.hpp"
 
 #include "Qmainwindow.moc"
@@ -255,15 +253,16 @@ void MainWindow::MenuOpen() {
 
    // set bayer and codec
    setNone();
-   setSame();
+   //setRawrgb();
 }
 
 // SAVE
 void MainWindow::MenuSave() {
-
-   // temp
-   FILE* fd;
-   //
+   // is there selected frames ?
+   if(frameList->getSelectedFrames()==0) {
+      QMessageBox::critical(this, tr("AstroAviBrowser"),tr("No frame selected"));
+      return;
+   }
 
    // query file name
    outputFileName = QFileDialog::getSaveFileName(this, tr("Save Video"),"/home",tr("Avi Files (*.avi *.AVI)"));
@@ -275,21 +274,77 @@ void MainWindow::MenuSave() {
    if(outputFileName=="")
       return;
 
+   // it could be long...
    setCursor(Qt::BusyCursor);
+   // vars
+   int frameRate;
+   IAviWriteFile* outputFile;
+   IAviVideoWriteStream *outputStream;
+   BITMAPINFOHEADER bi;
+   // init
+   memset(&bi, 0, sizeof(bi));
+   bi.biSize = sizeof(bi);
+   bi.biWidth = inputFileCodecContext->width;
+   bi.biHeight = inputFileCodecContext->height;
+   frameRate=(float)inputFileFormatContext->streams[inputStreamNumber]->r_frame_rate.den/(float)inputFileFormatContext->streams[inputStreamNumber]->r_frame_rate.num*1000000;
+   // separate or not
    if(separateRgb->isChecked()) {
-   // R plan
-   // G plan
-   // B plan
+      // init
+      bi.biSizeImage = (bi.biWidth * bi.biHeight);
+      bi.biPlanes = 1;
+      bi.biBitCount = 8;
+      bi.biCompression = IMG_FMT_Y800;
+
+      // R plan
+      outputFile=avm::CreateWriteFile((outputFileName.toStdString()+"_R.avi").c_str());
+      outputStream=outputFile->AddVideoStream(RIFFINFO_Y800, &bi, frameRate);
+      outputStream->SetQuality(10000);
+      outputStream->Start();
+      // frame list dump
+      frameList->dump(outputStream, &bi, RED);
+      // closing
+      outputStream->Stop();
+      delete outputFile;
+
+      // G plan
+      outputFile=avm::CreateWriteFile((outputFileName.toStdString()+"_G.avi").c_str());
+      outputStream=outputFile->AddVideoStream(RIFFINFO_Y800, &bi, frameRate);
+      outputStream->SetQuality(10000);
+      outputStream->Start();
+      // frame list dump
+      frameList->dump(outputStream, &bi, GREEN);
+      // closing
+      outputStream->Stop();
+      delete outputFile;
+
+      // B plan
+      outputFile=avm::CreateWriteFile((outputFileName.toStdString()+"_B.avi").c_str());
+      outputStream=outputFile->AddVideoStream(RIFFINFO_Y800, &bi, frameRate);
+      outputStream->SetQuality(10000);
+      outputStream->Start();
+      // frame list dump
+      frameList->dump(outputStream, &bi, BLUE);
    } else {
-      avm::IWriteFile* outputFile;
+      bi.biSizeImage = (bi.biWidth * bi.biHeight * 3);
+      bi.biPlanes = 1;
+      bi.biBitCount = 24;
+      bi.biCompression = BI_RGB;
+      //bi.biPlanes = 3;
+      //bi.biBitCount = 12;
+      //bi.biCompression=RIFFINFO_I420;
+
       outputFile=avm::CreateWriteFile((outputFileName.toStdString()+".avi").c_str());
+      outputStream=outputFile->AddVideoStream(outputCodec, &bi, frameRate);
+      outputStream->SetQuality(10000);
+      outputStream->Start();
 
       // frame list dump
-      frameList->dump();
-
-      // closing
-      delete outputFile;
+      frameList->dump(outputStream, &bi, ALL);
    }
+   // closing
+   outputStream->Stop();
+   delete outputFile;
+   // finished
    setCursor(Qt::ArrowCursor);
 }
 
@@ -443,14 +498,14 @@ void MainWindow::setGr() {
 
 void MainWindow::setSeparate() {
    if(separateRgb->isChecked()) {
-      setRawgrey();
-      codecSame->setEnabled(false);
-      codecRawrgb->setEnabled(false);
+      //setRawgrey();
+      //codecSame->setEnabled(false);
+      //codecRawrgb->setEnabled(false);
       codecLossless->setEnabled(false);
    } else {
-      setSame();
-      codecSame->setEnabled(true);
-      codecRawrgb->setEnabled(true);
+      setRawrgb();
+      //codecSame->setEnabled(true);
+      //codecRawrgb->setEnabled(true);
       codecLossless->setEnabled(true);
    }
 }
@@ -459,54 +514,48 @@ void MainWindow::setSeparate() {
 // output codec callbacks
 //
 
-void MainWindow::setSame() {
-   codecSame->setChecked(true);
-   codecRawgrey->setChecked(false);
-   codecRawrgb->setChecked(false);
-   codecLossless->setChecked(false);
+//void MainWindow::setSame() {
+//  codecSame->setChecked(true);
+//   codecRawgrey->setChecked(false);
+//   codecRawrgb->setChecked(false);
+//   codecLossless->setChecked(false);
 
    // update codec
-   if(inputFileCodecContext!=NULL) {
-      outputCodecId=inputFileCodecContext->codec_id;
+//   if(inputFileCodecContext!=NULL) {
+//      outputCodecId=inputFileCodecContext->codec_id;
       // set pix format
-      outputFmt=inputFileCodecContext->pix_fmt;
-   }
-}
+//      outputFmt=inputFileCodecContext->pix_fmt;
+//   }
+//}
 
 void MainWindow::setRawgrey() {
-   codecSame->setChecked(false);
-   codecRawgrey->setChecked(true);
-   codecRawrgb->setChecked(false);
+   //codecSame->setChecked(false);
+   //codecRawgrey->setChecked(true);
+   //codecRawrgb->setChecked(false);
    codecLossless->setChecked(false);
 
    // update codec
-   outputCodecId=CODEC_ID_RAWVIDEO;
-   // set 8 bits grey
-   outputFmt=PIX_FMT_GRAY8;
+   outputCodec=RIFFINFO_Y800;
 }
 
 void MainWindow::setRawrgb() {
-   codecSame->setChecked(false);
-   codecRawgrey->setChecked(false);
-   codecRawrgb->setChecked(true);
+   //codecSame->setChecked(false);
+   //codecRawgrey->setChecked(false);
+   //codecRawrgb->setChecked(true);
    codecLossless->setChecked(false);
 
    // update codec
-   outputCodecId=CODEC_ID_RAWVIDEO;
-   // set 24 bits rgb
-   outputFmt=PIX_FMT_RGB24;
+   outputCodec=BI_RGB;
 }
 
 void MainWindow::setLossless() {
-   codecSame->setChecked(false);
-   codecRawgrey->setChecked(false);
-   codecRawrgb->setChecked(false);
+   //codecSame->setChecked(false);
+   //codecRawgrey->setChecked(false);
+   //codecRawrgb->setChecked(false);
    codecLossless->setChecked(true);
 
    // update codec
-   outputCodecId=CODEC_ID_FFV1;
-   // set 24 bits rgb
-   outputFmt=PIX_FMT_RGB24;
+   outputCodec=RIFFINFO_ZLIB;
 }
 
 //
@@ -540,23 +589,23 @@ void MainWindow::createBayerMenu() {
 }
 
 void MainWindow::createCodecMenu() {
-   codecSame=new QAction("Unchanged",codec);
-   codecRawrgb=new QAction("Raw RGB",codec);
-   codecRawgrey=new QAction("Raw Grey",codec);
-   codecLossless=new QAction("FFV1 RGB",codec);
-   codecSame->setCheckable(true);
-   codecRawrgb->setCheckable(true);
-   codecRawgrey->setCheckable(true);
+   //codecSame=new QAction("Unchanged",codec);
+   //codecRawrgb=new QAction("Raw RGB",codec);
+   //codecRawgrey=new QAction("Raw Grey",codec);
+   codecLossless=new QAction("ZLIB Lossless",codec);
+   //codecSame->setCheckable(true);
+   //codecRawrgb->setCheckable(true);
+   //codecRawgrey->setCheckable(true);
    codecLossless->setCheckable(true);
-   codec->addAction(codecSame);
-   codec->addAction(codecRawrgb);
-   codec->addAction(codecRawgrey);
+   //codec->addAction(codecSame);
+   //codec->addAction(codecRawrgb);
+   //codec->addAction(codecRawgrey);
    codec->addAction(codecLossless);
 
-   setSame();
+   setLossless();
 
-   connect(codecSame,SIGNAL(triggered()),this,SLOT(setSame()));
-   connect(codecRawrgb,SIGNAL(triggered()),this,SLOT(setRawrgb()));
-   connect(codecRawgrey,SIGNAL(triggered()),this,SLOT(setRawgrey()));
+   //connect(codecSame,SIGNAL(triggered()),this,SLOT(setSame()));
+   //connect(codecRawrgb,SIGNAL(triggered()),this,SLOT(setRawrgb()));
+   //connect(codecRawgrey,SIGNAL(triggered()),this,SLOT(setRawgrey()));
    connect(codecLossless,SIGNAL(triggered()),this,SLOT(setLossless()));
 }

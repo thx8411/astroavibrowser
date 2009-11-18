@@ -17,6 +17,9 @@ extern "C" {
 #include <libavformat/avformat.h>
 }
 
+#include <avifile/avifile.h>
+#include <avifile/avm_fourcc.h>
+
 #include "Qframedisplay.hpp"
 #include "Qframelist.hpp"
 
@@ -46,7 +49,7 @@ class MainWindow : public QMainWindow
       // rgb sepearation slot
       void setSeparate();
       // ouput codecs slots
-      void setSame();
+      //void setSame();
       void setRawgrey();
       void setRawrgb();
       void setLossless();
@@ -76,7 +79,7 @@ class MainWindow : public QMainWindow
       QAction* bayerRg;
       QAction* bayerGr;
       // codec menu radio buttons
-      QAction* codecSame;
+      //QAction* codecSame;
       QAction* codecRawgrey;
       QAction* codecRawrgb;
       QAction* codecLossless;
@@ -90,9 +93,9 @@ class MainWindow : public QMainWindow
       // display and list
       FrameDisplay* frameDisplay;
       FrameList* frameList;
+      // avifile datas
+      fourcc_t outputCodec;
       // ffmpeg datas
-      CodecID outputCodecId;
-      PixelFormat outputFmt;
       AVFormatContext* inputFileFormatContext;
       AVCodecContext* inputFileCodecContext;
       AVCodec* inputFileCodec;
