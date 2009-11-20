@@ -7,3 +7,4 @@ TODO :
 - add autoconf
 - add debian package
 - add gnome desktop
+- cerr redirection to avoid avifile and ffmpeg messages

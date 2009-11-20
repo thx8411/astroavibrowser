@@ -2,3 +2,6 @@ Known Bugs :
 
  - Browsing frames back is very slow because we have to scan all the stream
    to get the real frame number (no index used)
+
+ - second part of the frames don't allways displays well
+ - Y8 and raw RGB outputs doesn't work
