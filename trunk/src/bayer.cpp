@@ -157,3 +157,11 @@ void raw2rgb(unsigned char * dest,const unsigned char * const data,int w,int h,i
    }
 }
 
+void bgr2rgb(unsigned char * datas, int w, int h) {
+   char tmp;
+   for(int i=0;i<w*h;i++) {
+      tmp=datas[i*3];
+      datas[i*3]=datas[i*3+2];
+      datas[i*3+2]=tmp;
+   }
+}

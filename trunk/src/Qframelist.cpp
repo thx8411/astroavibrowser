@@ -6,6 +6,8 @@
 
 #include "Qframelist.moc"
 
+#include "bayer.hpp"
+
 using namespace std;
 
 FrameList::FrameList(QWidget* parent) : QListWidget(parent) {
@@ -29,6 +31,9 @@ FrameList::FrameList(QWidget* parent) : QListWidget(parent) {
 }
 
 FrameList::~FrameList() {
+   // free scale context
+   if(img_convert_ctx!=NULL)
+      sws_freeContext(img_convert_ctx);
    // free mem
    av_free(frame);
    av_free(frameRGB);
@@ -84,6 +89,11 @@ void FrameList::setCodecContext(AVCodecContext* cc) {
    numBytes=avpicture_get_size(PIX_FMT_RGB24, codecContext->width,codecContext->height);
    buffer=(uint8_t *)av_malloc(numBytes*sizeof(uint8_t));
    avpicture_fill((AVPicture *)frameRGB, buffer, PIX_FMT_RGB24,codecContext->width, codecContext->height);
+   // setting img_convert_ctx
+   if(img_convert_ctx!=NULL)
+      sws_freeContext(img_convert_ctx);
+   img_convert_ctx = sws_getContext(codecContext->width,codecContext->height,codecContext->pix_fmt,codecContext->width,codecContext->height
+      ,PIX_FMT_RGB24,SWS_FAST_BILINEAR|SWS_CPU_CAPS_MMX,NULL, NULL, NULL);
 }
 
 void FrameList::setStreamNumber(int sn) {
@@ -161,12 +171,17 @@ void FrameList::reset() {
 void FrameList::seekFrame(int number) {
    int res=0;
 
+   if(number==framePosition)
+      return;
    if(number>framePosition) {
       // go forward
       res=av_read_frame(formatContext, pkt);
       while ((res==0)&&(framePosition!=number)) {
          framePosition++;
          res=av_read_frame(formatContext, pkt);
+
+         //cerr << res << endl;
+         //cerr << framePosition << endl;
       }
    } else {
       // we must start at stream beginning to get the real frame num index
@@ -177,6 +192,8 @@ void FrameList::seekFrame(int number) {
       while ((res==0)&&(framePosition!=number)) {
          framePosition++;
          res=av_read_frame(formatContext, pkt);
+
+         //cerr << framePosition << endl;
       }
    }
 }
@@ -191,6 +208,7 @@ void getPlan(unsigned char* dest, unsigned char* source, int size, int colorPlan
 
 void FrameList::dump(IAviVideoWriteStream* stream, BITMAPINFOHEADER* bi, int colorPlan) {
    unsigned char* datas;
+   unsigned char* plan;
    int size;
    AVFrame* savedFrame;
    QProgressDialog* progress;
@@ -212,10 +230,10 @@ void FrameList::dump(IAviVideoWriteStream* stream, BITMAPINFOHEADER* bi, int col
          break;
    }
    // alloc datas if needed
-   if(colorPlan!=ALL) {
-      size=codecContext->width*codecContext->height;
-      datas=(unsigned char*)malloc(size);
-   }
+   size=codecContext->width*codecContext->height;
+   if(colorPlan!=ALL)
+      plan=(unsigned char*)malloc(size);
+   datas=(unsigned char*)malloc(size*3);
    // loop
    for(int i=0;i<frameNumber;i++) {
       progress->setValue(i);
@@ -223,37 +241,42 @@ void FrameList::dump(IAviVideoWriteStream* stream, BITMAPINFOHEADER* bi, int col
       if(current->checkState()==Qt::Checked) {
          CImage* img;
          BitmapInfo info(*bi);
-         current->setSelected(true);
-         displayFrame(i);
-         savedFrame=frameDisplay->getFrame();
+         getFrame(i);
+         savedFrame=frameRGB;
+         if(frameDisplay->getRawmode()==RAW_NONE)
+            memcpy(datas,savedFrame->data[0],size*3);
+         else
+            raw2rgb(datas,savedFrame->data[0],codecContext->width,codecContext->height,frameDisplay->getRawmode());
+         bgr2rgb(datas,codecContext->width,codecContext->height);
          // add the frame in the stream
          switch(colorPlan) {
             case ALL :
-               datas=savedFrame->data[0];
+               plan=datas;
                break;
             case RED :
                // get red plan
-               getPlan(datas,savedFrame->data[0],size,RED);
+               getPlan(plan,datas,size,RED);
                break;
             case GREEN :
                // get green plan
-               getPlan(datas,savedFrame->data[0],size,GREEN);
+               getPlan(plan,datas,size,GREEN);
                break;
             case BLUE :
                // get blue plan
-               getPlan(datas,savedFrame->data[0],size,BLUE);
+               getPlan(plan,datas,size,BLUE);
                break;
          }
          // add frame
-         img= new CImage(&info, datas, false);
+         img= new CImage(&info, plan, false);
          stream->AddFrame(img);
          // free image
          delete img;
-         // free datas if needed
-         if(colorPlan!=ALL)
-            free(datas);
       }
    }
+   // free datas
+   if(colorPlan!=ALL)
+      free(plan);
+   free(datas);
    // back to the beginning
    current=item(0);
    current->setSelected(true);
@@ -276,12 +299,18 @@ void FrameList::displayFrame(int number) {
 
    seekFrame(number);
    avcodec_decode_video(codecContext, frame, &frameDecoded, pkt->data, pkt->size);
-   img_convert_ctx = sws_getContext(codecContext->width,codecContext->height,codecContext->pix_fmt,codecContext->width,codecContext->height
-      ,PIX_FMT_RGB24,SWS_FAST_BILINEAR|SWS_CPU_CAPS_MMX,NULL, NULL, NULL);
    sws_scale(img_convert_ctx, frame->data,frame->linesize,0,codecContext->height,frameRGB->data, frameRGB->linesize);
    frameDisplay->setFrame(codecContext->width,codecContext->height,frameRGB);
    frameDisplay->update();
    //cerr << frameDecoded << endl;
+}
+
+void FrameList::getFrame(int number) {
+   int frameDecoded;
+
+   seekFrame(number);
+   avcodec_decode_video(codecContext, frame, &frameDecoded, pkt->data, pkt->size);
+   sws_scale(img_convert_ctx, frame->data,frame->linesize,0,codecContext->height,frameRGB->data, frameRGB->linesize);
 }
 
 void FrameList::nop(int tmp) {

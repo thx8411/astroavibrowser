@@ -7,4 +7,6 @@
 void raw2rgb(unsigned char * dest,const unsigned char * const data,
                int w, int h,int mode);
 
+void bgr2rgb(unsigned char * datas, int w, int h);
+
 #endif

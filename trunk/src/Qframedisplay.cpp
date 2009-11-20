@@ -30,6 +30,10 @@ void FrameDisplay::setRawmode(int mode) {
    repaint();
 }
 
+int FrameDisplay::getRawmode() {
+   return(rawMode);
+}
+
 void FrameDisplay::paintEvent(QPaintEvent * ev) {
    if (frameData!=NULL) {
       applyRawMode();

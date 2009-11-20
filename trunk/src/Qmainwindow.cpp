@@ -285,7 +285,7 @@ void MainWindow::MenuSave() {
    memset(&bi, 0, sizeof(bi));
    bi.biSize = sizeof(bi);
    bi.biWidth = inputFileCodecContext->width;
-   bi.biHeight = inputFileCodecContext->height;
+   bi.biHeight = inputFileCodecContext->height*-1;
    frameRate=(float)inputFileFormatContext->streams[inputStreamNumber]->r_frame_rate.den/(float)inputFileFormatContext->streams[inputStreamNumber]->r_frame_rate.num*1000000;
    // separate or not
    if(separateRgb->isChecked()) {

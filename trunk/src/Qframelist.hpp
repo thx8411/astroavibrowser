@@ -47,6 +47,8 @@ class FrameList : public QListWidget
       // number of frame selected
       int getSelectedFrames();
    public slots :
+      // look for a frame
+      void getFrame(int number);
       // display the frame (CAUTION, starts at frame 0, not 1)
       void displayFrame(int number);
       // refresh frame
