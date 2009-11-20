@@ -36,6 +36,8 @@ class FrameDisplay : public QWidget
       AVFrame* getFrame();
       // set raw mode
       void setRawmode(int mode);
+      // get used raw mode
+      int getRawmode();
    protected:
       void paintEvent(QPaintEvent * ev);
    private :
