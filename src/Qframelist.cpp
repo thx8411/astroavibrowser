@@ -169,33 +169,32 @@ void FrameList::reset() {
 }
 
 void FrameList::seekFrame(int number) {
+   int frameDecoded;
    int res=0;
 
-   if(number==framePosition)
-      return;
    if(number>framePosition) {
       // go forward
       res=av_read_frame(formatContext, pkt);
-      while ((res==0)&&(framePosition!=number)) {
+      if(res==0)
          framePosition++;
+      while ((res==0)&&(framePosition!=number)) {
          res=av_read_frame(formatContext, pkt);
-
-         //cerr << res << endl;
-         //cerr << framePosition << endl;
+         framePosition++;
       }
    } else {
       // we must start at stream beginning to get the real frame num index
       av_seek_frame(formatContext, -1, 0, AVSEEK_FLAG_ANY);
       framePosition=0;
       res=av_read_frame(formatContext, pkt);
+      if(res==0)
+         framePosition++;
       // counting
       while ((res==0)&&(framePosition!=number)) {
-         framePosition++;
          res=av_read_frame(formatContext, pkt);
-
-         //cerr << framePosition << endl;
+         framePosition++;
       }
    }
+   avcodec_decode_video(codecContext, frame, &frameDecoded, pkt->data, pkt->size);
 }
 
 void getPlan(unsigned char* dest, unsigned char* source, int size, int colorPlan) {
@@ -267,7 +266,7 @@ void FrameList::dump(IAviVideoWriteStream* stream, BITMAPINFOHEADER* bi, int col
                break;
          }
          // add frame
-         img= new CImage(&info, plan, false);
+         img= new CImage(&info, plan, true);
          stream->AddFrame(img);
          // free image
          delete img;
@@ -278,9 +277,7 @@ void FrameList::dump(IAviVideoWriteStream* stream, BITMAPINFOHEADER* bi, int col
       free(plan);
    free(datas);
    // back to the beginning
-   current=item(0);
-   current->setSelected(true);
-   displayFrame(0);
+   seekFrame(0);
    // closing progress window
    progress->close();
    delete progress;
@@ -295,21 +292,14 @@ void FrameList::refreshFrame() {
 }
 
 void FrameList::displayFrame(int number) {
-   int frameDecoded;
-
    seekFrame(number);
-   avcodec_decode_video(codecContext, frame, &frameDecoded, pkt->data, pkt->size);
    sws_scale(img_convert_ctx, frame->data,frame->linesize,0,codecContext->height,frameRGB->data, frameRGB->linesize);
    frameDisplay->setFrame(codecContext->width,codecContext->height,frameRGB);
    frameDisplay->update();
-   //cerr << frameDecoded << endl;
 }
 
 void FrameList::getFrame(int number) {
-   int frameDecoded;
-
    seekFrame(number);
-   avcodec_decode_video(codecContext, frame, &frameDecoded, pkt->data, pkt->size);
    sws_scale(img_convert_ctx, frame->data,frame->linesize,0,codecContext->height,frameRGB->data, frameRGB->linesize);
 }
 
