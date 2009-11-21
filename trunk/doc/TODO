@@ -8,3 +8,4 @@ TODO :
 - add debian package
 - add gnome desktop
 - cerr redirection to avoid avifile and ffmpeg messages
+- add raw rgb output

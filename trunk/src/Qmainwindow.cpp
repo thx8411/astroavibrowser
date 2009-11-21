@@ -241,7 +241,7 @@ void MainWindow::MenuOpen() {
    save->setEnabled(true);
    properties->setEnabled(true);
    bayer->setEnabled(true);
-   separateRgb->setEnabled(true);
+   //separateRgb->setEnabled(true);
    codec->setEnabled(true);
    selectAll->setEnabled(true);
    unSelectAll->setEnabled(true);
@@ -322,15 +322,12 @@ void MainWindow::MenuSave() {
       outputStream=outputFile->AddVideoStream(RIFFINFO_Y800, &bi, frameRate);
       outputStream->SetQuality(10000);
       outputStream->Start();
-      //
-      outputStream->GetCodecInfo();
-      //
 
       // frame list dump
       frameList->dump(outputStream, &bi, BLUE);
    } else {
       bi.biSizeImage = (bi.biWidth * bi.biHeight * 3);
-      bi.biPlanes = 1;
+      bi.biPlanes = 3;
       bi.biBitCount = 24;
       bi.biCompression =BI_RGB;
 
@@ -501,12 +498,12 @@ void MainWindow::setSeparate() {
    if(separateRgb->isChecked()) {
       //setRawgrey();
       //codecSame->setEnabled(false);
-      codecRawrgb->setEnabled(false);
+      //codecRawrgb->setEnabled(false);
       codecLossless->setEnabled(false);
    } else {
-      setRawrgb();
+      setLossless();
       //codecSame->setEnabled(true);
-      codecRawrgb->setEnabled(true);
+      //codecRawrgb->setEnabled(true);
       codecLossless->setEnabled(true);
    }
 }
@@ -532,7 +529,7 @@ void MainWindow::setSeparate() {
 void MainWindow::setRawgrey() {
    //codecSame->setChecked(false);
    //codecRawgrey->setChecked(true);
-   codecRawrgb->setChecked(false);
+   //codecRawrgb->setChecked(false);
    codecLossless->setChecked(false);
 
    // update codec
@@ -542,17 +539,17 @@ void MainWindow::setRawgrey() {
 void MainWindow::setRawrgb() {
    //codecSame->setChecked(false);
    //codecRawgrey->setChecked(false);
-   codecRawrgb->setChecked(true);
+   //codecRawrgb->setChecked(true);
    codecLossless->setChecked(false);
 
    // update codec
-   outputCodec=24/*BI_RGB*/;
+   outputCodec=BI_RGB;
 }
 
 void MainWindow::setLossless() {
    //codecSame->setChecked(false);
    //codecRawgrey->setChecked(false);
-   codecRawrgb->setChecked(false);
+   //codecRawrgb->setChecked(false);
    codecLossless->setChecked(true);
 
    // update codec
@@ -591,22 +588,22 @@ void MainWindow::createBayerMenu() {
 
 void MainWindow::createCodecMenu() {
    //codecSame=new QAction("Unchanged",codec);
-   codecRawrgb=new QAction("Raw RGB",codec);
+   //codecRawrgb=new QAction("Raw RGB",codec);
    //codecRawgrey=new QAction("Raw Grey",codec);
-   codecLossless=new QAction("ZLIB Lossless",codec);
+   codecLossless=new QAction("RGB Lossless",codec);
    //codecSame->setCheckable(true);
-   codecRawrgb->setCheckable(true);
+   //codecRawrgb->setCheckable(true);
    //codecRawgrey->setCheckable(true);
    codecLossless->setCheckable(true);
    //codec->addAction(codecSame);
-   codec->addAction(codecRawrgb);
+   //codec->addAction(codecRawrgb);
    //codec->addAction(codecRawgrey);
    codec->addAction(codecLossless);
 
-   setRawrgb();
+   setLossless();
 
    //connect(codecSame,SIGNAL(triggered()),this,SLOT(setSame()));
-   connect(codecRawrgb,SIGNAL(triggered()),this,SLOT(setRawrgb()));
+   //connect(codecRawrgb,SIGNAL(triggered()),this,SLOT(setRawrgb()));
    //connect(codecRawgrey,SIGNAL(triggered()),this,SLOT(setRawgrey()));
    connect(codecLossless,SIGNAL(triggered()),this,SLOT(setLossless()));
 }

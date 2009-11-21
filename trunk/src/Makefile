@@ -3,8 +3,8 @@
 CC=gcc -c
 LD=gcc
 MOC=/usr/share/qt4/bin/moc
-CCFLAGS=-g -march=i686
-LDFLAGS=-g -march=i686
+CCFLAGS=-O3 -march=i686
+LDFLAGS=-O3 -march=i686
 INCS=/usr/include/qt4
 LIBS=-lQtCore -lQtGui -lavformat -lavcodec -lswscale -laviplay
 BIN= AstroAviBrowser
