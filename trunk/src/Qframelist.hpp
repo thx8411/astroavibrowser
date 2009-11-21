@@ -16,6 +16,9 @@ extern "C" {
 
 #include "Qframedisplay.hpp"
 
+#include "config.h"
+
+// color plans
 #define ALL	0
 #define RED	1
 #define GREEN	2
@@ -48,7 +51,7 @@ class FrameList : public QListWidget
       int getSelectedFrames();
    public slots :
       // look for a frame
-      void getFrame(int number);
+      bool getFrame(int number);
       // display the frame (CAUTION, starts at frame 0, not 1)
       void displayFrame(int number);
       // refresh frame
@@ -72,6 +75,8 @@ class FrameList : public QListWidget
       int streamNumber;
       // original frame
       AVFrame* frame;
+      // we have got a frame
+      bool frameOk;
       // converted frame
       AVFrame* frameRGB;
       // av packet
@@ -80,7 +85,7 @@ class FrameList : public QListWidget
       uint8_t* buffer;
       // go to frame a given frame
       // exact number, no approx.
-      void seekFrame(int number);
+      bool seekFrame(int number);
       // clears the list
       void reset();
 };

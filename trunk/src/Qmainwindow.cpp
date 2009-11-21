@@ -120,6 +120,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    frameDisplay->show();
    frameList->show();
    centralZone->show();
+   // fix size
+   sizeHint();
    setFixedSize(sizeHint());
 
    //
@@ -236,7 +238,6 @@ void MainWindow::MenuOpen() {
    setCursor(Qt::BusyCursor);
    frameList->fill();
    setCursor(Qt::ArrowCursor);
-
    // enabling widgets
    save->setEnabled(true);
    properties->setEnabled(true);
@@ -246,12 +247,11 @@ void MainWindow::MenuOpen() {
    selectAll->setEnabled(true);
    unSelectAll->setEnabled(true);
    invertSelection->setEnabled(true);
-
-   // fixing new size (to times to get refresh...)
+   // fixing new size (to times to get refresh
+   sizeHint();
    setFixedSize(sizeHint());
-   setFixedSize(sizeHint());
 
-   // set bayer and codec
+   // set bayer
    setNone();
 }
 
@@ -266,8 +266,8 @@ void MainWindow::MenuSave() {
    // query file name
    outputFileName = QFileDialog::getSaveFileName(this, tr("Save Video"),"/home",tr("Avi Files (*.avi *.AVI)"));
    // removes ".avi" postfix if needed
-   if(outputFileName.contains(".avi",Qt::CaseInsensitive))
-      outputFileName.remove(".avi",Qt::CaseInsensitive);
+   //if(outputFileName.contains(".avi",Qt::CaseInsensitive))
+   //   outputFileName.remove(".avi",Qt::CaseInsensitive);
 
    // is the name valid ?
    if(outputFileName=="")
@@ -326,11 +326,13 @@ void MainWindow::MenuSave() {
       // frame list dump
       frameList->dump(outputStream, &bi, BLUE);
    } else {
+      // init
       bi.biSizeImage = (bi.biWidth * bi.biHeight * 3);
       bi.biPlanes = 3;
       bi.biBitCount = 24;
       bi.biCompression =BI_RGB;
 
+      // RGB
       outputFile=avm::CreateWriteFile((outputFileName.toStdString()+".avi").c_str());
       outputStream=outputFile->AddVideoStream(outputCodec, &bi, frameRate);
       outputStream->SetQuality(10000);
@@ -536,15 +538,15 @@ void MainWindow::setRawgrey() {
    outputCodec=RIFFINFO_Y800;
 }
 
-void MainWindow::setRawrgb() {
+//void MainWindow::setRawrgb() {
    //codecSame->setChecked(false);
    //codecRawgrey->setChecked(false);
    //codecRawrgb->setChecked(true);
-   codecLossless->setChecked(false);
+   //codecLossless->setChecked(false);
 
    // update codec
-   outputCodec=BI_RGB;
-}
+   //outputCodec=BI_RGB;
+//}
 
 void MainWindow::setLossless() {
    //codecSame->setChecked(false);

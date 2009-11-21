@@ -28,6 +28,8 @@ FrameList::FrameList(QWidget* parent) : QListWidget(parent) {
    frameNumber=0;
    // no file
    fileOpened=false;
+   // no frame
+   frameOk=false;
 }
 
 FrameList::~FrameList() {
@@ -168,7 +170,7 @@ void FrameList::reset() {
       clear();
 }
 
-void FrameList::seekFrame(int number) {
+bool FrameList::seekFrame(int number) {
    int frameDecoded;
    int res=0;
 
@@ -194,7 +196,11 @@ void FrameList::seekFrame(int number) {
          framePosition++;
       }
    }
-   avcodec_decode_video(codecContext, frame, &frameDecoded, pkt->data, pkt->size);
+   // decode frame
+   res=avcodec_decode_video(codecContext, frame, &frameDecoded, pkt->data, pkt->size);
+   //cerr << frameDecoded << endl;
+   frameOk=(res>0)&&(frameDecoded!=0);
+   return(frameOk);
 }
 
 void getPlan(unsigned char* dest, unsigned char* source, int size, int colorPlan) {
@@ -235,41 +241,46 @@ void FrameList::dump(IAviVideoWriteStream* stream, BITMAPINFOHEADER* bi, int col
    datas=(unsigned char*)malloc(size*3);
    // loop
    for(int i=0;i<frameNumber;i++) {
+      // update progress bar
       progress->setValue(i);
+      // if current frame checked...
       current=item(i);
       if(current->checkState()==Qt::Checked) {
          CImage* img;
          BitmapInfo info(*bi);
-         getFrame(i);
-         savedFrame=frameRGB;
-         if(frameDisplay->getRawmode()==RAW_NONE)
-            memcpy(datas,savedFrame->data[0],size*3);
-         else
-            raw2rgb(datas,savedFrame->data[0],codecContext->width,codecContext->height,frameDisplay->getRawmode());
-         bgr2rgb(datas,codecContext->width,codecContext->height);
-         // add the frame in the stream
-         switch(colorPlan) {
-            case ALL :
-               plan=datas;
-               break;
-            case RED :
-               // get red plan
-               getPlan(plan,datas,size,RED);
-               break;
-            case GREEN :
-               // get green plan
-               getPlan(plan,datas,size,GREEN);
-               break;
-            case BLUE :
-               // get blue plan
-               getPlan(plan,datas,size,BLUE);
-               break;
+         // if we have a frame
+         if(getFrame(i)) {
+            savedFrame=frameRGB;
+            // apply raw filter
+            if(frameDisplay->getRawmode()==RAW_NONE)
+               memcpy(datas,savedFrame->data[0],size*3);
+            else
+               raw2rgb(datas,savedFrame->data[0],codecContext->width,codecContext->height,frameDisplay->getRawmode());
+            bgr2rgb(datas,codecContext->width,codecContext->height);
+            // get frame datas
+            switch(colorPlan) {
+               case ALL :
+                  plan=datas;
+                  break;
+               case RED :
+                  // get red plan
+                  getPlan(plan,datas,size,RED);
+                  break;
+               case GREEN :
+                  // get green plan
+                  getPlan(plan,datas,size,GREEN);
+                  break;
+               case BLUE :
+                  // get blue plan
+                  getPlan(plan,datas,size,BLUE);
+                  break;
+            }
+            // add frame
+            img= new CImage(&info, plan, true);
+            stream->AddFrame(img);
+            // free image
+            delete img;
          }
-         // add frame
-         img= new CImage(&info, plan, true);
-         stream->AddFrame(img);
-         // free image
-         delete img;
       }
    }
    // free datas
@@ -285,22 +296,38 @@ void FrameList::dump(IAviVideoWriteStream* stream, BITMAPINFOHEADER* bi, int col
 
 void FrameList::refreshFrame() {
    if(fileOpened) {
-      sws_scale(img_convert_ctx, frame->data,frame->linesize,0,codecContext->height,frameRGB->data, frameRGB->linesize);
-      frameDisplay->setFrame(codecContext->width,codecContext->height,frameRGB);
+      // if we have a frame
+      if(frameOk) {
+         // convert and display
+         sws_scale(img_convert_ctx, frame->data,frame->linesize,0,codecContext->height,frameRGB->data, frameRGB->linesize);
+         frameDisplay->setFrame(codecContext->width,codecContext->height,frameRGB);
+      } else
+         // or clear the display
+         frameDisplay->setFrame(codecContext->width,codecContext->height,NULL);
       frameDisplay->update();
    }
 }
 
 void FrameList::displayFrame(int number) {
-   seekFrame(number);
-   sws_scale(img_convert_ctx, frame->data,frame->linesize,0,codecContext->height,frameRGB->data, frameRGB->linesize);
-   frameDisplay->setFrame(codecContext->width,codecContext->height,frameRGB);
+   // seek the frame
+   if(seekFrame(number)) {
+      // display it
+      sws_scale(img_convert_ctx, frame->data,frame->linesize,0,codecContext->height,frameRGB->data, frameRGB->linesize);
+      frameDisplay->setFrame(codecContext->width,codecContext->height,frameRGB);
+   } else
+      // or clear the display
+      frameDisplay->setFrame(codecContext->width,codecContext->height,NULL);
    frameDisplay->update();
 }
 
-void FrameList::getFrame(int number) {
-   seekFrame(number);
-   sws_scale(img_convert_ctx, frame->data,frame->linesize,0,codecContext->height,frameRGB->data, frameRGB->linesize);
+bool FrameList::getFrame(int number) {
+   // seek the frame
+   if(seekFrame(number)) {
+      // if we have one, save it
+      sws_scale(img_convert_ctx, frame->data,frame->linesize,0,codecContext->height,frameRGB->data, frameRGB->linesize);
+      return(true);
+   } else
+      return(false);
 }
 
 void FrameList::nop(int tmp) {
@@ -314,6 +341,7 @@ int FrameList::getFrameNumber() {
 
 int FrameList::getSelectedFrames() {
    int num=0;
+   // count the number of selected frames
    QListWidgetItem* current;
    for(int i=0;i<frameNumber;i++) {
       current=item(i);

@@ -41,6 +41,11 @@ void FrameDisplay::paintEvent(QPaintEvent * ev) {
       painter_->setClipRegion(ev->region());
       painter_->drawImage(0,0,QImage((unsigned char*)frameData->data[0],frameWidth,frameHeight,QImage::Format_RGB888));
       painter_->end();
+   } else {
+      painter_->begin(this);
+      painter_->setClipRegion(ev->region());
+      painter_->fillRect(0,0,frameWidth,frameHeight,Qt::black);
+      painter_->end();
    }
 }
 

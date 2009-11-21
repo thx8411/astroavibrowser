@@ -23,6 +23,8 @@ extern "C" {
 #include "Qframedisplay.hpp"
 #include "Qframelist.hpp"
 
+#include "config.h"
+
 #define	CODEC_SAME	0
 #define CODEC_RAWGREY	1
 #define CODEC_RAWRGB	2
@@ -51,7 +53,7 @@ class MainWindow : public QMainWindow
       // ouput codecs slots
       //void setSame();
       void setRawgrey();
-      void setRawrgb();
+      //void setRawrgb();
       void setLossless();
       // buttons slots
       void ButtonSelectAll();
