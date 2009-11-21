@@ -5,6 +5,8 @@
 #include <Qt/qapplication.h>
 #include <Qt/qmainwindow.h>
 
+#include "config.h"
+
 #include "version.hpp"
 
 #include "Qmainwindow.hpp"

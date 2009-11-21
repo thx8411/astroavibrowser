@@ -21,26 +21,26 @@ clean :
 $(BIN) : main.o Qmainwindow.o Qframedisplay.o Qframelist.o bayer.o
 	$(LD) $(LDFLAGS) -o $(BIN) main.o Qmainwindow.o Qframedisplay.o Qframelist.o bayer.o $(LIBS)
 
-main.o : main.cpp version.hpp
+main.o : main.cpp version.hpp config.h
 	$(CC) $(CCFLAGS) main.cpp -I $(INCS)
 
-Qmainwindow.moc : Qmainwindow.hpp
+Qmainwindow.moc : Qmainwindow.hpp config.h
 	$(MOC) Qmainwindow.hpp -o Qmainwindow.moc
 
 Qmainwindow.o : Qmainwindow.cpp Qmainwindow.moc Qframedisplay.hpp Qframelist.hpp version.hpp
 	$(CC) $(CCFLAGS) Qmainwindow.cpp -I $(INCS)
 
-Qframedisplay.moc : Qframedisplay.hpp
+Qframedisplay.moc : Qframedisplay.hpp config.h
 	$(MOC) Qframedisplay.hpp -o Qframedisplay.moc
 
 Qframedisplay.o : Qframedisplay.cpp Qframedisplay.moc bayer.hpp
 	$(CC) $(CCFLAGS) Qframedisplay.cpp -I $(INCS)
 
-Qframelist.moc : Qframelist.hpp
+Qframelist.moc : Qframelist.hpp config.h
 	$(MOC) Qframelist.hpp -o Qframelist.moc
 
 Qframelist.o : Qframelist.cpp Qframelist.moc
 	$(CC) $(CCFLAGS) Qframelist.cpp -I $(INCS)
 
-bayer.o : bayer.hpp bayer.cpp
+bayer.o : bayer.hpp bayer.cpp config.h
 	$(CC) $(CCFLAGS) bayer.cpp -I $(INCS)
