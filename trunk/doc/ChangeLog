@@ -1,3 +1,12 @@
-Vers. 0.1beta20091122
+Vers. 0.1
 
- - initial work
+ * Initial work !
+
+ * Features :
+
+   - opens any supported ffmpeg video file
+   - debayer raw video (RGB, 4 ways)
+   - displays video properties
+   - let the user selected all the video frames, frame by frame
+   - save the new video in an avi file, using the zlib rgb lossless codec
+

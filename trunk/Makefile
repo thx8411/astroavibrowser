@@ -35,3 +35,8 @@ install : all
 clean :
 	$(MAKE) -C src clean
 
+distclean : clean
+	rm -rf debian/*.log
+	rm -rf debian/files
+	rm -rf debian/astroavibrowser.substvars
+	rm -rf debian/astroavibrowser

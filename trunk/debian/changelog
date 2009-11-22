@@ -1,7 +1,10 @@
-astroavibrowser (0.1beta2009112) jaunty; urgency=low
+astroavibrowser (0.1) jaunty; urgency=low
 
   * Initial work
+  * Opens any supported ffmpeg video file
+  * Debayer raw video (RGB, 4 ways)
+  * Displays video properties
+  * Let the user selected all the video frames, frame by frame
+  * Save the new video in an avi file, using the zlib rgb lossless codec
 
- -- Blaise-Florentin Collin <collin@eeepc901>  Sun, 22 Nov 2009 22:40:59 +0100
-
-
+ -- Blaise-Florentin Collin <collin@eeepc901>  Sun, 22 Nov 2009 23:13:12 +0100

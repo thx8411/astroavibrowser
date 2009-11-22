@@ -5,7 +5,6 @@ TODO :
 - better error detection
 - speed up frame seeking
 - add autoconf
-- add debian package
-- add gnome desktop
 - cerr redirection to avoid avifile and ffmpeg messages
 - add raw rgb output
+- apply dark, flat and offset to the video
