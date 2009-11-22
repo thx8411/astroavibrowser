@@ -18,6 +18,8 @@
  * MA 02110-1301 USA
  */
 
+#include <sys/fcntl.h>
+
 #include <iostream>
 
 #include <Qt/qapplication.h>
@@ -34,6 +36,7 @@ using namespace std;
 int main(int argc, char *argv[])
 {
    // init messages
+   //cout << endl;
    //cout << "<init>" << Name << " " << Version << endl;
    //cout << "<init>" << "Build "<< Build << endl;
    //cout << "<init>" << Web << endl;

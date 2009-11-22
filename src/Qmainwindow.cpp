@@ -133,7 +133,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    createCodecMenu();
    // set and display
    setCentralWidget(centralZone);
-   QPixmap* pixmap = new QPixmap("../icons/main-icon.png");
+   QPixmap* pixmap = new QPixmap("usr/share/astroavobrowser/icons/astroavibrowser-icon.png");
    setWindowIcon(*pixmap);
    frameDisplay->show();
    frameList->show();
