@@ -29,16 +29,16 @@ LIBS=-lQtCore -lQtGui -lavformat -lavcodec -lswscale -laviplay
 BIN= AstroAviBrowser
 
 
-# RULES
+# STANDARD RULES
 
 all : $(BIN)
-
-install : all
 
 clean :
 	rm -rf *.o
 	rm -rf *.moc
 	rm -f $(BIN)
+
+# FILES RULES
 
 $(BIN) : main.o Qmainwindow.o Qframedisplay.o Qframelist.o bayer.o
 	$(LD) $(LDFLAGS) -o $(BIN) main.o Qmainwindow.o Qframedisplay.o Qframelist.o bayer.o $(LIBS)

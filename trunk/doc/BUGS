@@ -3,6 +3,5 @@ Known Bugs :
  - Browsing frames back is very slow because we have to scan all the stream
    to get the real frame number (no index used)
  - Y8 and raw RGB outputs doesn't work (including color separation)
- - file replace not well managed (.avi postfix added and libavfile FatalError)
  - no proper display with some p-b frames codecs
- - main don't resize well when opening a video smaller than the last one
+ - main window don't resize well when opening a video smaller than the last one

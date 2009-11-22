@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=AstroAviBrowser
+Comment="Video editing tool for astronomy"
+Exec=AstroAviBrowser
+Terminal=false
+Icon=astroavibrowser-icon.png
+X-MultipleArgs=false
+Type=Application
+Categories=Education;Science;Astronomy
