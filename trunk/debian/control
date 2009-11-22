@@ -1,12 +1,14 @@
-Package: AstroAviBrowser
-Architecture: i386
-Version: 0.1
-Section: graphics
-Priority: optional
+Source: astroavibrowser
 Maintainer: Blaise-Florentin Collin <thx8411@users.sourceforge.net>
 Standards-Version: 3.6.0
+
+Package: astroavibrowser
+Architecture: i386
+Section: graphics
+Priority: optional
 Depends: ${shlibs:Depends}
 Description: Video editing tool for Astronomy
  Like AviRaw for Windows, AstroAviBrowser opens any ffmpeg kwnon file. You may
  de-bayer your video if needed, choose the best frames and save them in a lossless
  compressed avi file.
+
