@@ -7,6 +7,8 @@ Vers. 0.1
    - opens any supported ffmpeg video file
    - debayer raw video (RGB, 4 ways)
    - displays video properties
-   - let the user selected all the video frames, frame by frame
-   - save the new video in an avi file, using the zlib rgb lossless codec
+   - let the user select all the video frames, frame by frame
+   - save the new video in an avi file, using the zlib rgb24 lossless codec
+   - adds an entry in the gnome/kde menu
+   - debian binary packaging tool
 
