@@ -27,31 +27,11 @@ all :
 	$(MAKE) -C src all
 
 install : all
-	install src/AstroAviBrowser /usr/bin
-	install -d /usr/share/icons; install -m 644 icons/astroavibrowser-icon.png /usr/share/icons
-	install -d /usr/share/astroavibrowser/icons; install -m 644 icons/*.png /usr/share/astroavibrowser/icons
-	install -d /usr/share/applications; install -m 644 astroavibrowser-entry.desktop /usr/share/applications
-
-uninstall :
-	rm -rf /usr/share/icons/astroavibrowser-icon.png
-	rm -rf /usr/bin/AstroAviBrowser
-	rm -rf /usr/share/astroavibrowser
-	rm -rf /usr/share/applications/astroavibrowser-entry.desktop
+	install -d $(DESTDIR)/bin; install src/AstroAviBrowser $(DESTDIR)/bin
+	install -d $(DESTDIR)/share/icons; install -m 644 icons/astroavibrowser-icon.png $(DESTDIR)/share/icons
+	install -d $(DESTDIR)/share/astroavibrowser/icons; install -m 644 icons/*.png $(DESTDIR)/share/astroavibrowser/icons
+	install -d $(DESTDIR)/share/applications; install -m 644 astroavibrowser-entry.desktop $(DESTDIR)/share/applications
 
 clean :
 	$(MAKE) -C src clean
-
-distclean : clean
-
-mostlyclean : clean
-
-maintainer-clean : clean
-
-info :
-
-dvi :
-
-dist :
-
-check :
 
