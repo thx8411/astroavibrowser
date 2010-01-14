@@ -1,5 +1,5 @@
 /*
- * copyright (c) 2009 Blaise-Florentin Collin
+ * copyright (c) 2009-2010 Blaise-Florentin Collin
  *
  * This file is part of AstroAviBrowser.
  *
@@ -28,6 +28,8 @@
 #include <QtGui/QFileDialog>
 
 #include "version.hpp"
+#include "bayer.hpp"
+#include "aviwriter.hpp"
 
 #include "Qmainwindow.moc"
 
@@ -44,14 +46,19 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    save = new QAction("&Save...",this);
    quit = new QAction("&Quit", this);
    properties = new QAction("Get &Properties...",this);
-   separateRgb= new QAction("RGB Separation",this);
-   separateRgb->setCheckable(true);
+   rPlan= new QAction("Save &R plan...",this);
+   gPlan= new QAction("Save &G plan...",this);
+   bPlan= new QAction("Save &B plan...",this);
    about = new QAction("&About...",this);
    // file menu
    QMenu* file;
    file = menuBar()->addMenu("&File");
    file->addAction(open);
    file->addAction(save);
+   file->addSeparator();
+   file->addAction(rPlan);
+   file->addAction(gPlan);
+   file->addAction(bPlan);
    file->addSeparator();
    file->addAction(quit);
    // input menu
@@ -63,8 +70,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    // output menu
    QMenu* output;
    output = menuBar()->addMenu("O&utput");
-   output->addAction(separateRgb);
-   output->addSeparator();
    codec= output->addMenu("Output Codec");
    // help menu
    QMenu* help;
@@ -72,10 +77,12 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    help->addAction(about);
    // signal connections
    connect(open, SIGNAL(triggered()), this, SLOT(MenuOpen()));
-   connect(save, SIGNAL(triggered()), this, SLOT(MenuSave()));
+   connect(save, SIGNAL(triggered()), this, SLOT(MenuSaveAll()));
+   connect(rPlan, SIGNAL(triggered()), this, SLOT(MenuSaveR()));
+   connect(gPlan, SIGNAL(triggered()), this, SLOT(MenuSaveG()));
+   connect(bPlan, SIGNAL(triggered()), this, SLOT(MenuSaveB()));
    connect(quit, SIGNAL(triggered()), qApp, SLOT(quit()));
    connect(properties, SIGNAL(triggered()), this, SLOT(MenuProperties()));
-   connect(separateRgb, SIGNAL(triggered()), this, SLOT(setSeparate()));
    connect(about, SIGNAL(triggered()), this, SLOT(MenuAbout()));
 
    // CENTRAL ZONE
@@ -99,7 +106,10 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    save->setEnabled(false);
    properties->setEnabled(false);
    bayer->setEnabled(false);
-   separateRgb->setEnabled(false);
+   codec->setEnabled(false);
+   rPlan->setEnabled(false);
+   gPlan->setEnabled(false);
+   bPlan->setEnabled(false);
    codec->setEnabled(false);
    selectAll->setEnabled(false);
    unSelectAll->setEnabled(false);
@@ -135,6 +145,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    setCentralWidget(centralZone);
    QPixmap* pixmap = new QPixmap("/usr/share/astroavibrowser/icons/astroavibrowser-icon.png");
    setWindowIcon(*pixmap);
+   delete pixmap;
    frameDisplay->show();
    frameList->show();
    centralZone->show();
@@ -157,6 +168,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
 MainWindow::~MainWindow() {
    // release opened file
    freeFile();
+   delete frameList;
+   delete frameDisplay;
 }
 
 void MainWindow::freeFile() {
@@ -170,7 +183,9 @@ void MainWindow::freeFile() {
    save->setEnabled(false);
    properties->setEnabled(false);
    bayer->setEnabled(false);
-   separateRgb->setEnabled(false);
+   rPlan->setEnabled(false);
+   gPlan->setEnabled(false);
+   bPlan->setEnabled(false);
    codec->setEnabled(false);
    selectAll->setEnabled(false);
    unSelectAll->setEnabled(false);
@@ -260,7 +275,10 @@ void MainWindow::MenuOpen() {
    save->setEnabled(true);
    properties->setEnabled(true);
    bayer->setEnabled(true);
-   //separateRgb->setEnabled(true);
+   codec->setEnabled(true);
+   rPlan->setEnabled(true);
+   gPlan->setEnabled(true);
+   bPlan->setEnabled(true);
    codec->setEnabled(true);
    selectAll->setEnabled(true);
    unSelectAll->setEnabled(true);
@@ -274,7 +292,25 @@ void MainWindow::MenuOpen() {
 }
 
 // SAVE
-void MainWindow::MenuSave() {
+
+void MainWindow::MenuSaveAll() {
+   MenuSaveImpl(ALL_PLANS);
+}
+
+void MainWindow::MenuSaveR() {
+   MenuSaveImpl(RED_PLAN);
+}
+
+void MainWindow::MenuSaveG() {
+   MenuSaveImpl(GREEN_PLAN);
+}
+
+void MainWindow::MenuSaveB() {
+   MenuSaveImpl(BLUE_PLAN);
+}
+
+void MainWindow::MenuSaveImpl(int p) {
+   AviWriter*	file;
    // is there selected frames ?
    if(frameList->getSelectedFrames()==0) {
       QMessageBox::critical(this, tr("AstroAviBrowser"),tr("No frame selected"));
@@ -295,74 +331,12 @@ void MainWindow::MenuSave() {
    setCursor(Qt::BusyCursor);
    // vars
    int frameRate;
-   CodecInfo* ci;
-   IAviWriteFile* outputFile;
-   IAviVideoWriteStream *outputStream;
-   BITMAPINFOHEADER bi;
-   // init
-   memset(&bi, 0, sizeof(bi));
-   bi.biSize = sizeof(bi);
-   bi.biWidth = inputFileCodecContext->width;
-   bi.biHeight = inputFileCodecContext->height*-1;
    frameRate=(float)inputFileFormatContext->streams[inputStreamNumber]->r_frame_rate.den/(float)inputFileFormatContext->streams[inputStreamNumber]->r_frame_rate.num*1000000;
-   // separate or not
-   if(separateRgb->isChecked()) {
-      // init
-      bi.biSizeImage = (bi.biWidth * bi.biHeight);
-      bi.biPlanes = 1;
-      bi.biBitCount = 8;
-      bi.biCompression = IMG_FMT_Y800;
 
-      // R plan
-      outputFile=avm::CreateWriteFile((outputFileName.toStdString()+"_R.avi").c_str());
-      outputStream=outputFile->AddVideoStream(RIFFINFO_Y800, &bi, frameRate);
-      outputStream->SetQuality(10000);
-      outputStream->Start();
-      // frame list dump
-      frameList->dump(outputStream, &bi, RED);
-      // closing
-      outputStream->Stop();
-      delete outputFile;
+   file=new AviWriter(outputCodec,p,outputFileName.toStdString().c_str(),inputFileCodecContext->width,inputFileCodecContext->height,frameRate);
+   frameList->dump(file);
+   delete file;
 
-      // G plan
-      outputFile=avm::CreateWriteFile((outputFileName.toStdString()+"_G.avi").c_str());
-      outputStream=outputFile->AddVideoStream(RIFFINFO_Y800, &bi, frameRate);
-      outputStream->SetQuality(10000);
-      outputStream->Start();
-      // frame list dump
-      frameList->dump(outputStream, &bi, GREEN);
-      // closing
-      outputStream->Stop();
-      delete outputFile;
-
-      // B plan
-      outputFile=avm::CreateWriteFile((outputFileName.toStdString()+"_B.avi").c_str());
-      outputStream=outputFile->AddVideoStream(RIFFINFO_Y800, &bi, frameRate);
-      outputStream->SetQuality(10000);
-      outputStream->Start();
-
-      // frame list dump
-      frameList->dump(outputStream, &bi, BLUE);
-   } else {
-      // init
-      bi.biSizeImage = (bi.biWidth * bi.biHeight * 3);
-      bi.biPlanes = 3;
-      bi.biBitCount = 24;
-      bi.biCompression =BI_RGB;
-
-      // RGB
-      outputFile=avm::CreateWriteFile((outputFileName.toStdString()+".avi").c_str());
-      outputStream=outputFile->AddVideoStream(outputCodec, &bi, frameRate);
-      outputStream->SetQuality(10000);
-      outputStream->Start();
-
-      // frame list dump
-      frameList->dump(outputStream, &bi, ALL);
-   }
-   // closing
-   outputStream->Stop();
-   delete outputFile;
-   // finished
    setCursor(Qt::ArrowCursor);
 }
 
@@ -511,69 +485,34 @@ void MainWindow::setGr() {
 }
 
 //
-// rgb separation callback
-//
-
-void MainWindow::setSeparate() {
-   if(separateRgb->isChecked()) {
-      //setRawgrey();
-      //codecSame->setEnabled(false);
-      //codecRawrgb->setEnabled(false);
-      codecLossless->setEnabled(false);
-   } else {
-      setLossless();
-      //codecSame->setEnabled(true);
-      //codecRawrgb->setEnabled(true);
-      codecLossless->setEnabled(true);
-   }
-}
-
-//
 // output codec callbacks
 //
 
-//void MainWindow::setSame() {
-//  codecSame->setChecked(true);
-//   codecRawgrey->setChecked(false);
-//   codecRawrgb->setChecked(false);
-//   codecLossless->setChecked(false);
-
-   // update codec
-//   if(inputFileCodecContext!=NULL) {
-//      outputCodecId=inputFileCodecContext->codec_id;
-      // set pix format
-//      outputFmt=inputFileCodecContext->pix_fmt;
-//   }
-//}
-
 void MainWindow::setRawgrey() {
-   //codecSame->setChecked(false);
-   //codecRawgrey->setChecked(true);
-   //codecRawrgb->setChecked(false);
+   codecRawgrey->setChecked(true);
+   codecRawrgb->setChecked(false);
    codecLossless->setChecked(false);
 
    // update codec
-   outputCodec=RIFFINFO_Y800;
+   outputCodec=CODEC_RAWGREY;
 }
 
-//void MainWindow::setRawrgb() {
-   //codecSame->setChecked(false);
-   //codecRawgrey->setChecked(false);
-   //codecRawrgb->setChecked(true);
-   //codecLossless->setChecked(false);
+void MainWindow::setRawrgb() {
+   codecRawgrey->setChecked(false);
+   codecRawrgb->setChecked(true);
+   codecLossless->setChecked(false);
 
    // update codec
-   //outputCodec=BI_RGB;
-//}
+   outputCodec=CODEC_RAWRGB;
+}
 
 void MainWindow::setLossless() {
-   //codecSame->setChecked(false);
-   //codecRawgrey->setChecked(false);
-   //codecRawrgb->setChecked(false);
+   codecRawgrey->setChecked(false);
+   codecRawrgb->setChecked(false);
    codecLossless->setChecked(true);
 
    // update codec
-   outputCodec=RIFFINFO_ZLIB;
+   outputCodec=CODEC_LOSSLESSRGB;
 }
 
 //
@@ -607,23 +546,19 @@ void MainWindow::createBayerMenu() {
 }
 
 void MainWindow::createCodecMenu() {
-   //codecSame=new QAction("Unchanged",codec);
-   //codecRawrgb=new QAction("Raw RGB",codec);
-   //codecRawgrey=new QAction("Raw Grey",codec);
-   codecLossless=new QAction("RGB Lossless",codec);
-   //codecSame->setCheckable(true);
-   //codecRawrgb->setCheckable(true);
-   //codecRawgrey->setCheckable(true);
+   codecRawgrey=new QAction("Raw 8 bits Luminance",codec);
+   codecRawrgb=new QAction("Raw RGB",codec);
+   codecLossless=new QAction("Lossless RGB",codec);
+   codecRawrgb->setCheckable(true);
+   codecRawgrey->setCheckable(true);
    codecLossless->setCheckable(true);
-   //codec->addAction(codecSame);
-   //codec->addAction(codecRawrgb);
-   //codec->addAction(codecRawgrey);
+   codec->addAction(codecRawrgb);
    codec->addAction(codecLossless);
+   codec->addAction(codecRawgrey);
 
-   setLossless();
+   setRawrgb();
 
-   //connect(codecSame,SIGNAL(triggered()),this,SLOT(setSame()));
-   //connect(codecRawrgb,SIGNAL(triggered()),this,SLOT(setRawrgb()));
-   //connect(codecRawgrey,SIGNAL(triggered()),this,SLOT(setRawgrey()));
+   connect(codecRawrgb,SIGNAL(triggered()),this,SLOT(setRawrgb()));
+   connect(codecRawgrey,SIGNAL(triggered()),this,SLOT(setRawgrey()));
    connect(codecLossless,SIGNAL(triggered()),this,SLOT(setLossless()));
 }

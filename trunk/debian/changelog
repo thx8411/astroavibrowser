@@ -1,6 +1,12 @@
-astroavibrowser (0.2beta20091123) jaunty; urgency=low
+astroavibrowser (0.2beta20100114) jaunty; urgency=low
 
   * Code cleaning
+  * Added 8 bits color separation and raw avi saving
+  * Added raw rgb24 avi output
+  * Added 8 bits luminance raw avi output
+  * Memory leaks/bugs fixed
+
+ -- Blaise-Florentin Collin <collin@eeepc901>  Sun, 14 Jan 2010 23:13:12 +0100
 
 astroavibrowser (0.1) jaunty; urgency=low
 

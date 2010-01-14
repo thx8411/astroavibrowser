@@ -1,5 +1,5 @@
 /*
- * copyright (c) 2009 Blaise-Florentin Collin
+ * copyright (c) 2009-2010 Blaise-Florentin Collin
  *
  * This file is part of AstroAviBrowser.
  *
@@ -18,15 +18,31 @@
  * MA 02110-1301 USA
  */
 
-#ifndef _VERSION_HPP_
-#define _VERSION_HPP_
+#ifndef _AVIWRITER_HPP_
+#define _AVIWRITER_HPP_
 
-const char * const Version ="0.2beta20100114";
-const int          Build   =16;
-const char * const Web = "http://sourceforge.net/projects/AstroAviBrowser/";
-const char * const Mail = "thx8411@users.sourceforge.net";
-const char * const Name = "AstroAviBrowser";
-const char * const Author = "Blaise-Florentin Collin";
-const char * const Year = "2009-2010";
+#include <avifile/avifile.h>
+#include <avifile/image.h>
+#include <avifile/avm_fourcc.h>
+
+// codecs
+#define CODEC_RAWGREY           0
+#define CODEC_RAWRGB            1
+#define CODEC_LOSSLESSRGB       2
+
+class AviWriter {
+   public :
+      AviWriter(int codec, int plans, const char* name, int width, int height, int frameRate);
+      ~AviWriter();
+      void AddFrame(unsigned char* datas);
+   private:
+      avm::IWriteFile* aviFile_;
+      avm::IWriteStream* aviChunkStream_;
+      avm::IVideoWriteStream* aviFrameStream_;
+      int w;
+      int h;
+      int codec_;
+      int plans_;
+};
 
 #endif

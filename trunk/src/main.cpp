@@ -46,5 +46,7 @@ int main(int argc, char *argv[])
    MainWindow w;
    // display and loop
    w.show();
-   return app.exec();
+   app.exec();
+
+   return(0);
 }

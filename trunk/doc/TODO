@@ -1,10 +1,8 @@
 TODO :
 
-- video save (finish)
 - code cleaning/reorganisation
 - better error detection
 - speed up frame seeking
 - add autoconf
 - cerr redirection to avoid avifile and ffmpeg messages
-- add raw rgb output
 - apply dark, flat and offset to the video

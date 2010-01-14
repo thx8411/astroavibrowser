@@ -29,18 +29,17 @@ extern "C" {
 #include <libswscale/swscale.h>
 }
 
-#include <avifile/avifile.h>
-#include <avifile/image.h>
-
 #include "Qframedisplay.hpp"
 
 #include "config.h"
 
+#include "aviwriter.hpp"
+
 // color plans
-#define ALL	0
-#define RED	1
-#define GREEN	2
-#define BLUE	3
+//#define ALL	0
+//#define RED	1
+//#define GREEN	2
+//#define BLUE	3
 
 class FrameList : public QListWidget
 {
@@ -61,7 +60,7 @@ class FrameList : public QListWidget
       // scans the stream and fill the list
       void fill();
       // dump selected frames in the given codec
-      void dump(IAviVideoWriteStream* stream ,BITMAPINFOHEADER* bi, int plan);
+      void dump(AviWriter* file);
       // returns the total stream frame number
       // real number, no approx.
       int getFrameNumber();

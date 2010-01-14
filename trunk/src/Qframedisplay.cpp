@@ -62,7 +62,7 @@ void FrameDisplay::paintEvent(QPaintEvent * ev) {
    } else {
       painter_->begin(this);
       painter_->setClipRegion(ev->region());
-      painter_->fillRect(0,0,frameWidth,frameHeight,Qt::black);
+      painter_->fillRect(0,0,width(),height(),Qt::black);
       painter_->end();
    }
 }
