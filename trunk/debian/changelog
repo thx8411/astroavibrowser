@@ -1,4 +1,4 @@
-astroavibrowser (0.2beta20100114) jaunty; urgency=low
+astroavibrowser (0.2) jaunty; urgency=low
 
   * Code cleaning
   * Added 8 bits color separation and raw avi saving
