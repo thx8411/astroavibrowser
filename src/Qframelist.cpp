@@ -52,16 +52,14 @@ FrameList::FrameList(QWidget* parent) : QListWidget(parent) {
 
 FrameList::~FrameList() {
    // free scale context
-   if(img_convert_ctx!=NULL)
-      sws_freeContext(img_convert_ctx);
+   sws_freeContext(img_convert_ctx);
    // free mem
    av_free(frame);
    av_free(frameRGB);
    // release packet
    av_free_packet(pkt);
    // release buffer
-   if(buffer==NULL)
-      av_free(buffer);
+   av_free(buffer);
 }
 
 void FrameList::selectAll() {
@@ -229,34 +227,16 @@ void getPlan(unsigned char* dest, unsigned char* source, int size, int colorPlan
    }
 }
 
-void FrameList::dump(IAviVideoWriteStream* stream, BITMAPINFOHEADER* bi, int colorPlan) {
+void FrameList::dump(AviWriter* file) {
    unsigned char* datas;
-   unsigned char* plan;
-   int size;
    AVFrame* savedFrame;
    QProgressDialog* progress;
    QListWidgetItem* current;
 
    // setting progress dialog
-   switch(colorPlan) {
-      case ALL :
-         progress = new QProgressDialog(QString("File saving..."),QString(),0,frameNumber);
-         break;
-      case RED :
-         progress = new QProgressDialog(QString("Saving red plan..."),QString(),0,frameNumber);
-         break;
-      case GREEN :
-         progress = new QProgressDialog(QString("Saving green plan..."),QString(),0,frameNumber);
-         break;
-      case BLUE :
-         progress = new QProgressDialog(QString("Saving blue plan..."),QString(),0,frameNumber);
-         break;
-   }
+   progress = new QProgressDialog(QString("File saving..."),QString(),0,frameNumber);
    // alloc datas if needed
-   size=codecContext->width*codecContext->height;
-   if(colorPlan!=ALL)
-      plan=(unsigned char*)malloc(size);
-   datas=(unsigned char*)malloc(size*3);
+   datas=(unsigned char*)malloc(codecContext->width*codecContext->height*3);
    // loop
    for(int i=0;i<frameNumber;i++) {
       // update progress bar
@@ -264,46 +244,20 @@ void FrameList::dump(IAviVideoWriteStream* stream, BITMAPINFOHEADER* bi, int col
       // if current frame checked...
       current=item(i);
       if(current->checkState()==Qt::Checked) {
-         CImage* img;
-         BitmapInfo info(*bi);
          // if we have a frame
          if(getFrame(i)) {
             savedFrame=frameRGB;
             // apply raw filter
             if(frameDisplay->getRawmode()==RAW_NONE)
-               memcpy(datas,savedFrame->data[0],size*3);
+               memcpy(datas,savedFrame->data[0],codecContext->width*codecContext->height*3);
             else
                raw2rgb(datas,savedFrame->data[0],codecContext->width,codecContext->height,frameDisplay->getRawmode());
             bgr2rgb(datas,codecContext->width,codecContext->height);
-            // get frame datas
-            switch(colorPlan) {
-               case ALL :
-                  plan=datas;
-                  break;
-               case RED :
-                  // get red plan
-                  getPlan(plan,datas,size,RED);
-                  break;
-               case GREEN :
-                  // get green plan
-                  getPlan(plan,datas,size,GREEN);
-                  break;
-               case BLUE :
-                  // get blue plan
-                  getPlan(plan,datas,size,BLUE);
-                  break;
-            }
-            // add frame
-            img= new CImage(&info, plan, true);
-            stream->AddFrame(img);
-            // free image
-            delete img;
+            file->AddFrame(datas);
          }
       }
    }
    // free datas
-   if(colorPlan!=ALL)
-      free(plan);
    free(datas);
    // back to the beginning
    seekFrame(0);

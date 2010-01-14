@@ -35,18 +35,10 @@ extern "C" {
 #include <libavformat/avformat.h>
 }
 
-#include <avifile/avifile.h>
-#include <avifile/avm_fourcc.h>
-
 #include "Qframedisplay.hpp"
 #include "Qframelist.hpp"
 
 #include "config.h"
-
-#define	CODEC_SAME	0
-#define CODEC_RAWGREY	1
-#define CODEC_RAWRGB	2
-#define CODEC_LOSSLESS	3
 
 class MainWindow : public QMainWindow
 {
@@ -57,7 +49,10 @@ class MainWindow : public QMainWindow
    public slots :
       // menu slots
       void MenuOpen();
-      void MenuSave();
+      void MenuSaveAll();
+      void MenuSaveR();
+      void MenuSaveG();
+      void MenuSaveB();
       void MenuProperties();
       void MenuAbout();
       // input mode slots
@@ -66,12 +61,9 @@ class MainWindow : public QMainWindow
       void setGb();
       void setRg();
       void setGr();
-      // rgb sepearation slot
-      void setSeparate();
       // ouput codecs slots
-      //void setSame();
       void setRawgrey();
-      //void setRawrgb();
+      void setRawrgb();
       void setLossless();
       // buttons slots
       void ButtonSelectAll();
@@ -83,12 +75,16 @@ class MainWindow : public QMainWindow
       // format and codec menu tools
       void createBayerMenu();
       void createCodecMenu();
+      // save a file
+      void MenuSaveImpl(int p);
       // menu actions
       QAction* open;
       QAction* save;
+      QAction* rPlan;
+      QAction* gPlan;
+      QAction* bPlan;
       QAction* quit;
       QAction* properties;
-      QAction* separateRgb;
       QMenu* bayer;
       QMenu* codec;
       QAction* about;
@@ -99,7 +95,6 @@ class MainWindow : public QMainWindow
       QAction* bayerRg;
       QAction* bayerGr;
       // codec menu radio buttons
-      //QAction* codecSame;
       QAction* codecRawgrey;
       QAction* codecRawrgb;
       QAction* codecLossless;
@@ -114,7 +109,7 @@ class MainWindow : public QMainWindow
       FrameDisplay* frameDisplay;
       FrameList* frameList;
       // avifile datas
-      fourcc_t outputCodec;
+      int outputCodec;
       // ffmpeg datas
       AVFormatContext* inputFileFormatContext;
       AVCodecContext* inputFileCodecContext;

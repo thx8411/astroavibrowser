@@ -183,3 +183,39 @@ void bgr2rgb(unsigned char * datas, int w, int h) {
       datas[i*3+2]=tmp;
    }
 }
+
+// swap rgb24 (upside down)
+void rgb24_vertical_swap(int w, int h, unsigned char* data){
+   unsigned char* tmp;
+   tmp=(unsigned char*)malloc(w*h*3);
+   memcpy(tmp,data,w*h*3);
+   for(int i=0;i<h;i++) {
+      memcpy(&data[i*w*3],&tmp[(h-i-1)*w*3],w*3);
+   }
+   free(tmp);
+}
+
+// return R, G, B or luminance plan form bgr24
+unsigned char* getPlan(int w, int h, unsigned char* data, int plan) {
+   unsigned char* buffer;
+   buffer=(unsigned char*)malloc(w*h);
+   for(int i=0;i<(w*h);i++){
+      switch(plan){
+         case RED_PLAN :
+            buffer[i]=data[i*3+2];
+            break;
+         case GREEN_PLAN :
+            buffer[i]=data[i*3+1];
+            break;
+         case BLUE_PLAN :
+            buffer[i]=data[i*3];
+            break;
+         case LUM_PLAN :
+            buffer[i]=((66*data[i*3+2]+129*data[i*3+1]+25*data[i*3]+128)>>8)+16;;
+            break;
+         default :
+            return(NULL);
+      }
+   }
+   return(buffer);
+}

@@ -1,5 +1,9 @@
-Vers. 0.2beta20091123
+Vers. 0.2beta20100114
 
+   - memory leaks/bugs fixed
+   - added 8 bits color separation and raw avi saving
+   - added raw rgb24 avi output
+   - added 8 bits luminance raw avi output
    - code cleaning
 
 Vers. 0.1

@@ -22,8 +22,14 @@
 CC=gcc -c
 LD=gcc
 MOC=/usr/share/qt4/bin/moc
+
+# release
 CCFLAGS=-O3 -march=i686
 LDFLAGS=-O3 -march=i686
+# debug
+#CCFLAGS= -O0 -g
+#LDFLAGS= -O0 -g
+
 INCS=/usr/include/qt4
 LIBS=-lQtCore -lQtGui -lavformat -lavcodec -lswscale -laviplay
 BIN= AstroAviBrowser
@@ -40,16 +46,16 @@ clean :
 
 # FILES RULES
 
-$(BIN) : main.o Qmainwindow.o Qframedisplay.o Qframelist.o bayer.o
-	$(LD) $(LDFLAGS) -o $(BIN) main.o Qmainwindow.o Qframedisplay.o Qframelist.o bayer.o $(LIBS)
+$(BIN) : main.o Qmainwindow.o Qframedisplay.o Qframelist.o bayer.o aviwriter.o
+	$(LD) $(LDFLAGS) -o $(BIN) main.o Qmainwindow.o Qframedisplay.o Qframelist.o bayer.o aviwriter.o $(LIBS)
 
-main.o : main.cpp version.hpp config.h
+main.o : main.cpp version.hpp config.h Qmainwindow.hpp
 	$(CC) $(CCFLAGS) main.cpp -I $(INCS)
 
 Qmainwindow.moc : Qmainwindow.hpp config.h
 	$(MOC) Qmainwindow.hpp -o Qmainwindow.moc
 
-Qmainwindow.o : Qmainwindow.cpp Qmainwindow.moc Qframedisplay.hpp Qframelist.hpp version.hpp
+Qmainwindow.o : Qmainwindow.cpp Qmainwindow.moc Qframedisplay.hpp Qframelist.hpp version.hpp bayer.hpp aviwriter.hpp
 	$(CC) $(CCFLAGS) Qmainwindow.cpp -I $(INCS)
 
 Qframedisplay.moc : Qframedisplay.hpp config.h
@@ -58,7 +64,7 @@ Qframedisplay.moc : Qframedisplay.hpp config.h
 Qframedisplay.o : Qframedisplay.cpp Qframedisplay.moc bayer.hpp
 	$(CC) $(CCFLAGS) Qframedisplay.cpp -I $(INCS)
 
-Qframelist.moc : Qframelist.hpp config.h
+Qframelist.moc : Qframelist.hpp Qframedisplay.hpp config.h bayer.hpp aviwriter.hpp
 	$(MOC) Qframelist.hpp -o Qframelist.moc
 
 Qframelist.o : Qframelist.cpp Qframelist.moc
@@ -66,3 +72,6 @@ Qframelist.o : Qframelist.cpp Qframelist.moc
 
 bayer.o : bayer.hpp bayer.cpp config.h
 	$(CC) $(CCFLAGS) bayer.cpp -I $(INCS)
+
+aviwriter.o : aviwriter.cpp aviwriter.hpp Qmainwindow.hpp bayer.hpp config.h
+	$(CC) $(CCFLAGS) aviwriter.cpp -I $(INCS)

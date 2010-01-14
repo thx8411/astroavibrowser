@@ -21,11 +21,23 @@
 #ifndef _BAYER_HPP_
 #define _BAYER_HPP_
 
+#define ALL_PLANS       3
+#define RED_PLAN        4
+#define GREEN_PLAN      5
+#define BLUE_PLAN       6
+#define LUM_PLAN        7
+
 // vesta raw to rgb conversion
 void raw2rgb(unsigned char * dest,const unsigned char * const data,
                int w, int h,int mode);
 
 // bgr to rgb plan swap
 void bgr2rgb(unsigned char * datas, int w, int h);
+
+// swap rgb24 (upside down)
+void rgb24_vertical_swap(int w, int h, unsigned char* data);
+
+// return R, G, B or luminance plan form rgb24
+unsigned char* getPlan(int w, int h, unsigned char* data, int plan);
 
 #endif
