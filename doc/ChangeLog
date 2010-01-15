@@ -1,3 +1,7 @@
+Vers. 0.2.2
+
+   - fixs the write file permission issue
+
 Vers. 0.2.1
 
    - huge memory leak fixed

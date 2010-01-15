@@ -4,4 +4,4 @@ Known Bugs :
    to get the real frame number (no index used)
  - no proper display with some p-b frames codecs
  - main window don't resize well when opening a video smaller than the last one
- - trying to write without permission gives an avifile fatal error
+ - with some files, frame display is shifted
