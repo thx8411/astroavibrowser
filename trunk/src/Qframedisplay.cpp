@@ -29,6 +29,7 @@ FrameDisplay::FrameDisplay(QWidget* parent) : QWidget(parent) {
 }
 
 FrameDisplay::~FrameDisplay() {
+   delete painter_;
 }
 
 void FrameDisplay::setFrame(int width, int height, AVFrame* f) {
@@ -57,7 +58,9 @@ void FrameDisplay::paintEvent(QPaintEvent * ev) {
       applyRawMode();
       painter_->begin(this);
       painter_->setClipRegion(ev->region());
-      painter_->drawImage(0,0,QImage((unsigned char*)frameData->data[0],frameWidth,frameHeight,QImage::Format_RGB888));
+      QImage* tmpImage=new QImage((unsigned char*)frameData->data[0],frameWidth,frameHeight,QImage::Format_RGB888);
+      painter_->drawImage(0,0,*tmpImage);
+      delete tmpImage;
       painter_->end();
    } else {
       painter_->begin(this);

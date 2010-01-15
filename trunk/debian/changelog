@@ -1,3 +1,11 @@
+astroavibrowser (0.2.1) jaunty; urgency=low
+
+  * Huge memory leak fixed
+  * Many small memory bugs fixed
+  * Speed improvement
+
+ -- Blaise-Florentin Collin <collin@eeepc901>  Sun, 15 Jan 2010 06:13:12 +0100
+
 astroavibrowser (0.2) jaunty; urgency=low
 
   * Code cleaning

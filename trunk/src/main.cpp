@@ -42,11 +42,13 @@ int main(int argc, char *argv[])
    //cout << "<init>" << Web << endl;
    //cout << "<init>" << Mail << endl << endl;
    // qapp creation
-   QApplication app(argc, argv);
-   MainWindow w;
+   QApplication* app=new QApplication(argc, argv);
+   MainWindow* w=new MainWindow();
    // display and loop
-   w.show();
-   app.exec();
+   w->show();
+   app->exec();
 
+   delete w;
+   delete app;
    return(0);
 }
