@@ -58,6 +58,7 @@ FrameList::~FrameList() {
    av_free(frameRGB);
    // release packet
    av_free_packet(pkt);
+   av_free(pkt);
    // release buffer
    av_free(buffer);
 }
@@ -101,8 +102,7 @@ void FrameList::setCodecContext(AVCodecContext* cc) {
 
    codecContext=cc;
    // release buffer if needed
-   if(buffer!=NULL)
-      av_free(buffer);
+   av_free(buffer);
    // buffer and frameRGB settings
    numBytes=avpicture_get_size(PIX_FMT_RGB24, codecContext->width,codecContext->height);
    buffer=(uint8_t *)av_malloc(numBytes*sizeof(uint8_t));
@@ -160,6 +160,7 @@ void FrameList::fill() {
       current->setFlags(current->flags()|Qt::ItemIsUserCheckable);
       current->setCheckState(Qt::Checked);
       // read new frame
+      av_free_packet(pkt);
       res=av_read_frame(formatContext, pkt);
    }
    // progress closing
@@ -190,12 +191,26 @@ bool FrameList::seekFrame(int number) {
    int frameDecoded;
    int res=0;
 
+   if(number==0) {
+      av_seek_frame(formatContext, -1, 0, AVSEEK_FLAG_ANY);
+      framePosition=0;
+      av_free_packet(pkt);
+      res=av_read_frame(formatContext, pkt);
+      // decode frame
+      res=avcodec_decode_video(codecContext, frame, &frameDecoded, pkt->data, pkt->size);
+      //cerr << frameDecoded << endl;
+      frameOk=(res>0)&&(frameDecoded!=0);
+      return(frameOk);
+   }
+
    if(number>framePosition) {
       // go forward
+      av_free_packet(pkt);
       res=av_read_frame(formatContext, pkt);
       if(res==0)
          framePosition++;
       while ((res==0)&&(framePosition!=number)) {
+         av_free_packet(pkt);
          res=av_read_frame(formatContext, pkt);
          framePosition++;
       }
@@ -203,11 +218,13 @@ bool FrameList::seekFrame(int number) {
       // we must start at stream beginning to get the real frame num index
       av_seek_frame(formatContext, -1, 0, AVSEEK_FLAG_ANY);
       framePosition=0;
+      av_free_packet(pkt);
       res=av_read_frame(formatContext, pkt);
       if(res==0)
          framePosition++;
       // counting
       while ((res==0)&&(framePosition!=number)) {
+         av_free_packet(pkt);
          res=av_read_frame(formatContext, pkt);
          framePosition++;
       }
