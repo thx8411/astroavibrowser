@@ -18,6 +18,8 @@
  * MA 02110-1301 USA
  */
 
+#include <unistd.h>
+#include <fcntl.h>
 #include <iostream>
 
 #include <Qt/qmenu.h>
@@ -42,7 +44,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
 
    //   MENU
    // actions
-   open = new QAction("&Open...",this);
+   openfile = new QAction("&Open...",this);
    save = new QAction("&Save...",this);
    quit = new QAction("&Quit", this);
    properties = new QAction("Get &Properties...",this);
@@ -53,7 +55,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    // file menu
    QMenu* file;
    file = menuBar()->addMenu("&File");
-   file->addAction(open);
+   file->addAction(openfile);
    file->addAction(save);
    file->addSeparator();
    file->addAction(rPlan);
@@ -76,7 +78,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    help = menuBar()->addMenu("&Help");
    help->addAction(about);
    // signal connections
-   connect(open, SIGNAL(triggered()), this, SLOT(MenuOpen()));
+   connect(openfile, SIGNAL(triggered()), this, SLOT(MenuOpen()));
    connect(save, SIGNAL(triggered()), this, SLOT(MenuSaveAll()));
    connect(rPlan, SIGNAL(triggered()), this, SLOT(MenuSaveR()));
    connect(gPlan, SIGNAL(triggered()), this, SLOT(MenuSaveG()));
@@ -326,6 +328,14 @@ void MainWindow::MenuSaveImpl(int p) {
    // is the name valid ?
    if(outputFileName=="")
       return;
+
+   // testing file access
+   int fd;
+   if(open(outputFileName.toStdString().c_str(),O_WRONLY|O_CREAT,S_IWUSR)<0){
+      QMessageBox::critical(this, tr("AstroAviBrowser"),tr("Write access denied"));
+      return;
+   } else
+      unlink(outputFileName.toStdString().c_str());
 
    // it could be long...
    setCursor(Qt::BusyCursor);

@@ -78,7 +78,7 @@ class MainWindow : public QMainWindow
       // save a file
       void MenuSaveImpl(int p);
       // menu actions
-      QAction* open;
+      QAction* openfile;
       QAction* save;
       QAction* rPlan;
       QAction* gPlan;
