@@ -8,7 +8,7 @@ Section: graphics
 Priority: optional
 Depends: ${shlibs:Depends}
 Description: Video editing tool for Astronomy
- Like AviRaw for Windows, AstroAviBrowser opens any ffmpeg kwnon file. You may
+ Like AviRaw for Windows, AstroAviBrowser opens any ffmpeg known file. You may
  de-bayer your video if needed, choose the best frames and save them in a raw lossless
  compressed avi file. You may also separate RGB plans.
 
