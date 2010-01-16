@@ -120,7 +120,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    frameDisplay= new FrameDisplay(centralZone);
    frameDisplay->setMinimumWidth(640);
    frameDisplay->setMinimumHeight(480);
-   frameDisplay->setAutoFillBackground( true );
+   //frameDisplay->resize(640,480);
+   frameDisplay->setAutoFillBackground(true);
    frameList= new FrameList(centralZone);
    frameList->setFrameDisplay(frameDisplay);
    // set frame display background to black
@@ -137,8 +138,10 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    buttons->addWidget(invertSelection);
    left->addWidget(frameList);
    left->addLayout(buttons);
-   central->addLayout(left);
-   central->addWidget(frameDisplay);
+   central->addLayout(left,0);
+   central->addStretch(10);
+   central->addWidget(frameDisplay,10);
+   central->addStretch(10);
    centralZone->setLayout(central);
    // update menu
    createBayerMenu();
@@ -153,7 +156,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    centralZone->show();
    // fix size
    sizeHint();
-   setFixedSize(sizeHint());
+   //setFixedSize(sizeHint());
 
    //
    //   FFMPEG
@@ -285,9 +288,9 @@ void MainWindow::MenuOpen() {
    selectAll->setEnabled(true);
    unSelectAll->setEnabled(true);
    invertSelection->setEnabled(true);
-   // fixing new size (to times to get refresh
+   // fixing new size (to times to get refresh)
    sizeHint();
-   setFixedSize(sizeHint());
+   //setFixedSize(sizeHint());
 
    // set bayer
    setNone();
