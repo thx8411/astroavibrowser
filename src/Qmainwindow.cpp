@@ -25,6 +25,7 @@
 #include <Qt/qmenu.h>
 #include <Qt/qmenubar.h>
 #include <Qt/qmessagebox.h>
+#include <Qt/qscrollarea.h>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QFileDialog>
@@ -116,18 +117,15 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    selectAll->setEnabled(false);
    unSelectAll->setEnabled(false);
    invertSelection->setEnabled(false);
+   // scroll area
+   QScrollArea* picture= new QScrollArea();
    // frame display and list
    frameDisplay= new FrameDisplay(centralZone);
-   frameDisplay->setMinimumWidth(640);
-   frameDisplay->setMinimumHeight(480);
-   //frameDisplay->resize(640,480);
-   frameDisplay->setAutoFillBackground(true);
    frameList= new FrameList(centralZone);
    frameList->setFrameDisplay(frameDisplay);
-   // set frame display background to black
-   QPalette pal = frameDisplay->palette();
-   pal.setColor(frameDisplay->backgroundRole(), Qt::black);
-   frameDisplay->setPalette(pal);
+   picture->setBackgroundRole(QPalette::Dark);
+   picture->setWidget(frameDisplay);
+   picture->setAlignment(Qt::AlignCenter);
    // connections
    connect(selectAll, SIGNAL(released()), this, SLOT(ButtonSelectAll()));
    connect(unSelectAll, SIGNAL(released()), this, SLOT(ButtonUnSelectAll()));
@@ -139,9 +137,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    left->addWidget(frameList);
    left->addLayout(buttons);
    central->addLayout(left,0);
-   central->addStretch(10);
-   central->addWidget(frameDisplay,10);
-   central->addStretch(10);
+   central->addWidget(picture,10);
    centralZone->setLayout(central);
    // update menu
    createBayerMenu();
@@ -219,7 +215,6 @@ void MainWindow::MenuOpen() {
       QMessageBox::critical(this, tr("AstroAviBrowser"),tr("Unable to open the file"));
       return;
    }
-   //cerr << "Opening file " << inputFileName.toStdString().c_str() << endl;
 
    // get streams
    if(av_find_stream_info(inputFileFormatContext)<0) {
@@ -228,10 +223,6 @@ void MainWindow::MenuOpen() {
       freeFile();
       return;
    }
-   // file infos on cerr
-   //dump_format(inputFileFormatContext, 0, inputFileName.toStdString().c_str(), false);
-   //cerr << endl;
-
    // open stream
    inputStreamNumber=-1;
    for(int i=0;i<inputFileFormatContext->nb_streams;i++) {
@@ -246,7 +237,6 @@ void MainWindow::MenuOpen() {
       freeFile();
       return;
    }
-   //cerr << "Using stream " << inputStreamNumber << endl;
 
    // load codec
    inputFileCodecContext=inputFileFormatContext->streams[inputStreamNumber]->codec;
@@ -266,7 +256,6 @@ void MainWindow::MenuOpen() {
       freeFile();
       return;
    }
-   //cerr << "Using codec :" << inputFileCodecContext->codec_name << endl;
 
    // frame list update
    frameList->setFormatContext(inputFileFormatContext);
@@ -288,9 +277,8 @@ void MainWindow::MenuOpen() {
    selectAll->setEnabled(true);
    unSelectAll->setEnabled(true);
    invertSelection->setEnabled(true);
-   // fixing new size (to times to get refresh)
+   // fixing new size
    sizeHint();
-   //setFixedSize(sizeHint());
 
    // set bayer
    setNone();
@@ -324,9 +312,6 @@ void MainWindow::MenuSaveImpl(int p) {
 
    // query file name
    outputFileName = QFileDialog::getSaveFileName(this, tr("Save Video"),"/home",tr("Avi Files (*.avi *.AVI)"));
-   // removes ".avi" postfix if needed
-   //if(outputFileName.contains(".avi",Qt::CaseInsensitive))
-   //   outputFileName.remove(".avi",Qt::CaseInsensitive);
 
    // is the name valid ?
    if(outputFileName=="")
@@ -342,14 +327,17 @@ void MainWindow::MenuSaveImpl(int p) {
 
    // it could be long...
    setCursor(Qt::BusyCursor);
-   // vars
+
+   // compute frame rate
    int frameRate;
    frameRate=(float)inputFileFormatContext->streams[inputStreamNumber]->r_frame_rate.den/(float)inputFileFormatContext->streams[inputStreamNumber]->r_frame_rate.num*1000000;
 
+   // saving the new avi
    file=new AviWriter(outputCodec,p,outputFileName.toStdString().c_str(),inputFileCodecContext->width,inputFileCodecContext->height,frameRate);
    frameList->dump(file);
    delete file;
 
+   // set cursor back
    setCursor(Qt::ArrowCursor);
 }
 

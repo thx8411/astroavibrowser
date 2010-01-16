@@ -1,5 +1,5 @@
 /*
- * copyright (c) 2009 Blaise-Florentin Collin
+ * copyright (c) 2009-2010 Blaise-Florentin Collin
  *
  * This file is part of AstroAviBrowser.
  *
@@ -191,6 +191,7 @@ bool FrameList::seekFrame(int number) {
    int frameDecoded;
    int res=0;
 
+   // go to first frame
    if(number==0) {
       av_seek_frame(formatContext, -1, 0, AVSEEK_FLAG_ANY);
       framePosition=0;
@@ -270,6 +271,7 @@ void FrameList::dump(AviWriter* file) {
             else
                raw2rgb(datas,savedFrame->data[0],codecContext->width,codecContext->height,frameDisplay->getRawmode());
             bgr2rgb(datas,codecContext->width,codecContext->height);
+            // add the frame
             file->AddFrame(datas);
          }
       }

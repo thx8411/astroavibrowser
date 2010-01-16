@@ -39,9 +39,7 @@ AviWriter::AviWriter(int codec, int plans, const char* name, int width, int heig
       plans_=plans;
    aviChunkStream_=NULL;
    aviFrameStream_=NULL;
-   //cout << "creating file : " << name << endl;
    aviFile_=avm::CreateWriteFile(name);
-   //cout << "file created" << endl;
    if(plans_==ALL_PLANS) {
       // 3 plans
       BITMAPINFOHEADER bi;
@@ -54,15 +52,11 @@ AviWriter::AviWriter(int codec, int plans, const char* name, int width, int heig
       bi.biBitCount=24;
       bi.biCompression=BI_RGB;
       if(codec==CODEC_LOSSLESSRGB) {
-         //cout << "creating stream for 3 plans frames..." << endl;
          aviFrameStream_=aviFile_->AddVideoStream(RIFFINFO_ZLIB, &bi, frameRate);
          aviFrameStream_->SetQuality(10000);
          aviFrameStream_->Start();
-         //cout << "stream for 3 plans frames created" << endl;
       } else {
-         //cout << "creating stream for 3 plans chunks..." << endl;
          aviChunkStream_=aviFile_->AddStream(AviStream::Video,&bi,sizeof(bi),BI_RGB,frameRate);
-         //cout << "stream for 3 plans chunks created" << endl;
       }
    } else {
       // 1 plan
@@ -79,9 +73,7 @@ AviWriter::AviWriter(int codec, int plans, const char* name, int width, int heig
       // setting palette
       for(int i=0;i<256;i++)
          bi->bmiColors[i]=(i<<16)+(i<<8)+i;
-      //cout << "creating stream for 1 plans chunks..." << endl;
       aviChunkStream_=aviFile_->AddStream(AviStream::Video,bi,sizeof(bi)+256*4,BI_RGB,frameRate);
-      //cout << "stream for 1 plans chunks created" << endl;
       free(bi);
    }
 }
@@ -115,7 +107,6 @@ void AviWriter::AddFrame(unsigned char* datas) {
       BitmapInfo info(bi);
       CImage img(&info, datas, true);
       aviFrameStream_->AddFrame(&img);
-      //cout << "adding frame..." << endl;
    } else {
       rgb24_vertical_swap(w,h,datas);
       if(plans_!=ALL_PLANS) {
@@ -129,6 +120,5 @@ void AviWriter::AddFrame(unsigned char* datas) {
          free(tmp);
       } else
       aviChunkStream_->AddChunk(datas,bi.biSizeImage,1);
-      //cout << "adding chunk..." << endl;
    }
 }

@@ -1,5 +1,5 @@
 /*
- * copyright (c) 2009 Blaise-Florentin Collin
+ * copyright (c) 2009-2010 Blaise-Florentin Collin
  *
  * This file is part of AstroAviBrowser.
  *
@@ -170,11 +170,11 @@ void raw2rgb(unsigned char * dest,const unsigned char * const data,int w,int h,i
                   break;
             }
          }
-         // cerr << x << " : " << y << endl;
       }
    }
 }
 
+// swap blue and green in rgb24 frame
 void bgr2rgb(unsigned char * datas, int w, int h) {
    char tmp;
    for(int i=0;i<w*h;i++) {
