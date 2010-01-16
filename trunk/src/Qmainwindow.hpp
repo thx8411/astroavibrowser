@@ -1,5 +1,5 @@
 /*
- * copyright (c) 2009 Blaise-Florentin Collin
+ * copyright (c) 2009-2010 Blaise-Florentin Collin
  *
  * This file is part of AstroAviBrowser.
  *

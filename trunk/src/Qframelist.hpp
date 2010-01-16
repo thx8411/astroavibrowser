@@ -1,5 +1,5 @@
 /*
- * copyright (c) 2009 Blaise-Florentin Collin
+ * copyright (c) 2009-2010 Blaise-Florentin Collin
  *
  * This file is part of AstroAviBrowser.
  *
@@ -34,12 +34,6 @@ extern "C" {
 #include "config.h"
 
 #include "aviwriter.hpp"
-
-// color plans
-//#define ALL	0
-//#define RED	1
-//#define GREEN	2
-//#define BLUE	3
 
 class FrameList : public QListWidget
 {

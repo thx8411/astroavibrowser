@@ -1,5 +1,5 @@
 /*
- * copyright (c) 2009 Blaise-Florentin Collin
+ * copyright (c) 2009-2010 Blaise-Florentin Collin
  *
  * This file is part of AstroAviBrowser.
  *
@@ -35,12 +35,6 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-   // init messages
-   //cout << endl;
-   //cout << "<init>" << Name << " " << Version << endl;
-   //cout << "<init>" << "Build "<< Build << endl;
-   //cout << "<init>" << Web << endl;
-   //cout << "<init>" << Mail << endl << endl;
    // qapp creation
    QApplication* app=new QApplication(argc, argv);
    MainWindow* w=new MainWindow();
@@ -48,6 +42,7 @@ int main(int argc, char *argv[])
    w->show();
    app->exec();
 
+   // finish
    delete w;
    delete app;
    return(0);

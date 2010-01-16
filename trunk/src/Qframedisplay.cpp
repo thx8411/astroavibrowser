@@ -1,5 +1,5 @@
 /*
- * copyright (c) 2009 Blaise-Florentin Collin
+ * copyright (c) 2009-2010 Blaise-Florentin Collin
  *
  * This file is part of AstroAviBrowser.
  *
@@ -26,6 +26,7 @@ FrameDisplay::FrameDisplay(QWidget* parent) : QWidget(parent) {
    painter_ = new QPainter();
    frameData=NULL;
    rawMode=RAW_NONE;
+   resize(640,480);
 }
 
 FrameDisplay::~FrameDisplay() {
@@ -36,8 +37,6 @@ void FrameDisplay::setFrame(int width, int height, AVFrame* f) {
    frameWidth=width;
    frameHeight=height;
    frameData=f;
-   //setMinimumWidth(width);
-   //setMinimumHeight(height);
    resize(width,height);
    repaint();
 }
@@ -58,16 +57,20 @@ int FrameDisplay::getRawmode() {
 
 void FrameDisplay::paintEvent(QPaintEvent * ev) {
    if (frameData!=NULL) {
+      // if we have a frame...
       applyRawMode();
       painter_->begin(this);
       painter_->setClipRegion(ev->region());
+      // load frame in widget
       QImage* tmpImage=new QImage((unsigned char*)frameData->data[0],frameWidth,frameHeight,QImage::Format_RGB888);
       painter_->drawImage(0,0,*tmpImage);
       delete tmpImage;
       painter_->end();
    } else {
+      // no frame...
       painter_->begin(this);
       painter_->setClipRegion(ev->region());
+      // black rect
       painter_->fillRect(0,0,width(),height(),Qt::black);
       painter_->end();
    }
@@ -78,7 +81,6 @@ void FrameDisplay::applyRawMode() {
    if ((frameData!=NULL)&&(rawMode!=RAW_NONE)) {
          buffer=(unsigned char*)malloc(frameWidth*frameHeight*3);
          memcpy(buffer,frameData->data[0],frameWidth*frameHeight*3);
-         //cerr << "raw " << rawMode << endl;
          raw2rgb(frameData->data[0],buffer,frameWidth,frameHeight,rawMode);
          free(buffer);
    }

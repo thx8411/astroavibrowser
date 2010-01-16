@@ -6,3 +6,4 @@ TODO :
 - add autoconf
 - cerr redirection to avoid avifile and ffmpeg messages
 - apply dark, flat and offset to the video
+- add cropping features
