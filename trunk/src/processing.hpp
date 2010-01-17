@@ -45,7 +45,10 @@ void bgr2rgb(unsigned char * datas, int w, int h);
 // swap rgb24 (upside down)
 void rgb24_vertical_swap(int w, int h, unsigned char* data);
 
-// return R, G, B or luminance plan form rgb24
+// return R, G, B or luminance plan from rgb24
 unsigned char* getPlan(int w, int h, unsigned char* data, int plan);
+
+// returns an array of 256 ints, histograme of the rgb frame luminance
+int* getHistogram(int w, int h, unsigned char* data);
 
 #endif
