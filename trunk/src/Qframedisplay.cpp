@@ -38,7 +38,6 @@ void FrameDisplay::setFrame(int width, int height, AVFrame* f) {
    frameHeight=height;
    frameData=f;
    resize(width,height);
-   repaint();
 }
 
 AVFrame* FrameDisplay::getFrame() {
