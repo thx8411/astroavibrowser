@@ -126,6 +126,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    // frame display and list
    frameDisplay= new FrameDisplay(centralZone);
    frameList= new FrameList(centralZone);
+   histogram=new Histogram(centralZone);
    frameList->setFrameDisplay(frameDisplay);
    picture->setBackgroundRole(QPalette::Dark);
    picture->setWidget(frameDisplay);
@@ -140,8 +141,9 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    buttons->addWidget(unSelectAll);
    buttons->addWidget(invertSelection);
    //buttons->addWidget(autoSelection);
-   left->addWidget(frameList);
-   left->addLayout(buttons);
+   left->addWidget(frameList,10);
+   left->addLayout(buttons,0);
+   left->addWidget(histogram,0);
    central->addLayout(left,0);
    central->addWidget(picture,10);
    centralZone->setLayout(central);
@@ -155,6 +157,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    delete pixmap;
    frameDisplay->show();
    frameList->show();
+   histogram->show();
    centralZone->show();
    // fix size
    sizeHint();
@@ -177,6 +180,7 @@ MainWindow::~MainWindow() {
    freeFile();
    delete frameList;
    delete frameDisplay;
+   delete histogram;
 }
 
 void MainWindow::freeFile() {
