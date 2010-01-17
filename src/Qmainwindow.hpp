@@ -69,6 +69,7 @@ class MainWindow : public QMainWindow
       void ButtonSelectAll();
       void ButtonUnSelectAll();
       void ButtonInvert();
+      void ButtonAuto();
    private :
       // release an opened file
       void freeFile();
@@ -102,6 +103,7 @@ class MainWindow : public QMainWindow
       QPushButton* selectAll;
       QPushButton* unSelectAll;
       QPushButton* invertSelection;
+      QPushButton* autoSelection;
       // file names
       QString inputFileName;
       QString outputFileName;
