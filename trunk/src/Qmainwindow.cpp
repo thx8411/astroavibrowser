@@ -139,7 +139,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    buttons->addWidget(selectAll);
    buttons->addWidget(unSelectAll);
    buttons->addWidget(invertSelection);
-   buttons->addWidget(autoSelection);
+   //buttons->addWidget(autoSelection);
    left->addWidget(frameList);
    left->addLayout(buttons);
    central->addLayout(left,0);
@@ -440,6 +440,8 @@ void MainWindow::ButtonInvert() {
 }
 
 void MainWindow::ButtonAuto() {
+   // auto selects frames
+   //
 }
 
 //
