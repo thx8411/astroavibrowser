@@ -31,7 +31,7 @@
 #include <QtGui/QFileDialog>
 
 #include "version.hpp"
-#include "bayer.hpp"
+#include "processing.hpp"
 #include "aviwriter.hpp"
 
 #include "Qmainwindow.moc"

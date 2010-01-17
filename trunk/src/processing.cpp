@@ -18,11 +18,14 @@
  * MA 02110-1301 USA
  */
 
+#include <string.h>
+#include <stdlib.h>
+
 #include <iostream>
 
-#include "Qframedisplay.hpp"
+//#include "Qframedisplay.hpp"
 
-#include "bayer.hpp"
+#include "processing.hpp"
 
 using namespace std;
 

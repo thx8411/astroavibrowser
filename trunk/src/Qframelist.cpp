@@ -24,7 +24,7 @@
 
 #include "Qframelist.moc"
 
-#include "bayer.hpp"
+#include "processing.hpp"
 
 using namespace std;
 

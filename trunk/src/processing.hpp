@@ -21,11 +21,19 @@
 #ifndef _BAYER_HPP_
 #define _BAYER_HPP_
 
+// plans def.
 #define ALL_PLANS       3
 #define RED_PLAN        4
 #define GREEN_PLAN      5
 #define BLUE_PLAN       6
 #define LUM_PLAN        7
+
+// raw modes
+#define RAW_NONE        0
+#define RAW_BG          1
+#define RAW_GB          2
+#define RAW_RG          3
+#define RAW_GR          4
 
 // vesta raw to rgb conversion
 void raw2rgb(unsigned char * dest,const unsigned char * const data,
