@@ -98,6 +98,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    selectAll = new QPushButton("Select All");
    unSelectAll = new QPushButton("Unselect All");
    invertSelection = new QPushButton("Invert Selection");
+   autoSelection = new QPushButton("Auto Selection");
    // set buttons size (should be ok for 1024*600 with PAL format)
    selectAll->setMaximumWidth(128);
    selectAll->setMinimumWidth(128);
@@ -105,6 +106,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    unSelectAll->setMinimumWidth(128);
    invertSelection->setMaximumWidth(128);
    invertSelection->setMinimumWidth(128);
+   autoSelection->setMaximumWidth(128);
+   autoSelection->setMinimumWidth(128);
    // disabling widgets (no file loaded at this time)
    save->setEnabled(false);
    properties->setEnabled(false);
@@ -117,6 +120,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    selectAll->setEnabled(false);
    unSelectAll->setEnabled(false);
    invertSelection->setEnabled(false);
+   autoSelection->setEnabled(false);
    // scroll area
    QScrollArea* picture= new QScrollArea();
    // frame display and list
@@ -130,10 +134,12 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    connect(selectAll, SIGNAL(released()), this, SLOT(ButtonSelectAll()));
    connect(unSelectAll, SIGNAL(released()), this, SLOT(ButtonUnSelectAll()));
    connect(invertSelection, SIGNAL(released()), this, SLOT(ButtonInvert()));
+   connect(autoSelection, SIGNAL(released()), this, SLOT(ButtonAuto()));
    // add widgets and layouts
    buttons->addWidget(selectAll);
    buttons->addWidget(unSelectAll);
    buttons->addWidget(invertSelection);
+   buttons->addWidget(autoSelection);
    left->addWidget(frameList);
    left->addLayout(buttons);
    central->addLayout(left,0);
@@ -191,6 +197,7 @@ void MainWindow::freeFile() {
    selectAll->setEnabled(false);
    unSelectAll->setEnabled(false);
    invertSelection->setEnabled(false);
+   autoSelection->setEnabled(false);
 }
 
 //
@@ -277,6 +284,7 @@ void MainWindow::MenuOpen() {
    selectAll->setEnabled(true);
    unSelectAll->setEnabled(true);
    invertSelection->setEnabled(true);
+   autoSelection->setEnabled(true);
    // fixing new size
    sizeHint();
 
@@ -429,6 +437,9 @@ void MainWindow::ButtonUnSelectAll() {
 void MainWindow::ButtonInvert() {
    // invert frame selection
    frameList->invertSelection();
+}
+
+void MainWindow::ButtonAuto() {
 }
 
 //
