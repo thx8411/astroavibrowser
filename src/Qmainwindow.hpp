@@ -37,6 +37,7 @@ extern "C" {
 
 #include "Qframedisplay.hpp"
 #include "Qframelist.hpp"
+#include "Qhistogram.hpp"
 
 #include "config.h"
 
@@ -110,6 +111,7 @@ class MainWindow : public QMainWindow
       // display and list
       FrameDisplay* frameDisplay;
       FrameList* frameList;
+      Histogram* histogram;
       // avifile datas
       int outputCodec;
       // ffmpeg datas

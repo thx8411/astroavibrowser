@@ -46,8 +46,8 @@ clean :
 
 # FILES RULES
 
-$(BIN) : main.o Qmainwindow.o Qframedisplay.o Qframelist.o processing.o aviwriter.o
-	$(LD) $(LDFLAGS) -o $(BIN) main.o Qmainwindow.o Qframedisplay.o Qframelist.o processing.o aviwriter.o $(LIBS)
+$(BIN) : main.o Qmainwindow.o Qframedisplay.o Qframelist.o processing.o aviwriter.o Qhistogram.o
+	$(LD) $(LDFLAGS) -o $(BIN) main.o Qmainwindow.o Qframedisplay.o Qframelist.o processing.o aviwriter.o Qhistogram.o $(LIBS)
 
 main.o : main.cpp version.hpp config.h Qmainwindow.hpp
 	$(CC) $(CCFLAGS) main.cpp -I $(INCS)
@@ -55,7 +55,7 @@ main.o : main.cpp version.hpp config.h Qmainwindow.hpp
 Qmainwindow.moc : Qmainwindow.hpp config.h
 	$(MOC) Qmainwindow.hpp -o Qmainwindow.moc
 
-Qmainwindow.o : Qmainwindow.cpp Qmainwindow.moc Qframedisplay.hpp Qframelist.hpp version.hpp processing.hpp aviwriter.hpp
+Qmainwindow.o : Qmainwindow.cpp Qmainwindow.moc Qframedisplay.hpp Qframelist.hpp Qhistogram.hpp version.hpp processing.hpp aviwriter.hpp
 	$(CC) $(CCFLAGS) Qmainwindow.cpp -I $(INCS)
 
 Qframedisplay.moc : Qframedisplay.hpp config.h
@@ -64,11 +64,17 @@ Qframedisplay.moc : Qframedisplay.hpp config.h
 Qframedisplay.o : Qframedisplay.cpp Qframedisplay.moc processing.hpp
 	$(CC) $(CCFLAGS) Qframedisplay.cpp -I $(INCS)
 
-Qframelist.moc : Qframelist.hpp Qframedisplay.hpp config.h processing.hpp aviwriter.hpp
+Qframelist.moc : Qframelist.hpp Qframedisplay.hpp Qhistogram.hpp config.h processing.hpp aviwriter.hpp
 	$(MOC) Qframelist.hpp -o Qframelist.moc
 
 Qframelist.o : Qframelist.cpp Qframelist.moc
 	$(CC) $(CCFLAGS) Qframelist.cpp -I $(INCS)
+
+Qhistogram.moc : Qhistogram.hpp config.h
+	$(MOC) Qhistogram.hpp -o Qhistogram.moc
+
+Qhistogram.o : Qhistogram.cpp Qhistogram.moc
+	$(CC) $(CCFLAGS) Qhistogram.cpp -I $(INCS)
 
 processing.o : processing.hpp processing.cpp config.h
 	$(CC) $(CCFLAGS) processing.cpp -I $(INCS)
