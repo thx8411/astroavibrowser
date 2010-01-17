@@ -23,7 +23,7 @@
 
 #include <iostream>
 
-#include "bayer.hpp"
+#include "processing.hpp"
 
 #include "aviwriter.hpp"
 

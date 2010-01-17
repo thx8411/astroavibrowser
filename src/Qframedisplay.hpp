@@ -39,11 +39,11 @@ extern "C" {
 using namespace std;
 
 // raw modes
-#define RAW_NONE        0
-#define RAW_BG          1
-#define RAW_GB          2
-#define RAW_RG		3
-#define RAW_GR		4
+//#define RAW_NONE        0
+//#define RAW_BG          1
+//#define RAW_GB          2
+//#define RAW_RG		3
+//#define RAW_GR		4
 
 class FrameDisplay : public QWidget
 {

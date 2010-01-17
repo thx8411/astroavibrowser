@@ -18,7 +18,7 @@
  * MA 02110-1301 USA
  */
 
-#include "bayer.hpp"
+#include "processing.hpp"
 
 #include "Qframedisplay.moc"
 
