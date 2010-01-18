@@ -7,3 +7,5 @@ TODO :
 - cerr redirection to avoid avifile and ffmpeg messages
 - apply dark, flat and offset to the video
 - add cropping features
+- add frame auto selection
+- add histogram display (with the average movie value)
