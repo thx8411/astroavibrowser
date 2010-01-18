@@ -334,6 +334,11 @@ int* FrameList::getAverage() {
    free(datas);
    // back to the beginning
    seekFrame(0);
+   // init the first item
+   current=item(0);
+   current->setSelected(true);
+   // and display it
+   displayFrame(0);
    // closing progress window
    progress->close();
    delete progress;
