@@ -41,6 +41,15 @@ using namespace std;
 #define	GREEN_OFFSET	1
 #define	BLUE_OFFSET	2
 
+// clip a value between 0 and 255
+unsigned char clip(double v) {
+   if(v>255)
+      return 255;
+   if(v<0)
+      return 0;
+   return((unsigned char)v);
+}
+
 // get the bayer pixel color depending on its position
 // and bayer pattern
 int getPixelColor(int x,int y,int mode) {
@@ -215,7 +224,7 @@ unsigned char* getPlan(int w, int h, unsigned char* data, int plan) {
             buffer[i]=data[i*3];
             break;
          case LUM_PLAN :
-            buffer[i]=(unsigned char)(0.299*data[i*3+2]+0.587*data[i*3+1]+0.114*data[i*3]);
+            buffer[i]=clip(0.299*(double)data[i*3+2]+0.587*(double)data[i*3+1]+0.114*(double)data[i*3]);
             break;
          default :
             return(NULL);
