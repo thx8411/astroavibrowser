@@ -239,6 +239,8 @@ int* getHistogram(int w, int h, unsigned char* data) {
    int i;
    int* tab;
    unsigned char* buffer;
+   if(data==NULL)
+      return(NULL);
    tab=(int*)malloc(256*sizeof(int));
    memset(tab,0,256*sizeof(int));
    buffer=getPlan(w,h,data,LUM_PLAN);
