@@ -18,6 +18,7 @@
  * MA 02110-1301 USA
  */
 
+#include <math.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -224,14 +225,19 @@ unsigned char* getPlan(int w, int h, unsigned char* data, int plan) {
 }
 
 // returns an array of 256 ints, histogram of the rgb frame luminance
+// (log2)^2 base
 int* getHistogram(int w, int h, unsigned char* data) {
+   int i;
    int* tab;
    unsigned char* buffer;
    tab=(int*)malloc(256*sizeof(int));
    memset(tab,0,256*sizeof(int));
    buffer=getPlan(w,h,data,LUM_PLAN);
-   for(int i=0;i<(w*h);i++) {
+   for(i=0;i<(w*h);i++) {
       tab[buffer[i]]++;
    }
+   for(i=0;i<256;i++)
+      if(tab[i]!=0)
+         tab[i]=log2(tab[i])*log2(tab[i]);
    return(tab);
 }

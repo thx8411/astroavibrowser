@@ -46,6 +46,7 @@ void Histogram::setAverage(int* values) {
    average_=(int*)malloc(256*sizeof(int));
    memcpy(average_,values,256*sizeof(int));
    max=getMax();
+   max*=2;
 }
 
 void Histogram::setValues(int* values) {
@@ -53,25 +54,26 @@ void Histogram::setValues(int* values) {
    values_=(int*)malloc(256*sizeof(int));
    memcpy(values_,values,256*sizeof(int));
    max=getMax();
+   max*=2;
 }
 
 void Histogram::paintEvent(QPaintEvent * ev) {
    int i;
    int h;
    painter_->begin(this);
-   //painter_->setClipRegion(ev->region());
    painter_->setPen(*blackPen_);
    painter_->eraseRect(0,0,W_SIZE,H_SIZE);
-   painter_->drawRect(1,1,132,100);
-   painter_->drawText(6,116,QString("Frame"));
+   painter_->drawRect(1,1,W_SIZE-2,H_SIZE-20);
+   painter_->drawText(8,H_SIZE-4,QString("Frame"));
    painter_->setPen(*redPen_);
-   painter_->drawText(74,116,QString("Average"));
+   painter_->drawText(W_SIZE/2+4,H_SIZE-4,QString("Average"));
    painter_->setPen(*blackPen_);
    if(values_!=NULL) {
       for(i=0;i<128;i++) {
          if(max!=0) {
-            h=(values_[i*2]+values_[i*2+1])*48/max;
-            painter_->drawLine(i+3,98,i+3,98-h);
+               h=(values_[i*2]+values_[i*2+1])*(H_SIZE-24)/max;
+               if(h!=0)
+                  painter_->drawLine(i+3,H_SIZE-22,i+3,H_SIZE-22-h);
          }
       }
    }
@@ -79,7 +81,9 @@ void Histogram::paintEvent(QPaintEvent * ev) {
       painter_->setPen(*redPen_);
       for(i=0;i<128;i++) {
          if(max!=0)
-            painter_->drawPoint(i+3,98-((average_[i*2]+average_[i*2+1])*48/max));
+            h=(average_[i*2]+average_[i*2+1])*(H_SIZE-24)/max;
+            if(h!=0)
+               painter_->drawPoint(i+3,H_SIZE-22-h);
       }
    }
    painter_->end();
