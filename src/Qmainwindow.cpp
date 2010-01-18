@@ -100,14 +100,14 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    invertSelection = new QPushButton("Invert Selection");
    autoSelection = new QPushButton("Auto Selection");
    // set buttons size (should be ok for 1024*600 with PAL format)
-   selectAll->setMaximumWidth(128);
-   selectAll->setMinimumWidth(128);
-   unSelectAll->setMaximumWidth(128);
-   unSelectAll->setMinimumWidth(128);
-   invertSelection->setMaximumWidth(128);
-   invertSelection->setMinimumWidth(128);
-   autoSelection->setMaximumWidth(128);
-   autoSelection->setMinimumWidth(128);
+   selectAll->setMaximumWidth(135);
+   selectAll->setMinimumWidth(135);
+   unSelectAll->setMaximumWidth(135);
+   unSelectAll->setMinimumWidth(135);
+   invertSelection->setMaximumWidth(135);
+   invertSelection->setMinimumWidth(135);
+   autoSelection->setMaximumWidth(135);
+   autoSelection->setMinimumWidth(135);
    // disabling widgets (no file loaded at this time)
    save->setEnabled(false);
    properties->setEnabled(false);
@@ -127,6 +127,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    frameDisplay= new FrameDisplay(centralZone);
    frameList= new FrameList(centralZone);
    histogram=new Histogram(centralZone);
+   frameDisplay->setHistogram(histogram);
    frameList->setFrameDisplay(frameDisplay);
    picture->setBackgroundRole(QPalette::Dark);
    picture->setWidget(frameDisplay);

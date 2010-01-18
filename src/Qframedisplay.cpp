@@ -25,6 +25,7 @@
 FrameDisplay::FrameDisplay(QWidget* parent) : QWidget(parent) {
    painter_ = new QPainter();
    frameData=NULL;
+   histogram=NULL;
    rawMode=RAW_NONE;
    resize(640,480);
 }
@@ -55,6 +56,7 @@ int FrameDisplay::getRawmode() {
 }
 
 void FrameDisplay::paintEvent(QPaintEvent * ev) {
+   int* values;
    if (frameData!=NULL) {
       // if we have a frame...
       applyRawMode();
@@ -65,6 +67,13 @@ void FrameDisplay::paintEvent(QPaintEvent * ev) {
       painter_->drawImage(0,0,*tmpImage);
       delete tmpImage;
       painter_->end();
+
+      values=getHistogram(frameWidth,frameHeight,(unsigned char*)frameData->data[0]);
+      if(histogram!=NULL) {
+         histogram->setValues(values);
+         histogram->repaint();
+      }
+      free(values);
    } else {
       // no frame...
       painter_->begin(this);
@@ -72,6 +81,13 @@ void FrameDisplay::paintEvent(QPaintEvent * ev) {
       // black rect
       painter_->fillRect(0,0,width(),height(),Qt::black);
       painter_->end();
+      values=(int*)malloc(256*sizeof(int));
+      memset(values,0,256*sizeof(int));
+      if(histogram!=NULL) {
+         histogram->setValues(values);
+         histogram->repaint();
+      }
+      free(values);
    }
 }
 
@@ -83,4 +99,8 @@ void FrameDisplay::applyRawMode() {
          raw2rgb(frameData->data[0],buffer,frameWidth,frameHeight,rawMode);
          free(buffer);
    }
+}
+
+void FrameDisplay::setHistogram(Histogram* h) {
+   histogram=h;
 }

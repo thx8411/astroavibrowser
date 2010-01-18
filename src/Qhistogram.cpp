@@ -20,16 +20,24 @@
 
 #include "Qhistogram.moc"
 
+#define W_SIZE	134
+#define H_SIZE	120
+
 Histogram::Histogram(QWidget* parent) : QWidget(parent) {
    painter_ = new QPainter();
+   redPen_= new QPen(Qt::red);
+   blackPen_=new QPen(Qt::black);
+   max=0;
    values_=NULL;
    average_=NULL;
-   setFixedSize(128,96);
+   setFixedSize(W_SIZE,H_SIZE);
 }
 
 Histogram::~Histogram() {
    free(average_);
    free(average_);
+   delete blackPen_;
+   delete redPen_;
    delete painter_;
 }
 
@@ -37,23 +45,62 @@ void Histogram::setAverage(int* values) {
    free(average_);
    average_=(int*)malloc(256*sizeof(int));
    memcpy(average_,values,256*sizeof(int));
+   max=getMax();
 }
 
 void Histogram::setValues(int* values) {
    free(values_);
    values_=(int*)malloc(256*sizeof(int));
    memcpy(values_,values,256*sizeof(int));
+   max=getMax();
 }
 
 void Histogram::paintEvent(QPaintEvent * ev) {
+   int i;
+   int h;
    painter_->begin(this);
-   painter_->setClipRegion(ev->region());
-   //
-   if(average_!=NULL) {
-      //
-   }
+   //painter_->setClipRegion(ev->region());
+   painter_->setPen(*blackPen_);
+   painter_->eraseRect(0,0,W_SIZE,H_SIZE);
+   painter_->drawRect(1,1,132,100);
+   painter_->drawText(6,116,QString("Frame"));
+   painter_->setPen(*redPen_);
+   painter_->drawText(74,116,QString("Average"));
+   painter_->setPen(*blackPen_);
    if(values_!=NULL) {
-      //
+      for(i=0;i<128;i++) {
+         if(max!=0) {
+            h=(values_[i*2]+values_[i*2+1])*48/max;
+            painter_->drawLine(i+3,98,i+3,98-h);
+         }
+      }
+   }
+   if(average_!=NULL) {
+      painter_->setPen(*redPen_);
+      for(i=0;i<128;i++) {
+         if(max!=0)
+            painter_->drawPoint(i+3,98-((average_[i*2]+average_[i*2+1])*48/max));
+      }
    }
    painter_->end();
+}
+
+// returns the biggest value from the two arrays
+int Histogram::getMax() {
+   int maxA=0;
+   int maxV=0;
+   int i;
+   if(average_!=NULL)
+   for(i=0;i<256;i++) {
+      if(average_[i]>maxA)
+         maxA=average_[i];
+   }
+   if(values_!=NULL)
+   for(i=0;i<256;i++) {
+      if(values_[i]>maxV)
+         maxV=values_[i];
+   }
+   if(maxA>maxV)
+      return(maxA);
+   return(maxV);
 }

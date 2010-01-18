@@ -223,13 +223,15 @@ unsigned char* getPlan(int w, int h, unsigned char* data, int plan) {
    return(buffer);
 }
 
-// returns an array of 256 ints, histograme of the rgb frame luminance
+// returns an array of 256 ints, histogram of the rgb frame luminance
 int* getHistogram(int w, int h, unsigned char* data) {
    int* tab;
    unsigned char* buffer;
    tab=(int*)malloc(256*sizeof(int));
+   memset(tab,0,256*sizeof(int));
    buffer=getPlan(w,h,data,LUM_PLAN);
-   for(int i=0;i<(w*h);i++)
+   for(int i=0;i<(w*h);i++) {
       tab[buffer[i]]++;
+   }
    return(tab);
 }
