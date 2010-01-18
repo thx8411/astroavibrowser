@@ -290,8 +290,59 @@ void FrameList::dump(AviWriter* file) {
 }
 
 int* FrameList::getAverage() {
+   int i,j;
    int* values=NULL;
+   long sum[256];
+   unsigned char* datas;
+   AVFrame* savedFrame;
+   QListWidgetItem* current;
+   QProgressDialog* progress;
+
+   setCursor(Qt::BusyCursor);
+
+   memset(sum,0,256*sizeof(long));
+   values=(int*)malloc(256*sizeof(int));
    //
+   // setting progress dialog
+   progress = new QProgressDialog(QString("Compute average histogram..."),QString(),0,frameNumber);
+   // alloc datas if needed
+   datas=(unsigned char*)malloc(codecContext->width*codecContext->height*3);
+   // loop
+   for(i=0;i<frameNumber;i++) {
+      // update progress bar
+      progress->setValue(i);
+      // if current frame checked...
+      current=item(i);
+      if(current->checkState()==Qt::Checked) {
+         // if we have a frame
+         if(getFrame(i)) {
+            savedFrame=frameRGB;
+            // apply raw filter
+            if(frameDisplay->getRawmode()==RAW_NONE)
+               memcpy(datas,savedFrame->data[0],codecContext->width*codecContext->height*3);
+            else
+               raw2rgb(datas,savedFrame->data[0],codecContext->width,codecContext->height,frameDisplay->getRawmode());
+            bgr2rgb(datas,codecContext->width,codecContext->height);
+            // add histogram
+            values=getHistogram(codecContext->width,codecContext->height,datas);
+            for(j=0;j<256;j++)
+               sum[j]+=values[j];
+         }
+      }
+   }
+   // free datas
+   free(datas);
+   // back to the beginning
+   seekFrame(0);
+   // closing progress window
+   progress->close();
+   delete progress;
+   //
+   for(i=0;i<256;i++)
+      values[i]=sum[i]/frameNumber;
+
+   setCursor(Qt::ArrowCursor);
+
    return(values);
 }
 

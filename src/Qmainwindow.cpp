@@ -39,6 +39,10 @@
 using namespace std;
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
+   // ffmpeg datas init
+   inputFileFormatContext=NULL;
+   inputFileCodec=NULL;
+
    //
    //   GUI
    //
@@ -171,10 +175,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
 
    // register all formats and codecs
    av_register_all();
-
-   // ffmpeg datas init
-   inputFileFormatContext=NULL;
-   inputFileCodec=NULL;
 }
 
 MainWindow::~MainWindow() {
@@ -187,11 +187,15 @@ MainWindow::~MainWindow() {
 
 void MainWindow::freeFile() {
    // close codec
-   if(inputFileCodec!=NULL)
+   if(inputFileCodec!=NULL) {
       avcodec_close(inputFileCodecContext);
+      inputFileCodecContext=NULL;
+   }
    // close file
-   if(inputFileFormatContext!=NULL)
+   if(inputFileFormatContext!=NULL) {
       av_close_input_file(inputFileFormatContext);
+      inputFileFormatContext=NULL;
+   }
    // disabling widgets (no more file opened)
    save->setEnabled(false);
    properties->setEnabled(false);
@@ -213,7 +217,8 @@ void MainWindow::freeFile() {
 
 // OPEN
 void MainWindow::MenuOpen() {
-   int* average;
+   //int* average;
+
    // open new file
    // getting file name
    inputFileName = QFileDialog::getOpenFileName(this,tr("Open Video"),"/home", tr("Video Files (*.avi *.mpg *.mpeg *.divx *.mkv *.mov *.wmv *.AVI *.MPG *.MPEG *.DIVX *.MKV *.MOV *.WMV)"));
@@ -279,9 +284,9 @@ void MainWindow::MenuOpen() {
    // it could be long...
    setCursor(Qt::BusyCursor);
    frameList->fill();
-   average=frameList->getAverage();
-   histogram->setAverage(average);
-   free(average);
+   //average=frameList->getAverage();
+   //histogram->setAverage(average);
+   //free(average);
    setCursor(Qt::ArrowCursor);
    // enabling widgets
    save->setEnabled(true);
@@ -461,52 +466,72 @@ void MainWindow::ButtonAuto() {
 //
 
 void MainWindow::setNone() {
+   int* average;
    bayerNone->setChecked(true);
    bayerBg->setChecked(false);
    bayerGb->setChecked(false);
    bayerRg->setChecked(false);
    bayerGr->setChecked(false);
    frameDisplay->setRawmode(RAW_NONE);
+   average=frameList->getAverage();
+   histogram->setAverage(average);
+   free(average);
    frameList->refreshFrame();
 }
 
 void MainWindow::setBg() {
+   int* average;
    bayerNone->setChecked(false);
    bayerBg->setChecked(true);
    bayerGb->setChecked(false);
    bayerRg->setChecked(false);
    bayerGr->setChecked(false);
    frameDisplay->setRawmode(RAW_BG);
+   average=frameList->getAverage();
+   histogram->setAverage(average);
+   free(average);
    frameList->refreshFrame();
 }
 
 void MainWindow::setGb() {
+   int* average;
    bayerNone->setChecked(false);
    bayerBg->setChecked(false);
    bayerGb->setChecked(true);
    bayerRg->setChecked(false);
    bayerGr->setChecked(false);
    frameDisplay->setRawmode(RAW_GB);
+   average=frameList->getAverage();
+   histogram->setAverage(average);
+   free(average);
    frameList->refreshFrame();
 }
 
 void MainWindow::setRg() {
+   int* average;
    bayerNone->setChecked(false);
    bayerBg->setChecked(false);
    bayerGb->setChecked(false);
    bayerRg->setChecked(true);
    bayerGr->setChecked(false);
    frameDisplay->setRawmode(RAW_RG);
+   average=frameList->getAverage();
+   histogram->setAverage(average);
+   free(average);
    frameList->refreshFrame();
 }
 
 void MainWindow::setGr() {
+   int* average;
    bayerNone->setChecked(false);
    bayerBg->setChecked(false);
    bayerGb->setChecked(false);
    bayerRg->setChecked(false);
    bayerGr->setChecked(true);
    frameDisplay->setRawmode(RAW_GR);
+   average=frameList->getAverage();
+   histogram->setAverage(average);
+   free(average);
    frameList->refreshFrame();
 }
 
@@ -552,17 +577,18 @@ void MainWindow::createBayerMenu() {
    bayerRg=new QAction("Raw RG",bayer);
    bayerGr=new QAction("Raw GR",bayer);
    bayerNone->setCheckable(true);
-   bayerBg->setCheckable(true);
-   bayerGb->setCheckable(true);
-   bayerRg->setCheckable(true);
-   bayerGr->setCheckable(true);
+   bayerBg->setCheckable(false);
+   bayerGb->setCheckable(false);
+   bayerRg->setCheckable(false);
+   bayerGr->setCheckable(false);
    bayer->addAction(bayerNone);
    bayer->addAction(bayerBg);
    bayer->addAction(bayerGb);
    bayer->addAction(bayerRg);
    bayer->addAction(bayerGr);
 
-   setNone();
+   frameDisplay->setRawmode(RAW_NONE);
+   frameList->refreshFrame();
 
    connect(bayerNone,SIGNAL(triggered()),this,SLOT(setNone()));
    connect(bayerBg,SIGNAL(triggered()),this,SLOT(setBg()));
