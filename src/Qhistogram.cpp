@@ -108,3 +108,16 @@ int Histogram::getMax() {
       return(maxA);
    return(maxV);
 }
+
+void Histogram::setEnabled(bool b) {
+   delete blackPen_;
+   delete redPen_;
+   if(b) {
+      blackPen_=new QPen(Qt::black);
+      redPen_=new QPen(Qt::red);
+   } else {
+      blackPen_=new QPen(Qt::gray);
+      redPen_=new QPen(Qt::darkRed);
+   }
+   repaint();
+}
