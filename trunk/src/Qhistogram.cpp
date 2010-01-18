@@ -35,13 +35,15 @@ Histogram::Histogram(QWidget* parent) : QWidget(parent) {
 
 Histogram::~Histogram() {
    free(average_);
-   free(average_);
+   free(values_);
    delete blackPen_;
    delete redPen_;
    delete painter_;
 }
 
 void Histogram::setAverage(int* values) {
+   if(values==NULL)
+      return;
    free(average_);
    average_=(int*)malloc(256*sizeof(int));
    memcpy(average_,values,256*sizeof(int));
@@ -50,6 +52,8 @@ void Histogram::setAverage(int* values) {
 }
 
 void Histogram::setValues(int* values) {
+   if(values==NULL)
+      return;
    free(values_);
    values_=(int*)malloc(256*sizeof(int));
    memcpy(values_,values,256*sizeof(int));

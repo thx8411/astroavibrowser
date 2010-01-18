@@ -35,6 +35,8 @@ extern "C" {
 
 #include "aviwriter.hpp"
 
+#include "Qhistogram.hpp"
+
 class FrameList : public QListWidget
 {
       Q_OBJECT
@@ -51,6 +53,8 @@ class FrameList : public QListWidget
       void setStreamNumber(int sn);
       // set the display widget
       void setFrameDisplay(FrameDisplay* fd);
+      // set the histogram
+      void setHistogram(Histogram* h);
       // scans the stream and fill the list
       void fill();
       // dump selected frames in the given codec
@@ -60,6 +64,8 @@ class FrameList : public QListWidget
       int getFrameNumber();
       // number of frame selected
       int getSelectedFrames();
+      // returns average histogram
+      int* getAverage();
    public slots :
       // look for a frame
       bool getFrame(int number);

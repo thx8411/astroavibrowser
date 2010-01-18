@@ -61,13 +61,13 @@ Qmainwindow.o : Qmainwindow.cpp Qmainwindow.moc Qframedisplay.hpp Qframelist.hpp
 Qframedisplay.moc : Qframedisplay.hpp config.h
 	$(MOC) Qframedisplay.hpp -o Qframedisplay.moc
 
-Qframedisplay.o : Qframedisplay.cpp Qframedisplay.moc processing.hpp
+Qframedisplay.o : Qframedisplay.cpp Qframedisplay.moc processing.hpp Qhistogram.hpp
 	$(CC) $(CCFLAGS) Qframedisplay.cpp -I $(INCS)
 
 Qframelist.moc : Qframelist.hpp Qframedisplay.hpp Qhistogram.hpp config.h processing.hpp aviwriter.hpp
 	$(MOC) Qframelist.hpp -o Qframelist.moc
 
-Qframelist.o : Qframelist.cpp Qframelist.moc
+Qframelist.o : Qframelist.cpp Qframelist.moc Qhistogram.hpp
 	$(CC) $(CCFLAGS) Qframelist.cpp -I $(INCS)
 
 Qhistogram.moc : Qhistogram.hpp config.h

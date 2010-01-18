@@ -213,6 +213,7 @@ void MainWindow::freeFile() {
 
 // OPEN
 void MainWindow::MenuOpen() {
+   int* average;
    // open new file
    // getting file name
    inputFileName = QFileDialog::getOpenFileName(this,tr("Open Video"),"/home", tr("Video Files (*.avi *.mpg *.mpeg *.divx *.mkv *.mov *.wmv *.AVI *.MPG *.MPEG *.DIVX *.MKV *.MOV *.WMV)"));
@@ -278,6 +279,9 @@ void MainWindow::MenuOpen() {
    // it could be long...
    setCursor(Qt::BusyCursor);
    frameList->fill();
+   average=frameList->getAverage();
+   histogram->setAverage(average);
+   free(average);
    setCursor(Qt::ArrowCursor);
    // enabling widgets
    save->setEnabled(true);

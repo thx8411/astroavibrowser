@@ -18,6 +18,7 @@
  * MA 02110-1301 USA
  */
 
+#include <string.h>
 #include <iostream>
 
 #include <QtGui/QProgressDialog>
@@ -124,6 +125,7 @@ void FrameList::setFrameDisplay(FrameDisplay* fd) {
 
 void FrameList::fill() {
    // init
+   int frameDecoded=0;
    int i=0;
    int res=0;
    int frameNumberEstimation;
@@ -152,13 +154,15 @@ void FrameList::fill() {
    av_seek_frame(formatContext, -1, 0, AVSEEK_FLAG_ANY);
    res=av_read_frame(formatContext, pkt);
    while (res==0) {
-      i++;
-      progress->setValue(i);
-      // add item...
-      current= new QListWidgetItem(itemName+QString::number(i),this);
-      // and check it
-      current->setFlags(current->flags()|Qt::ItemIsUserCheckable);
-      current->setCheckState(Qt::Checked);
+      if((avcodec_decode_video(codecContext, frame, &frameDecoded, pkt->data, pkt->size)!=0)&&(frameDecoded!=0)) {
+         i++;
+         progress->setValue(i);
+         // add item...
+         current= new QListWidgetItem(itemName+QString::number(i),this);
+         // and check it
+         current->setFlags(current->flags()|Qt::ItemIsUserCheckable);
+         current->setCheckState(Qt::Checked);
+      }
       // read new frame
       av_free_packet(pkt);
       res=av_read_frame(formatContext, pkt);
@@ -283,6 +287,12 @@ void FrameList::dump(AviWriter* file) {
    // closing progress window
    progress->close();
    delete progress;
+}
+
+int* FrameList::getAverage() {
+   int* values=NULL;
+   //
+   return(values);
 }
 
 void FrameList::refreshFrame() {
