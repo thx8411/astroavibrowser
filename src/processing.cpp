@@ -214,7 +214,7 @@ unsigned char* getPlan(int w, int h, unsigned char* data, int plan) {
             buffer[i]=data[i*3];
             break;
          case LUM_PLAN :
-            buffer[i]=((66*data[i*3+2]+129*data[i*3+1]+25*data[i*3]+128)>>8)+16;;
+            buffer[i]=(unsigned char)(0.299*data[i*3+2]+0.587*data[i*3+1]+0.114*data[i*3]);
             break;
          default :
             return(NULL);
