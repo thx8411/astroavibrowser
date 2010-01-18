@@ -36,14 +36,9 @@ extern "C" {
 
 #include "config.h"
 
-using namespace std;
+#include "Qhistogram.hpp"
 
-// raw modes
-//#define RAW_NONE        0
-//#define RAW_BG          1
-//#define RAW_GB          2
-//#define RAW_RG		3
-//#define RAW_GR		4
+using namespace std;
 
 class FrameDisplay : public QWidget
 {
@@ -51,6 +46,7 @@ class FrameDisplay : public QWidget
    public :
       FrameDisplay(QWidget* parent=0);
       ~FrameDisplay();
+      void setHistogram(Histogram* h);
       // set the frame to display
       void setFrame(int width, int height, AVFrame* f);
       // get the frame
@@ -66,6 +62,7 @@ class FrameDisplay : public QWidget
       int rawMode;
       int frameWidth;
       int frameHeight;
+      Histogram* histogram;
       AVFrame* frameData;
       QPainter * painter_;
       // functions

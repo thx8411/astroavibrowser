@@ -41,7 +41,7 @@ FrameList::FrameList(QWidget* parent) : QListWidget(parent) {
    // packet mem alloc
    pkt=(AVPacket*)av_malloc(sizeof(AVPacket));
    // set max list width
-   setMaximumWidth(128);
+   setMaximumWidth(135);
    // init frame number
    frameNumber=0;
    // no file

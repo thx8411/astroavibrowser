@@ -46,9 +46,14 @@ class Histogram : public QWidget
    protected:
       void paintEvent(QPaintEvent * ev);
    private :
+      int max;
       int* values_;
       int* average_;
       QPainter* painter_;
+      QPen* redPen_;
+      QPen* blackPen_;
+      // functions
+      int getMax();
 };
 
 #endif
