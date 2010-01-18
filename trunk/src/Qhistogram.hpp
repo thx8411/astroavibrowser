@@ -43,6 +43,8 @@ class Histogram : public QWidget
       void setAverage(int* values);
       // get the frame
       void setValues(int* values);
+      // enabling/disabling histogram
+      void setEnabled(bool b);
    protected:
       void paintEvent(QPaintEvent * ev);
    private :

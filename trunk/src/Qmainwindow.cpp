@@ -127,6 +127,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    frameDisplay= new FrameDisplay(centralZone);
    frameList= new FrameList(centralZone);
    histogram=new Histogram(centralZone);
+   histogram->setEnabled(false);
    frameDisplay->setHistogram(histogram);
    frameList->setFrameDisplay(frameDisplay);
    picture->setBackgroundRole(QPalette::Dark);
@@ -203,6 +204,7 @@ void MainWindow::freeFile() {
    unSelectAll->setEnabled(false);
    invertSelection->setEnabled(false);
    autoSelection->setEnabled(false);
+   histogram->setEnabled(false);
 }
 
 //
@@ -290,6 +292,7 @@ void MainWindow::MenuOpen() {
    unSelectAll->setEnabled(true);
    invertSelection->setEnabled(true);
    autoSelection->setEnabled(true);
+   histogram->setEnabled(true);
    // fixing new size
    sizeHint();
 
