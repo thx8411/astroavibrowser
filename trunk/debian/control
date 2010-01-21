@@ -3,7 +3,7 @@ Maintainer: Blaise-Florentin Collin <thx8411@users.sourceforge.net>
 Standards-Version: 3.6.0
 
 Package: astroavibrowser
-Architecture: i386
+Architecture: any
 Section: graphics
 Priority: optional
 Depends: ${shlibs:Depends}

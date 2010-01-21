@@ -24,8 +24,8 @@ LD=gcc
 MOC=/usr/share/qt4/bin/moc
 
 # release
-CCFLAGS=-O3 -march=i686
-LDFLAGS=-O3 -march=i686
+CCFLAGS=-O3
+LDFLAGS=-O3
 # debug
 #CCFLAGS= -O0 -g
 #LDFLAGS= -O0 -g
