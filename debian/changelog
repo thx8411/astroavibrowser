@@ -1,7 +1,9 @@
 astroavibrowser (0.3) jaunty; urgency=low
 
   * Frame histogram added
-  * Better luminance convertion
+  * Better luminance conversion
+  * 8bits avi raw palette bug fixed
+  * Debian packaging modified for multi-platforme
 
  -- Blaise-Florentin Collin <collin@eeepc901>  Sun, 15 Jan 2010 21:13:12 +0100
 

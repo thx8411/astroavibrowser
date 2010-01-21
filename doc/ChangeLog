@@ -1,7 +1,9 @@
 Vers. 0.3
 
-   - better luminance convertion
+   - debian packaging modified for multi-plateforme
+   - better luminance conversion
    - frame histogram added
+   - 8bits avi raw palette bug fixed
 
 Vers. 0.2.2
 
