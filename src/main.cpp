@@ -35,6 +35,11 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
+   string logFileName(".astroavibrowser.log");
+
+   // cout redirection
+   FILE* logFile=freopen(logFileName.c_str(),"w",stdout);
+
    // qapp creation
    QApplication* app=new QApplication(argc, argv);
    MainWindow* w=new MainWindow();
