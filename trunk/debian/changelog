@@ -1,5 +1,6 @@
 astroavibrowser (0.3) jaunty; urgency=low
 
+  * cout redirected to log file
   * Frame histogram added
   * Better luminance conversion
   * 8bits avi raw palette bug fixed
