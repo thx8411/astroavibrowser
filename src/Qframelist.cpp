@@ -196,44 +196,20 @@ bool FrameList::seekFrame(int number) {
    int res=0;
 
    // go to first frame
-   if(number==0) {
+   if((number==0)||(number<framePosition)) {
       av_seek_frame(formatContext, -1, 0, AVSEEK_FLAG_ANY);
       framePosition=0;
+   }
+   while (framePosition<number) {
       av_free_packet(pkt);
       res=av_read_frame(formatContext, pkt);
-      // decode frame
-      res=avcodec_decode_video(codecContext, frame, &frameDecoded, pkt->data, pkt->size);
-      //cerr << frameDecoded << endl;
-      frameOk=(res>0)&&(frameDecoded!=0);
-      return(frameOk);
+      framePosition++;
    }
+   // just read the frame
+   av_free_packet(pkt);
+   res=av_read_frame(formatContext, pkt);
+   framePosition++;
 
-   if(number>framePosition) {
-      // go forward
-      av_free_packet(pkt);
-      res=av_read_frame(formatContext, pkt);
-      if(res==0)
-         framePosition++;
-      while ((res==0)&&(framePosition!=number)) {
-         av_free_packet(pkt);
-         res=av_read_frame(formatContext, pkt);
-         framePosition++;
-      }
-   } else {
-      // we must start at stream beginning to get the real frame num index
-      av_seek_frame(formatContext, -1, 0, AVSEEK_FLAG_ANY);
-      framePosition=0;
-      av_free_packet(pkt);
-      res=av_read_frame(formatContext, pkt);
-      if(res==0)
-         framePosition++;
-      // counting
-      while ((res==0)&&(framePosition!=number)) {
-         av_free_packet(pkt);
-         res=av_read_frame(formatContext, pkt);
-         framePosition++;
-      }
-   }
    // decode frame
    res=avcodec_decode_video(codecContext, frame, &frameDecoded, pkt->data, pkt->size);
    //cerr << frameDecoded << endl;
