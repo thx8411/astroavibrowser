@@ -8,6 +8,7 @@ astroavibrowser (0.3beta20100216) jaunty; urgency=low
   * better de-bayer quality
   * 8 bits luminance now in with both raw en lossless codecs
   * lossless codec is now huffyuv instead of zlib (faster and smaller outputs)
+  * BMP output added
 
  -- Blaise-Florentin Collin <collin@eeepc901>  Sun, 15 Feb 2010 21:13:12 +0100
 

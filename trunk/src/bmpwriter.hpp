@@ -21,27 +21,29 @@
 #ifndef _BMPWRITER_HPP_
 #define _BMPWRITER_HPP_
 
+#include <stdint.h>
+#include "filewriter.hpp"
+
+// works only on little endian archs
 typedef struct {
    // file header
    char type[2];
-   unsigned int total_size;
-   unsigned int reserved1;
-   unsigned int offset;
+   uint32_t total_size;
+   uint32_t reserved;
+   uint32_t offset;
    // picture header
-   unsigned int header_size;
-   unsigned int width;
-   unsigned int height;
-   unsigned short plans;
-   unsigned short depth;
-   unsigned int compression;
-   unsigned int picture_size;
-   unsigned int hres;
-   unsigned int vres;
-   unsigned int palette_size;
-   unsigned int important_colors;
+   uint32_t header_size;
+   uint32_t width;
+   uint32_t height;
+   uint16_t plans;
+   uint16_t depth;
+   uint32_t compression;
+   uint32_t picture_size;
+   uint32_t hres;
+   uint32_t vres;
+   uint32_t palette_size;
+   uint32_t important_colors;
 } BMPHEADER;
-
-#include "filewriter.hpp"
 
 class BmpWriter : public FileWriter {
    public :

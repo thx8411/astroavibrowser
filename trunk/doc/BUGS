@@ -4,3 +4,4 @@ Known Bugs :
    to get the real frame number (no index used)
  - no proper display with some p-b frames codecs
  - frame/average histogram not on the same scale
+ - BMP won't work on big endian archs

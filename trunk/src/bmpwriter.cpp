@@ -30,6 +30,18 @@
 
 using namespace std;
 
+// 2-byte number
+unsigned short SHORT_little_endian_TO_big_endian(unsigned short i)
+{
+    return ((i>>8)&0xff)+((i << 8)&0xff00);
+}
+
+// 4-byte number
+unsigned int INT_little_endian_TO_big_endian(unsigned int i)
+{
+    return((i&0xff)<<24)+((i&0xff00)<<8)+((i&0xff0000)>>8)+((i>>24)&0xff);
+}
+
 BmpWriter::BmpWriter(int codec, int plans, const char* name, int width, int height, int frameRate) : FileWriter (codec,plans,name,width,height,frameRate) {
    frameNumber=0;
 }
@@ -60,6 +72,8 @@ void BmpWriter::AddFrame(unsigned char* datas) {
 
    fd=open(fileName.c_str(),O_WRONLY|O_CREAT,0644);
 
+   cout << sizeof(bi) << endl;
+
    // write header
    memset(&bi,0,sizeof(bi));
    bi.type[0]='B';
@@ -69,7 +83,7 @@ void BmpWriter::AddFrame(unsigned char* datas) {
    bi.height=h;
    bi.compression=0;
    bi.important_colors=0;
-   if(plans_=ALL_PLANS) {
+   if(plans_==ALL_PLANS) {
       bi.offset=54;
       bi.plans=1;
       bi.depth=24;
@@ -81,7 +95,21 @@ void BmpWriter::AddFrame(unsigned char* datas) {
       bi.picture_size=w*h;
    }
    bi.total_size=bi.offset+bi.picture_size;
-   res=write(fd,&bi,sizeof(bi));
+   res=write(fd,&bi.type,2);
+   res=write(fd,&bi.total_size,4);
+   res=write(fd,&bi.reserved,4);
+   res=write(fd,&bi.offset,4);
+   res=write(fd,&bi.header_size,4);
+   res=write(fd,&bi.width,4);
+   res=write(fd,&bi.height,4);
+   res=write(fd,&bi.plans,2);
+   res=write(fd,&bi.depth,2);
+   res=write(fd,&bi.compression,4);
+   res=write(fd,&bi.picture_size,4);
+   res=write(fd,&bi.hres,4);
+   res=write(fd,&bi.vres,4);
+   res=write(fd,&bi.palette_size,4);
+   res=write(fd,&bi.important_colors,4);
 
    // write palette if needed
    if(plans_!=ALL_PLANS) {
@@ -93,10 +121,14 @@ void BmpWriter::AddFrame(unsigned char* datas) {
    }
 
    // write picture
+   rgb24_vertical_swap(w,h,datas);
    if(plans_==ALL_PLANS) {
       res=write(fd,datas,bi.picture_size);
    } else {
-      //
+      unsigned char* tmp;
+      tmp=getPlan(w,h,datas,plans_);
+      res=write(fd,tmp,bi.picture_size);
+      free(tmp);
    }
 
    close(fd);
