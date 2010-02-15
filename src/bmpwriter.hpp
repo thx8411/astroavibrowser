@@ -21,14 +21,35 @@
 #ifndef _BMPWRITER_HPP_
 #define _BMPWRITER_HPP_
 
+typedef struct {
+   // file header
+   char type[2];
+   unsigned int total_size;
+   unsigned int reserved1;
+   unsigned int offset;
+   // picture header
+   unsigned int header_size;
+   unsigned int width;
+   unsigned int height;
+   unsigned short plans;
+   unsigned short depth;
+   unsigned int compression;
+   unsigned int picture_size;
+   unsigned int hres;
+   unsigned int vres;
+   unsigned int palette_size;
+   unsigned int important_colors;
+} BMPHEADER;
+
 #include "filewriter.hpp"
 
-class BmpWriter {
+class BmpWriter : public FileWriter {
    public :
       BmpWriter(int codec, int plans, const char* name, int width, int height, int frameRate);
       ~BmpWriter();
       void AddFrame(unsigned char* datas);
    private:
+      int frameNumber;
 };
 
 #endif

@@ -33,7 +33,7 @@ extern "C" {
 
 #include "config.h"
 
-#include "aviwriter.hpp"
+#include "filewriter.hpp"
 
 #include "Qhistogram.hpp"
 
@@ -58,7 +58,7 @@ class FrameList : public QListWidget
       // scans the stream and fill the list
       void fill();
       // dump selected frames in the given codec
-      void dump(AviWriter* file);
+      void dump(FileWriter* file);
       // returns the total stream frame number
       // real number, no approx.
       int getFrameNumber();

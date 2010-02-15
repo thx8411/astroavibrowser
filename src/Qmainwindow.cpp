@@ -33,12 +33,17 @@
 #include "version.hpp"
 #include "processing.hpp"
 #include "aviwriter.hpp"
+#include "bmpwriter.hpp"
 
 #include "Qmainwindow.moc"
 
 using namespace std;
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
+   // basic init
+   outputCodec=CODEC_RAW;
+   outputFormat=AVI_FILE;
+
    // ffmpeg datas init
    inputFileFormatContext=NULL;
    inputFileCodec=NULL;
@@ -57,6 +62,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    rPlan= new QAction("Save &R plan...",this);
    gPlan= new QAction("Save &G plan...",this);
    bPlan= new QAction("Save &B plan...",this);
+   useBmp=new QAction("BMP sequence",this);
+   useBmp->setCheckable(true);
    about = new QAction("&About...",this);
    // file menu
    QMenu* file;
@@ -79,7 +86,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    // output menu
    QMenu* output;
    output = menuBar()->addMenu("O&utput");
-   codec= output->addMenu("Output Codec");
+   output->addAction(useBmp);
+   codec= output->addMenu("Avi movie");
    // help menu
    QMenu* help;
    help = menuBar()->addMenu("&Help");
@@ -93,6 +101,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    connect(bPlan, SIGNAL(triggered()), this, SLOT(MenuSaveB()));
    connect(quit, SIGNAL(triggered()), qApp, SLOT(quit()));
    connect(properties, SIGNAL(triggered()), this, SLOT(MenuProperties()));
+   connect(useBmp,SIGNAL(toggled(bool)),this,SLOT(MenuBmp(bool)));
    connect(about, SIGNAL(triggered()), this, SLOT(MenuAbout()));
 
    // CENTRAL ZONE
@@ -124,6 +133,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    rPlan->setEnabled(false);
    gPlan->setEnabled(false);
    bPlan->setEnabled(false);
+   useBmp->setEnabled(false);
    codec->setEnabled(false);
    selectAll->setEnabled(false);
    unSelectAll->setEnabled(false);
@@ -208,6 +218,7 @@ void MainWindow::freeFile() {
    rPlan->setEnabled(false);
    gPlan->setEnabled(false);
    bPlan->setEnabled(false);
+   useBmp->setEnabled(false);
    codec->setEnabled(false);
    selectAll->setEnabled(false);
    unSelectAll->setEnabled(false);
@@ -302,6 +313,7 @@ void MainWindow::MenuOpen() {
    rPlan->setEnabled(true);
    gPlan->setEnabled(true);
    bPlan->setEnabled(true);
+   useBmp->setEnabled(true);
    codec->setEnabled(true);
    selectAll->setEnabled(true);
    unSelectAll->setEnabled(true);
@@ -338,15 +350,20 @@ void MainWindow::MenuSaveB() {
 }
 
 void MainWindow::MenuSaveImpl(int p) {
-   AviWriter*	file;
+   string extension;
+   FileWriter*	file;
    // is there selected frames ?
    if(frameList->getSelectedFrames()==0) {
       QMessageBox::critical(this, tr("AstroAviBrowser"),tr("No frame selected"));
       return;
    }
 
+   if(outputFormat==BMP_FILE)
+      extension="Bmp Files (*.bmp *.BMP)";
+   else
+      extension="Avi Files (*.avi *.AVI)";
    // query file name
-   outputFileName = QFileDialog::getSaveFileName(this, tr("Save Video"),"/home",tr("Avi Files (*.avi *.AVI)"));
+   outputFileName = QFileDialog::getSaveFileName(this, tr("Save Video"),"/home",extension.c_str());
 
    // is the name valid ?
    if(outputFileName=="")
@@ -368,7 +385,11 @@ void MainWindow::MenuSaveImpl(int p) {
    frameRate=(float)inputFileFormatContext->streams[inputStreamNumber]->r_frame_rate.den/(float)inputFileFormatContext->streams[inputStreamNumber]->r_frame_rate.num*1000000;
 
    // saving the new avi
-   file=new AviWriter(outputCodec,p,outputFileName.toStdString().c_str(),inputFileCodecContext->width,inputFileCodecContext->height,frameRate);
+   if(outputFormat==BMP_FILE) {
+      file=new BmpWriter(outputCodec,p,outputFileName.toStdString().c_str(),inputFileCodecContext->width,inputFileCodecContext->height,frameRate);
+   } else {
+      file=new AviWriter(outputCodec,p,outputFileName.toStdString().c_str(),inputFileCodecContext->width,inputFileCodecContext->height,frameRate);
+   }
    frameList->dump(file);
    delete file;
 
@@ -420,6 +441,17 @@ void MainWindow::MenuProperties() {
    message+=tmp;
    message+="\n";
    QMessageBox::information(this, tr("AstroAviBrowser"),tr(message.toStdString().c_str()));
+}
+
+// bmp output
+void MainWindow::MenuBmp(bool v) {
+   if(v) {
+      codec->setEnabled(false);
+      outputFormat=BMP_FILE;
+   } else {
+      codec->setEnabled(true);
+      outputFormat=AVI_FILE;
+   }
 }
 
 // ABOUT...
