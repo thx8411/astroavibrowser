@@ -30,18 +30,6 @@
 
 using namespace std;
 
-// 2-byte number
-unsigned short SHORT_little_endian_TO_big_endian(unsigned short i)
-{
-    return ((i>>8)&0xff)+((i << 8)&0xff00);
-}
-
-// 4-byte number
-unsigned int INT_little_endian_TO_big_endian(unsigned int i)
-{
-    return((i&0xff)<<24)+((i&0xff00)<<8)+((i&0xff0000)>>8)+((i>>24)&0xff);
-}
-
 BmpWriter::BmpWriter(int codec, int plans, const char* name, int width, int height, int frameRate) : FileWriter (codec,plans,name,width,height,frameRate) {
    frameNumber=0;
 }
@@ -71,8 +59,6 @@ void BmpWriter::AddFrame(unsigned char* datas) {
    fileName+=".bmp";
 
    fd=open(fileName.c_str(),O_WRONLY|O_CREAT,0644);
-
-   cout << sizeof(bi) << endl;
 
    // write header
    memset(&bi,0,sizeof(bi));
