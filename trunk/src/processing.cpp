@@ -134,14 +134,18 @@ int getPixelColor(int x,int y,int mode) {
 }
 
 // rgb raw to rgb color conversion
-// we use the green plan (close to luminance on most codecs)
-void raw2rgb(unsigned char * dest,const unsigned char * const data,int w,int h,int mode) {
+void raw2rgb(unsigned char * dest, unsigned char * const data,int w,int h,int mode) {
+   unsigned char* lum;
    int pixelOffset;
-   int rowOffset=3;
-   int lineOffset=w*3;
+   int pixelOffsetLum;
+   int rowOffset=1;
+   int lineOffset=w;
+   // compute luminance first
+   lum=getPlan(w,h,data,LUM_PLAN);
    for(int x=0;x<w;x++) {
       for(int y=0;y<h;y++) {
-         pixelOffset=(y*w+x)*3;
+         pixelOffsetLum=y*w+x;
+         pixelOffset=pixelOffsetLum*3;
          // manage edges
          if((x==0)||(x==w-1)||(y==0)||(y==h-1)) {
             dest[pixelOffset+RED_OFFSET]=0;
@@ -150,41 +154,42 @@ void raw2rgb(unsigned char * dest,const unsigned char * const data,int w,int h,i
          } else {
             switch(getPixelColor(x,y,mode)) {
                case RED :
-                  dest[pixelOffset+RED_OFFSET]=data[pixelOffset+GREEN_OFFSET];
-                  dest[pixelOffset+GREEN_OFFSET]=(data[pixelOffset-rowOffset+GREEN_OFFSET]
-                     +data[pixelOffset+rowOffset+GREEN_OFFSET]
-                     +data[pixelOffset-lineOffset+GREEN_OFFSET]
-                     +data[pixelOffset+lineOffset+GREEN_OFFSET])/4;
-                  dest[pixelOffset+BLUE_OFFSET]=(data[pixelOffset+lineOffset+rowOffset+GREEN_OFFSET]
-                     +data[pixelOffset+lineOffset-rowOffset+GREEN_OFFSET]
-                     +data[pixelOffset-lineOffset+rowOffset+GREEN_OFFSET]
-                     +data[pixelOffset-lineOffset-rowOffset+GREEN_OFFSET])/4;
+                  dest[pixelOffset+RED_OFFSET]=lum[pixelOffsetLum];
+                  dest[pixelOffset+GREEN_OFFSET]=(lum[pixelOffsetLum-rowOffset]
+                     +lum[pixelOffsetLum+rowOffset]
+                     +lum[pixelOffsetLum-lineOffset]
+                     +lum[pixelOffsetLum+lineOffset])/4;
+                  dest[pixelOffset+BLUE_OFFSET]=(lum[pixelOffsetLum+lineOffset+rowOffset]
+                     +lum[pixelOffsetLum+lineOffset-rowOffset]
+                     +lum[pixelOffsetLum-lineOffset+rowOffset]
+                     +lum[pixelOffsetLum-lineOffset-rowOffset])/4;
                   break;
                case GREEN1 :
-                  dest[pixelOffset+RED_OFFSET]=(data[pixelOffset+rowOffset+GREEN_OFFSET]+data[pixelOffset-rowOffset+GREEN_OFFSET])/2;
-                  dest[pixelOffset+GREEN_OFFSET]=data[pixelOffset+GREEN_OFFSET];
-                  dest[pixelOffset+BLUE_OFFSET]=(data[pixelOffset+lineOffset+GREEN_OFFSET]+data[pixelOffset-lineOffset+GREEN_OFFSET])/2;
+                  dest[pixelOffset+RED_OFFSET]=(lum[pixelOffsetLum+rowOffset]+lum[pixelOffsetLum-rowOffset])/2;
+                  dest[pixelOffset+GREEN_OFFSET]=lum[pixelOffsetLum];
+                  dest[pixelOffset+BLUE_OFFSET]=(lum[pixelOffsetLum+lineOffset]+lum[pixelOffsetLum-lineOffset])/2;
                   break;
                case GREEN2 :
-                  dest[pixelOffset+RED_OFFSET]=(data[pixelOffset+lineOffset+GREEN_OFFSET]+data[pixelOffset-lineOffset+GREEN_OFFSET])/2;
-                  dest[pixelOffset+GREEN_OFFSET]=data[pixelOffset+GREEN_OFFSET];
-                  dest[pixelOffset+BLUE_OFFSET]=(data[pixelOffset+rowOffset+GREEN_OFFSET]+data[pixelOffset-rowOffset+GREEN_OFFSET])/2;
+                  dest[pixelOffset+RED_OFFSET]=(lum[pixelOffsetLum+lineOffset]+lum[pixelOffsetLum-lineOffset])/2;
+                  dest[pixelOffset+GREEN_OFFSET]=lum[pixelOffsetLum];
+                  dest[pixelOffset+BLUE_OFFSET]=(lum[pixelOffsetLum+rowOffset]+lum[pixelOffsetLum-rowOffset])/2;
                   break;
                case BLUE :
-                  dest[pixelOffset+RED_OFFSET]=(data[pixelOffset+lineOffset+rowOffset+GREEN_OFFSET]
-                     +data[pixelOffset+lineOffset-rowOffset+GREEN_OFFSET]
-                     +data[pixelOffset-lineOffset+rowOffset+GREEN_OFFSET]
-                     +data[pixelOffset-lineOffset-rowOffset+GREEN_OFFSET])/4;
-                  dest[pixelOffset+GREEN_OFFSET]=(data[pixelOffset-rowOffset+GREEN_OFFSET]
-                     +data[pixelOffset+rowOffset+GREEN_OFFSET]
-                     +data[pixelOffset-lineOffset+GREEN_OFFSET]
-                     +data[pixelOffset+lineOffset+GREEN_OFFSET])/4;
-                  dest[pixelOffset+BLUE_OFFSET]=data[pixelOffset+GREEN_OFFSET];
+                  dest[pixelOffset+RED_OFFSET]=(lum[pixelOffsetLum+lineOffset+rowOffset]
+                     +lum[pixelOffsetLum+lineOffset-rowOffset]
+                     +lum[pixelOffsetLum-lineOffset+rowOffset]
+                     +lum[pixelOffsetLum-lineOffset-rowOffset])/4;
+                  dest[pixelOffset+GREEN_OFFSET]=(lum[pixelOffsetLum-rowOffset]
+                     +lum[pixelOffsetLum+rowOffset]
+                     +lum[pixelOffsetLum-lineOffset]
+                     +lum[pixelOffsetLum+lineOffset])/4;
+                  dest[pixelOffset+BLUE_OFFSET]=lum[pixelOffsetLum];
                   break;
             }
          }
       }
    }
+   free(lum);
 }
 
 // swap blue and green in rgb24 frame
