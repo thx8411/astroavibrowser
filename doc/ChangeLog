@@ -8,6 +8,7 @@ Vers. 0.3beta20100216
    - better debayer quality
    - 8 bits luminance now in with both raw en lossless codecs
    - lossless codec is now huffyuv instead of zlib (faster and smaller outputs)
+   - BMP output added
 
 Vers. 0.2.3
 
