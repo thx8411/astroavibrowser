@@ -24,11 +24,11 @@ LD=gcc
 MOC=/usr/share/qt4/bin/moc
 
 # release
-CCFLAGS=-O3
-LDFLAGS=-O3
+#CCFLAGS=-O3
+#LDFLAGS=-O3
 # debug
-#CCFLAGS= -O0 -g
-#LDFLAGS= -O0 -g
+CCFLAGS= -O0 -g
+LDFLAGS= -O0 -g
 
 INCS=/usr/include/qt4
 LIBS=-lQtCore -lQtGui -lavformat -lavcodec -lswscale -laviplay
@@ -46,8 +46,8 @@ clean :
 
 # FILES RULES
 
-$(BIN) : main.o Qmainwindow.o Qframedisplay.o Qframelist.o processing.o aviwriter.o Qhistogram.o
-	$(LD) $(LDFLAGS) -o $(BIN) main.o Qmainwindow.o Qframedisplay.o Qframelist.o processing.o aviwriter.o Qhistogram.o $(LIBS)
+$(BIN) : main.o Qmainwindow.o Qframedisplay.o Qframelist.o processing.o aviwriter.o Qhistogram.o filewriter.o bmpwriter.o
+	$(LD) $(LDFLAGS) -o $(BIN) main.o Qmainwindow.o Qframedisplay.o Qframelist.o processing.o aviwriter.o Qhistogram.o filewriter.o bmpwriter.o $(LIBS)
 
 main.o : main.cpp version.hpp config.h Qmainwindow.hpp
 	$(CC) $(CCFLAGS) main.cpp -I $(INCS)
@@ -79,5 +79,11 @@ Qhistogram.o : Qhistogram.cpp Qhistogram.moc
 processing.o : processing.hpp processing.cpp config.h
 	$(CC) $(CCFLAGS) processing.cpp -I $(INCS)
 
-aviwriter.o : aviwriter.cpp aviwriter.hpp Qmainwindow.hpp processing.hpp config.h
+filewriter.o : filewriter.cpp filewriter.hpp
+	$(CC) $(CCFLAGS) filewriter.cpp -I $(INCS)
+
+aviwriter.o : aviwriter.cpp aviwriter.hpp filewriter.hpp processing.hpp config.h
 	$(CC) $(CCFLAGS) aviwriter.cpp -I $(INCS)
+
+bmpwriter.o : bmpwriter.cpp bmpwriter.hpp filewriter.hpp processing.hpp config.h
+	$(CC) $(CCFLAGS) bmpwriter.cpp -I $(INCS)

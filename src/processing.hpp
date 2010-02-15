@@ -48,6 +48,9 @@ void rgb24_vertical_swap(int w, int h, unsigned char* data);
 // return R, G, B or luminance plan from rgb24
 unsigned char* getPlan(int w, int h, unsigned char* data, int plan);
 
+// 8 bits grey to yuy2
+void grey_to_yuy2(int w, int h, const unsigned char* src, unsigned char* dst);
+
 // returns an array of 256 ints, histograme of the rgb frame luminance
 int* getHistogram(int w, int h, unsigned char* data);
 

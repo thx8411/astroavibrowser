@@ -53,6 +53,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    save = new QAction("&Save...",this);
    quit = new QAction("&Quit", this);
    properties = new QAction("Get &Properties...",this);
+   lPlan=new QAction("Save &Luminance...",this);
    rPlan= new QAction("Save &R plan...",this);
    gPlan= new QAction("Save &G plan...",this);
    bPlan= new QAction("Save &B plan...",this);
@@ -63,6 +64,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    file->addAction(openfile);
    file->addAction(save);
    file->addSeparator();
+   file->addAction(lPlan);
    file->addAction(rPlan);
    file->addAction(gPlan);
    file->addAction(bPlan);
@@ -85,6 +87,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    // signal connections
    connect(openfile, SIGNAL(triggered()), this, SLOT(MenuOpen()));
    connect(save, SIGNAL(triggered()), this, SLOT(MenuSaveAll()));
+   connect(lPlan, SIGNAL(triggered()), this, SLOT(MenuSaveL()));
    connect(rPlan, SIGNAL(triggered()), this, SLOT(MenuSaveR()));
    connect(gPlan, SIGNAL(triggered()), this, SLOT(MenuSaveG()));
    connect(bPlan, SIGNAL(triggered()), this, SLOT(MenuSaveB()));
@@ -117,6 +120,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    properties->setEnabled(false);
    bayer->setEnabled(false);
    codec->setEnabled(false);
+   lPlan->setEnabled(false);
    rPlan->setEnabled(false);
    gPlan->setEnabled(false);
    bPlan->setEnabled(false);
@@ -200,6 +204,7 @@ void MainWindow::freeFile() {
    save->setEnabled(false);
    properties->setEnabled(false);
    bayer->setEnabled(false);
+   lPlan->setEnabled(false);
    rPlan->setEnabled(false);
    gPlan->setEnabled(false);
    bPlan->setEnabled(false);
@@ -293,6 +298,7 @@ void MainWindow::MenuOpen() {
    properties->setEnabled(true);
    bayer->setEnabled(true);
    codec->setEnabled(true);
+   lPlan->setEnabled(true);
    rPlan->setEnabled(true);
    gPlan->setEnabled(true);
    bPlan->setEnabled(true);
@@ -313,6 +319,10 @@ void MainWindow::MenuOpen() {
 
 void MainWindow::MenuSaveAll() {
    MenuSaveImpl(ALL_PLANS);
+}
+
+void MainWindow::MenuSaveL() {
+   MenuSaveImpl(LUM_PLAN);
 }
 
 void MainWindow::MenuSaveR() {
@@ -539,31 +549,20 @@ void MainWindow::setGr() {
 // output codec callbacks
 //
 
-void MainWindow::setRawgrey() {
-   codecRawgrey->setChecked(true);
-   codecRawrgb->setChecked(false);
+void MainWindow::setRaw() {
+   codecRaw->setChecked(true);
    codecLossless->setChecked(false);
 
    // update codec
-   outputCodec=CODEC_RAWGREY;
-}
-
-void MainWindow::setRawrgb() {
-   codecRawgrey->setChecked(false);
-   codecRawrgb->setChecked(true);
-   codecLossless->setChecked(false);
-
-   // update codec
-   outputCodec=CODEC_RAWRGB;
+   outputCodec=CODEC_RAW;
 }
 
 void MainWindow::setLossless() {
-   codecRawgrey->setChecked(false);
-   codecRawrgb->setChecked(false);
+   codecRaw->setChecked(false);
    codecLossless->setChecked(true);
 
    // update codec
-   outputCodec=CODEC_LOSSLESSRGB;
+   outputCodec=CODEC_LOSSLESS;
 }
 
 //
@@ -598,19 +597,15 @@ void MainWindow::createBayerMenu() {
 }
 
 void MainWindow::createCodecMenu() {
-   codecRawgrey=new QAction("Raw 8 bits Luminance",codec);
-   codecRawrgb=new QAction("Raw RGB",codec);
-   codecLossless=new QAction("Lossless RGB",codec);
-   codecRawrgb->setCheckable(true);
-   codecRawgrey->setCheckable(true);
+   codecRaw=new QAction("Raw",codec);
+   codecLossless=new QAction("Lossless Huffyuv",codec);
+   codecRaw->setCheckable(true);
    codecLossless->setCheckable(true);
-   codec->addAction(codecRawrgb);
+   codec->addAction(codecRaw);
    codec->addAction(codecLossless);
-   codec->addAction(codecRawgrey);
 
-   setRawrgb();
+   setRaw();
 
-   connect(codecRawrgb,SIGNAL(triggered()),this,SLOT(setRawrgb()));
-   connect(codecRawgrey,SIGNAL(triggered()),this,SLOT(setRawgrey()));
+   connect(codecRaw,SIGNAL(triggered()),this,SLOT(setRaw()));
    connect(codecLossless,SIGNAL(triggered()),this,SLOT(setLossless()));
 }
