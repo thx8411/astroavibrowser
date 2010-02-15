@@ -5,8 +5,15 @@ astroavibrowser (0.3) jaunty; urgency=low
   * Better luminance conversion
   * 8bits avi raw palette bug fixed
   * Debian packaging modified for multi-platforme
+  * better de-bayer quality
 
- -- Blaise-Florentin Collin <collin@eeepc901>  Sun, 15 Jan 2010 21:13:12 +0100
+ -- Blaise-Florentin Collin <collin@eeepc901>  Sun, 15 Feb 2010 21:13:12 +0100
+
+astroavibrowser (0.2.3) jaunty; urgency=low
+
+  * frame seeking bug fixed
+
+ -- Blaise-Florentin Collin <collin@eeepc901>  Sun, 10 Feb 2010 21:13:12 +0100
 
 astroavibrowser (0.2.2) jaunty; urgency=low
 

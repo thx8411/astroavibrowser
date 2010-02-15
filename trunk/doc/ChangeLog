@@ -5,6 +5,11 @@ Vers. 0.3
    - better luminance conversion
    - frame histogram added
    - 8bits avi raw palette bug fixed
+   - better debayer quality
+
+Vers. 0.2.3
+
+   - frame seeking bug fixed
 
 Vers. 0.2.2
 
