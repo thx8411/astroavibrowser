@@ -71,7 +71,7 @@ AviWriter::AviWriter(int codec, int plans, const char* name, int width, int heig
       bi->bmiHeader.biBitCount=8;
       bi->bmiHeader.biCompression=BI_RGB;
       // setting palette
-      for(int i=0;i<256;i++)
+      for(unsigned int i=0;i<256;i++)
          bi->bmiColors[i]=(i<<16)+(i<<8)+i;
       aviChunkStream_=aviFile_->AddStream(AviStream::Video,bi,sizeof(BITMAPINFOHEADER)+256*4,BI_RGB,frameRate);
       free(bi);
