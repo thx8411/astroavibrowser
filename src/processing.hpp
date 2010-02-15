@@ -36,7 +36,7 @@
 #define RAW_GR          4
 
 // vesta raw to rgb conversion
-void raw2rgb(unsigned char * dest,const unsigned char * const data,
+void raw2rgb(unsigned char * dest, unsigned char * const data,
                int w, int h,int mode);
 
 // bgr to rgb plan swap

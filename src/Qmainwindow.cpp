@@ -344,11 +344,11 @@ void MainWindow::MenuSaveImpl(int p) {
 
    // testing file access
    int fd;
-   if(open(outputFileName.toStdString().c_str(),O_WRONLY|O_CREAT,S_IWUSR)<0){
+   if(fd=open(outputFileName.toStdString().c_str(),O_WRONLY|O_CREAT,S_IWUSR)<0){
       QMessageBox::critical(this, tr("AstroAviBrowser"),tr("Write access denied"));
       return;
-   } else
-      unlink(outputFileName.toStdString().c_str());
+   }
+   unlink(outputFileName.toStdString().c_str());
 
    // it could be long...
    setCursor(Qt::BusyCursor);
