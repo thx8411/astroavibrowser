@@ -1,4 +1,4 @@
-Vers. 0.3
+Vers. 0.3beta20100216
 
    - cout redirected to log file
    - debian packaging modified for multi-plateforme
@@ -6,6 +6,8 @@ Vers. 0.3
    - frame histogram added
    - 8bits avi raw palette bug fixed
    - better debayer quality
+   - 8 bits luminance now in with both raw en lossless codecs
+   - lossless codec is now huffyuv instead of zlib (faster and smaller outputs)
 
 Vers. 0.2.3
 

@@ -51,6 +51,7 @@ class MainWindow : public QMainWindow
       // menu slots
       void MenuOpen();
       void MenuSaveAll();
+      void MenuSaveL();
       void MenuSaveR();
       void MenuSaveG();
       void MenuSaveB();
@@ -63,8 +64,7 @@ class MainWindow : public QMainWindow
       void setRg();
       void setGr();
       // ouput codecs slots
-      void setRawgrey();
-      void setRawrgb();
+      void setRaw();
       void setLossless();
       // buttons slots
       void ButtonSelectAll();
@@ -82,6 +82,7 @@ class MainWindow : public QMainWindow
       // menu actions
       QAction* openfile;
       QAction* save;
+      QAction* lPlan;
       QAction* rPlan;
       QAction* gPlan;
       QAction* bPlan;
@@ -97,8 +98,7 @@ class MainWindow : public QMainWindow
       QAction* bayerRg;
       QAction* bayerGr;
       // codec menu radio buttons
-      QAction* codecRawgrey;
-      QAction* codecRawrgb;
+      QAction* codecRaw;
       QAction* codecLossless;
       // buttons
       QPushButton* selectAll;

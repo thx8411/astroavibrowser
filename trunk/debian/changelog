@@ -1,4 +1,4 @@
-astroavibrowser (0.3) jaunty; urgency=low
+astroavibrowser (0.3beta20100216) jaunty; urgency=low
 
   * cout redirected to log file
   * Frame histogram added
@@ -6,6 +6,8 @@ astroavibrowser (0.3) jaunty; urgency=low
   * 8bits avi raw palette bug fixed
   * Debian packaging modified for multi-platforme
   * better de-bayer quality
+  * 8 bits luminance now in with both raw en lossless codecs
+  * lossless codec is now huffyuv instead of zlib (faster and smaller outputs)
 
  -- Blaise-Florentin Collin <collin@eeepc901>  Sun, 15 Feb 2010 21:13:12 +0100
 

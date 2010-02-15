@@ -18,25 +18,23 @@
  * MA 02110-1301 USA
  */
 
-#ifndef _AVIWRITER_HPP_
-#define _AVIWRITER_HPP_
+#ifndef _FILEWRITER_HPP_
+#define _FILEWRITER_HPP_
 
-#include <avifile/avifile.h>
-#include <avifile/image.h>
-#include <avifile/avm_fourcc.h>
+// codecs
+#define CODEC_RAW	1
+#define CODEC_LOSSLESS	2
 
-#include "filewriter.hpp"
-
-class AviWriter : public FileWriter {
+class FileWriter {
    public :
-      AviWriter(int codec, int plans, const char* name, int width, int height, int frameRate);
-      ~AviWriter();
-      void AddFrame(unsigned char* datas);
-   private:
-      avm::IWriteFile* aviFile_;
-      avm::IWriteStream* aviChunkStream_;
-      avm::IVideoWriteStream* aviFrameStream_;
-      unsigned char* temp_buffer;
+      FileWriter(int codec, int plans, const char* name, int width, int height, int frameRate);
+      ~FileWriter() {};
+      virtual void AddFrame(unsigned char* datas) {};
+   protected :
+      int w;
+      int h;
+      int codec_;
+      int plans_;
 };
 
 #endif
