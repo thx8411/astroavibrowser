@@ -56,6 +56,7 @@ class MainWindow : public QMainWindow
       void MenuSaveG();
       void MenuSaveB();
       void MenuProperties();
+      void MenuBmp(bool v);
       void MenuAbout();
       // input mode slots
       void setNone();
@@ -89,6 +90,7 @@ class MainWindow : public QMainWindow
       QAction* quit;
       QAction* properties;
       QMenu* bayer;
+      QAction* useBmp;
       QMenu* codec;
       QAction* about;
       // bayer menu radio buttons
@@ -112,7 +114,8 @@ class MainWindow : public QMainWindow
       FrameDisplay* frameDisplay;
       FrameList* frameList;
       Histogram* histogram;
-      // avifile datas
+      // file datas
+      int outputFormat;
       int outputCodec;
       // ffmpeg datas
       AVFormatContext* inputFileFormatContext;

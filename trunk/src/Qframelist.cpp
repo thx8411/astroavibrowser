@@ -225,7 +225,7 @@ void getPlan(unsigned char* dest, unsigned char* source, int size, int colorPlan
    }
 }
 
-void FrameList::dump(AviWriter* file) {
+void FrameList::dump(FileWriter* file) {
    unsigned char* datas;
    AVFrame* savedFrame;
    QProgressDialog* progress;

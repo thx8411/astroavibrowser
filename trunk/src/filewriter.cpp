@@ -32,6 +32,7 @@ FileWriter::FileWriter(int codec, int plans, const char* name, int width, int he
    h=height;
    codec_=codec;
    plans_=plans;
+   name_=name;
 }
 
 

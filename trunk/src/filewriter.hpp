@@ -21,9 +21,17 @@
 #ifndef _FILEWRITER_HPP_
 #define _FILEWRITER_HPP_
 
+#include <string>
+
+// formats
+#define BMP_FILE	1
+#define AVI_FILE	2
+
 // codecs
 #define CODEC_RAW	1
 #define CODEC_LOSSLESS	2
+
+using namespace std;
 
 class FileWriter {
    public :
@@ -35,6 +43,7 @@ class FileWriter {
       int h;
       int codec_;
       int plans_;
+      string name_;
 };
 
 #endif
