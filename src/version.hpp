@@ -22,7 +22,7 @@
 #define _VERSION_HPP_
 
 const char * const Version ="0.3beta20100216";
-const int          Build   =22;
+const int          Build   =23;
 const char * const Web = "http://sourceforge.net/projects/AstroAviBrowser/";
 const char * const Mail = "thx8411@users.sourceforge.net";
 const char * const Name = "AstroAviBrowser";
