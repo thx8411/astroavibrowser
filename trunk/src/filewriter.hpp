@@ -36,7 +36,7 @@ using namespace std;
 class FileWriter {
    public :
       FileWriter(int codec, int plans, const char* name, int width, int height, int frameRate);
-      ~FileWriter() {};
+      virtual ~FileWriter() {};
       virtual void AddFrame(unsigned char* datas) {};
    protected :
       int w;
