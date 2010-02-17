@@ -268,6 +268,7 @@ void FrameList::dump(FileWriter* file) {
 int* FrameList::getAverage() {
    int i,j;
    int* values=NULL;
+   int* tmpValues;
    long sum[256];
    unsigned char* datas;
    AVFrame* savedFrame;
@@ -300,9 +301,10 @@ int* FrameList::getAverage() {
                raw2rgb(datas,savedFrame->data[0],codecContext->width,codecContext->height,frameDisplay->getRawmode());
             bgr2rgb(datas,codecContext->width,codecContext->height);
             // add histogram
-            values=getHistogram(codecContext->width,codecContext->height,datas);
+            tmpValues=getHistogram(codecContext->width,codecContext->height,datas);
             for(j=0;j<256;j++)
-               sum[j]+=values[j];
+               sum[j]+=tmpValues[j];
+            free(tmpValues);
          }
       }
    }
