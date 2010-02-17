@@ -123,6 +123,8 @@ class MainWindow : public QMainWindow
       AVCodec* inputFileCodec;
       // video sequence frame number
       int inputStreamNumber;
+      // have we huffyuv.dll ?
+      bool useLossless;
 };
 
 #endif

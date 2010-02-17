@@ -128,7 +128,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    save->setEnabled(false);
    properties->setEnabled(false);
    bayer->setEnabled(false);
-   codec->setEnabled(false);
    lPlan->setEnabled(false);
    rPlan->setEnabled(false);
    gPlan->setEnabled(false);
@@ -189,6 +188,16 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
 
    // register all formats and codecs
    av_register_all();
+
+   // looking for huffyuv.dll
+   FILE* fd=fopen("/usr/lib/win32/huffyuv.dll","r");
+   if(fd==NULL) {
+      QMessageBox::information(this, tr("AstroAviBrowser"),tr("'/usr/lib/win32/huffyuv.dll' not found\n AVI lossless format will be disabled"));
+      useLossless=false;
+   } else {
+      fclose(fd);
+      useLossless=true;
+   }
 }
 
 MainWindow::~MainWindow() {
@@ -308,13 +317,13 @@ void MainWindow::MenuOpen() {
    save->setEnabled(true);
    properties->setEnabled(true);
    bayer->setEnabled(true);
-   codec->setEnabled(true);
    lPlan->setEnabled(true);
    rPlan->setEnabled(true);
    gPlan->setEnabled(true);
    bPlan->setEnabled(true);
    useBmp->setEnabled(true);
-   codec->setEnabled(true);
+   if(useLossless)
+      codec->setEnabled(true);
    selectAll->setEnabled(true);
    unSelectAll->setEnabled(true);
    invertSelection->setEnabled(true);
@@ -449,7 +458,8 @@ void MainWindow::MenuBmp(bool v) {
       codec->setEnabled(false);
       outputFormat=BMP_FILE;
    } else {
-      codec->setEnabled(true);
+      if(useLossless)
+         codec->setEnabled(true);
       outputFormat=AVI_FILE;
    }
 }
