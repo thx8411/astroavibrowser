@@ -31,6 +31,8 @@ install : all
 	install -d $(DESTDIR)/share/icons; install -m 644 icons/astroavibrowser-icon.png $(DESTDIR)/share/icons
 	install -d $(DESTDIR)/share/astroavibrowser/icons; install -m 644 icons/*.png $(DESTDIR)/share/astroavibrowser/icons
 	install -d $(DESTDIR)/share/applications; install -m 644 astroavibrowser-entry.desktop $(DESTDIR)/share/applications
+	install -d $(DESTDIR)/share/astroavibrowser; install -m 644 lib/huffyuv_readme.txt $(DESTDIR)/share/astroavibrowser
+	install -d $(DESTDIR)/lib/win32; install -m 644 lib/huffyuv.dll $(DESTDIR)/lib/win32
 
 clean :
 	$(MAKE) -C src clean
