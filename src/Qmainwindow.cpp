@@ -618,10 +618,10 @@ void MainWindow::createBayerMenu() {
    bayerRg=new QAction("Raw RG",bayer);
    bayerGr=new QAction("Raw GR",bayer);
    bayerNone->setCheckable(true);
-   bayerBg->setCheckable(false);
-   bayerGb->setCheckable(false);
-   bayerRg->setCheckable(false);
-   bayerGr->setCheckable(false);
+   bayerBg->setCheckable(true);
+   bayerGb->setCheckable(true);
+   bayerRg->setCheckable(true);
+   bayerGr->setCheckable(true);
    bayer->addAction(bayerNone);
    bayer->addAction(bayerBg);
    bayer->addAction(bayerGb);
