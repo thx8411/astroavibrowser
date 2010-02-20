@@ -6,7 +6,7 @@ Package: astroavibrowser
 Architecture: any
 Section: graphics
 Priority: optional
-Depends: ${shlibs:Depends}
+Depends: ${shlibs:Depends} , avifile-win32-plugin (>= 1:0.7.47)
 Description: Video editing tool for Astronomy
  Like AviRaw for Windows, AstroAviBrowser opens any ffmpeg known file. You may
  de-bayer your video if needed, choose the best frames and save them in a raw lossless

@@ -1,4 +1,4 @@
-astroavibrowser (0.3beta20100217) jaunty; urgency=low
+astroavibrowser (0.3beta20100220) jaunty; urgency=low
 
   * cout redirected to log file
   * Frame histogram added
