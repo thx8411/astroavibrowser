@@ -4,9 +4,13 @@ TODO :
 - better error detection
 - speed up frame seeking
 - add autoconf
-- cerr redirection to avoid avifile and ffmpeg messages
+DONE - cerr redirection to avoid avifile and ffmpeg messages
 - apply dark, flat and offset to the video
 - add cropping features
 - add frame auto selection
-- add histogram display (with the average movie value)
+DONE - add histogram display (with the average movie value)
 - add help file
+DONE - add BMP output
+- generate grey/color dark master
+- generate grey/color falt master
+- use to native format RGB24 and YUV444
