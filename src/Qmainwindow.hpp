@@ -51,6 +51,12 @@ class MainWindow : public QMainWindow
       // menu slots
       void MenuOpen();
       void MenuSaveAll();
+      // menu dark/flat
+      void MenuDarkGrey();
+      void MenuDarkRGB();
+      void MenuFlatGrey();
+      void MenuFlatRGB();
+      // menu plans
       void MenuSaveL();
       void MenuSaveR();
       void MenuSaveG();
@@ -83,6 +89,12 @@ class MainWindow : public QMainWindow
       // menu actions
       QAction* openfile;
       QAction* save;
+      // dark/flat
+      QAction* darkGrey;
+      QAction* darkRGB;
+      QAction* flatGrey;
+      QAction* flatRGB;
+      // other plans
       QAction* lPlan;
       QAction* rPlan;
       QAction* gPlan;
