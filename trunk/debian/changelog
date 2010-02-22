@@ -1,3 +1,9 @@
+astroavibrowser (0.4) jaunty; urgency=low
+
+  * 
+
+ -- Blaise-Florentin Collin <collin@eeepc901>  Sun, 22 Feb 2010 21:13:12 +0100
+
 astroavibrowser (0.3) jaunty; urgency=low
 
   * cout redirected to log file
