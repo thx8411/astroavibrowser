@@ -58,6 +58,12 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    save = new QAction("&Save...",this);
    quit = new QAction("&Quit", this);
    properties = new QAction("Get &Properties...",this);
+   // dark/flat
+   darkGrey=new QAction("Build dark (mono)...",this);
+   darkRGB=new QAction("Build dark (rgb)...",this);
+   flatGrey=new QAction("Build flat (mono)...",this);
+   flatRGB=new QAction("Build flat (rgb)...",this);
+   // save plans
    lPlan=new QAction("Save &Luminance...",this);
    rPlan= new QAction("Save &R plan...",this);
    gPlan= new QAction("Save &G plan...",this);
@@ -75,6 +81,11 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    file->addAction(rPlan);
    file->addAction(gPlan);
    file->addAction(bPlan);
+   file->addSeparator();
+   file->addAction(darkGrey);
+   file->addAction(darkRGB);
+   file->addAction(flatGrey);
+   file->addAction(flatRGB);
    file->addSeparator();
    file->addAction(quit);
    // input menu
@@ -95,6 +106,12 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    // signal connections
    connect(openfile, SIGNAL(triggered()), this, SLOT(MenuOpen()));
    connect(save, SIGNAL(triggered()), this, SLOT(MenuSaveAll()));
+   // dark / flat
+   connect(darkGrey, SIGNAL(triggered()), this, SLOT(MenuDarkGrey()));
+   connect(darkRGB, SIGNAL(triggered()), this, SLOT(MenuDarkRGB()));
+   connect(flatGrey, SIGNAL(triggered()), this, SLOT(MenuFlatGrey()));
+   connect(flatRGB, SIGNAL(triggered()), this, SLOT(MenuFlatRGB()));
+   // plans
    connect(lPlan, SIGNAL(triggered()), this, SLOT(MenuSaveL()));
    connect(rPlan, SIGNAL(triggered()), this, SLOT(MenuSaveR()));
    connect(gPlan, SIGNAL(triggered()), this, SLOT(MenuSaveG()));
@@ -128,6 +145,12 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    save->setEnabled(false);
    properties->setEnabled(false);
    bayer->setEnabled(false);
+   // dark/flat
+   darkGrey->setEnabled(false);
+   darkRGB->setEnabled(false);
+   flatGrey->setEnabled(false);
+   flatRGB->setEnabled(false);
+   // plan
    lPlan->setEnabled(false);
    rPlan->setEnabled(false);
    gPlan->setEnabled(false);
@@ -223,6 +246,12 @@ void MainWindow::freeFile() {
    save->setEnabled(false);
    properties->setEnabled(false);
    bayer->setEnabled(false);
+   // dark/flat
+   darkGrey->setEnabled(false);
+   darkRGB->setEnabled(false);
+   flatGrey->setEnabled(false);
+   flatRGB->setEnabled(false);
+   // plan
    lPlan->setEnabled(false);
    rPlan->setEnabled(false);
    gPlan->setEnabled(false);
@@ -317,6 +346,12 @@ void MainWindow::MenuOpen() {
    save->setEnabled(true);
    properties->setEnabled(true);
    bayer->setEnabled(true);
+   // dark/flat
+   //darkGrey->setEnabled(false);
+   //darkRGB->setEnabled(false);
+   //flatGrey->setEnabled(false);
+   //flatRGB->setEnabled(false);
+   // plan
    lPlan->setEnabled(true);
    rPlan->setEnabled(true);
    gPlan->setEnabled(true);
@@ -334,6 +369,24 @@ void MainWindow::MenuOpen() {
 
    // set bayer
    setNone();
+}
+
+// PRE-PROCESS DARK/FLAT
+
+void MainWindow::MenuDarkGrey() {
+   //
+}
+
+void MainWindow::MenuDarkRGB() {
+   //
+}
+
+void MainWindow::MenuFlatGrey() {
+   //
+}
+
+void MainWindow::MenuFlatRGB() {
+   //
 }
 
 // SAVE
