@@ -131,7 +131,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    selectAll = new QPushButton("Select All");
    unSelectAll = new QPushButton("Unselect All");
    invertSelection = new QPushButton("Invert Selection");
-   autoSelection = new QPushButton("Auto Selection");
+   //autoSelection = new QPushButton("Auto Selection");
    // set buttons size (should be ok for 1024*600 with PAL format)
    selectAll->setMaximumWidth(135);
    selectAll->setMinimumWidth(135);
@@ -139,8 +139,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    unSelectAll->setMinimumWidth(135);
    invertSelection->setMaximumWidth(135);
    invertSelection->setMinimumWidth(135);
-   autoSelection->setMaximumWidth(135);
-   autoSelection->setMinimumWidth(135);
+   //autoSelection->setMaximumWidth(135);
+   //autoSelection->setMinimumWidth(135);
    // disabling widgets (no file loaded at this time)
    save->setEnabled(false);
    properties->setEnabled(false);
@@ -160,7 +160,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    selectAll->setEnabled(false);
    unSelectAll->setEnabled(false);
    invertSelection->setEnabled(false);
-   autoSelection->setEnabled(false);
+   //autoSelection->setEnabled(false);
    // scroll area
    QScrollArea* picture= new QScrollArea();
    // frame display and list
@@ -177,7 +177,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    connect(selectAll, SIGNAL(released()), this, SLOT(ButtonSelectAll()));
    connect(unSelectAll, SIGNAL(released()), this, SLOT(ButtonUnSelectAll()));
    connect(invertSelection, SIGNAL(released()), this, SLOT(ButtonInvert()));
-   connect(autoSelection, SIGNAL(released()), this, SLOT(ButtonAuto()));
+   //connect(autoSelection, SIGNAL(released()), this, SLOT(ButtonAuto()));
    // add widgets and layouts
    buttons->addWidget(selectAll);
    buttons->addWidget(unSelectAll);
@@ -261,7 +261,7 @@ void MainWindow::freeFile() {
    selectAll->setEnabled(false);
    unSelectAll->setEnabled(false);
    invertSelection->setEnabled(false);
-   autoSelection->setEnabled(false);
+   //autoSelection->setEnabled(false);
    histogram->setEnabled(false);
 }
 
@@ -347,10 +347,10 @@ void MainWindow::MenuOpen() {
    properties->setEnabled(true);
    bayer->setEnabled(true);
    // dark/flat
-   //darkGrey->setEnabled(false);
-   //darkRGB->setEnabled(false);
-   //flatGrey->setEnabled(false);
-   //flatRGB->setEnabled(false);
+   darkGrey->setEnabled(true);
+   darkRGB->setEnabled(true);
+   flatGrey->setEnabled(true);
+   flatRGB->setEnabled(true);
    // plan
    lPlan->setEnabled(true);
    rPlan->setEnabled(true);
@@ -362,31 +362,165 @@ void MainWindow::MenuOpen() {
    selectAll->setEnabled(true);
    unSelectAll->setEnabled(true);
    invertSelection->setEnabled(true);
-   autoSelection->setEnabled(true);
+   //autoSelection->setEnabled(true);
    histogram->setEnabled(true);
    // fixing new size
    sizeHint();
 
    // set bayer
    setNone();
+
+   repaint();
 }
 
 // PRE-PROCESS DARK/FLAT
 
 void MainWindow::MenuDarkGrey() {
-   //
+   string extension;
+   FileWriter*  file;
+   // is there selected frames ?
+   if(frameList->getSelectedFrames()==0) {
+      QMessageBox::critical(this, tr("AstroAviBrowser"),tr("No frame selected"));
+      return;
+   }
+
+   extension="Bmp Files (*.bmp *.BMP)";
+   // query file name
+   outputFileName = QFileDialog::getSaveFileName(this, tr("Save Video"),"/home",extension.c_str());
+
+   // is the name valid ?
+   if(outputFileName=="")
+      return;
+
+   // testing file access
+   int fd;
+   if(fd=open(outputFileName.toStdString().c_str(),O_WRONLY|O_CREAT,S_IWUSR)<0){
+      QMessageBox::critical(this, tr("AstroAviBrowser"),tr("Write access denied"));
+      return;
+   }
+   unlink(outputFileName.toStdString().c_str());
+
+   // it could be long...
+   setCursor(Qt::BusyCursor);
+
+   // saving the new frame
+   file=new BmpWriter(outputCodec,LUM_PLAN,outputFileName.toStdString().c_str(),inputFileCodecContext->width,inputFileCodecContext->height,0,false);
+   frameList->darkGreyMedian(file);
+   delete file;
+
+   // set cursor back
+   setCursor(Qt::ArrowCursor);
 }
 
 void MainWindow::MenuDarkRGB() {
-   //
+   string extension;
+   FileWriter*  file;
+   // is there selected frames ?
+   if(frameList->getSelectedFrames()==0) {
+      QMessageBox::critical(this, tr("AstroAviBrowser"),tr("No frame selected"));
+      return;
+   }
+
+   extension="Bmp Files (*.bmp *.BMP)";
+   // query file name
+   outputFileName = QFileDialog::getSaveFileName(this, tr("Save Video"),"/home",extension.c_str());
+
+   // is the name valid ?
+   if(outputFileName=="")
+      return;
+
+   // testing file access
+   int fd;
+   if(fd=open(outputFileName.toStdString().c_str(),O_WRONLY|O_CREAT,S_IWUSR)<0){
+      QMessageBox::critical(this, tr("AstroAviBrowser"),tr("Write access denied"));
+      return;
+   }
+   unlink(outputFileName.toStdString().c_str());
+
+   // it could be long...
+   setCursor(Qt::BusyCursor);
+
+   // saving the new frame
+   file=new BmpWriter(outputCodec,ALL_PLANS,outputFileName.toStdString().c_str(),inputFileCodecContext->width,inputFileCodecContext->height,0,false);
+   frameList->darkRgbMedian(file);
+   delete file;
+
+   // set cursor back
+   setCursor(Qt::ArrowCursor);
 }
 
 void MainWindow::MenuFlatGrey() {
-   //
+   string extension;
+   FileWriter*  file;
+   // is there selected frames ?
+   if(frameList->getSelectedFrames()==0) {
+      QMessageBox::critical(this, tr("AstroAviBrowser"),tr("No frame selected"));
+      return;
+   }
+
+   extension="Bmp Files (*.bmp *.BMP)";
+   // query file name
+   outputFileName = QFileDialog::getSaveFileName(this, tr("Save Video"),"/home",extension.c_str());
+
+   // is the name valid ?
+   if(outputFileName=="")
+      return;
+
+   // testing file access
+   int fd;
+   if(fd=open(outputFileName.toStdString().c_str(),O_WRONLY|O_CREAT,S_IWUSR)<0){
+      QMessageBox::critical(this, tr("AstroAviBrowser"),tr("Write access denied"));
+      return;
+   }
+   unlink(outputFileName.toStdString().c_str());
+
+   // it could be long...
+   setCursor(Qt::BusyCursor);
+
+   // saving the new frame
+   file=new BmpWriter(outputCodec,LUM_PLAN,outputFileName.toStdString().c_str(),inputFileCodecContext->width,inputFileCodecContext->height,0,false);
+   frameList->flatGreyMedian(file);
+   delete file;
+
+   // set cursor back
+   setCursor(Qt::ArrowCursor);
 }
 
 void MainWindow::MenuFlatRGB() {
-   //
+   string extension;
+   FileWriter*  file;
+   // is there selected frames ?
+   if(frameList->getSelectedFrames()==0) {
+      QMessageBox::critical(this, tr("AstroAviBrowser"),tr("No frame selected"));
+      return;
+   }
+
+   extension="Bmp Files (*.bmp *.BMP)";
+   // query file name
+   outputFileName = QFileDialog::getSaveFileName(this, tr("Save Video"),"/home",extension.c_str());
+
+   // is the name valid ?
+   if(outputFileName=="")
+      return;
+
+   // testing file access
+   int fd;
+   if(fd=open(outputFileName.toStdString().c_str(),O_WRONLY|O_CREAT,S_IWUSR)<0){
+      QMessageBox::critical(this, tr("AstroAviBrowser"),tr("Write access denied"));
+      return;
+   }
+   unlink(outputFileName.toStdString().c_str());
+
+   // it could be long...
+   setCursor(Qt::BusyCursor);
+
+   // saving the new frame
+   file=new BmpWriter(outputCodec,ALL_PLANS,outputFileName.toStdString().c_str(),inputFileCodecContext->width,inputFileCodecContext->height,0,false);
+   frameList->flatRgbMedian(file);
+   delete file;
+
+   // set cursor back
+   setCursor(Qt::ArrowCursor);
 }
 
 // SAVE

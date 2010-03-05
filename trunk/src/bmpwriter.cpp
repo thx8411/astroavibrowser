@@ -30,8 +30,9 @@
 
 using namespace std;
 
-BmpWriter::BmpWriter(int codec, int plans, const char* name, int width, int height, int frameRate) : FileWriter (codec,plans,name,width,height,frameRate) {
+BmpWriter::BmpWriter(int codec, int plans, const char* name, int width, int height, int frameRate, bool count) : FileWriter (codec,plans,name,width,height,frameRate) {
    frameNumber=0;
+   count_=count;
 }
 
 BmpWriter::~BmpWriter() {
@@ -54,8 +55,10 @@ void BmpWriter::AddFrame(unsigned char* datas) {
 
    // building file name
    fileName+="-";
-   sprintf(number,"%d",frameNumber);
-   fileName+=number;
+   if(count_) {
+      sprintf(number,"%d",frameNumber);
+      fileName+=number;
+   }
    fileName+=".bmp";
 
    fd=open(fileName.c_str(),O_WRONLY|O_CREAT,0644);
