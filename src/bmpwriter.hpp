@@ -47,10 +47,11 @@ typedef struct {
 
 class BmpWriter : public FileWriter {
    public :
-      BmpWriter(int codec, int plans, const char* name, int width, int height, int frameRate);
+      BmpWriter(int codec, int plans, const char* name, int width, int height, int frameRate, bool count=true);
       ~BmpWriter();
       void AddFrame(unsigned char* datas);
    private:
+      bool count_;
       int frameNumber;
 };
 

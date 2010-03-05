@@ -265,6 +265,20 @@ void FrameList::dump(FileWriter* file) {
    delete progress;
 }
 
+// save darks and flats
+
+void FrameList::darkGreyMedian(FileWriter* file) {
+}
+
+void FrameList::darkRgbMedian(FileWriter* file) {
+}
+
+void FrameList::flatGreyMedian(FileWriter* file) {
+}
+
+void FrameList::flatRgbMedian(FileWriter* file) {
+}
+
 int* FrameList::getAverage() {
    int i,j;
    int* values=NULL;
