@@ -332,7 +332,7 @@ void FrameList::darkFlatGreyMean(FileWriter* file) {
 }
 
 void FrameList::darkFlatRgbMean(FileWriter* file) {
-int i,j,counter;
+   int i,j,counter;
    unsigned char* savedFrame;
    unsigned char* newFrame;
    long* datas;
@@ -407,9 +407,114 @@ int i,j,counter;
 }
 
 void FrameList::darkFlatGreyMedian(FileWriter* file) {
+   int i,j;
+   unsigned char* savedFrame;
+   QListWidgetItem* current;
+   QProgressDialog* progress;
+
+   setCursor(Qt::BusyCursor);
+
+   savedFrame=(unsigned char*)malloc(codecContext->width*codecContext->height*3);
+
+   // setting progress dialog
+   progress = new QProgressDialog(QString("Compute dark/flat frame..."),QString(),0,frameNumber);
+   // loop
+   for(i=0;i<frameNumber;i++) {
+      // update progress bar
+      progress->setValue(i);
+      // if current frame checked...
+      current=item(i);
+      if(current->checkState()==Qt::Checked) {
+         // if we have a frame
+         if(getFrame(i)) {
+            //
+            // build data table
+            //
+         }
+      }
+   }
+   // back to the beginning
+   seekFrame(0);
+   // init the first item
+   current=item(0);
+   current->setSelected(true);
+   // and display it
+   displayFrame(0);
+   // closing progress window
+   progress->close();
+   delete progress;
+
+   //
+   // build median frame
+   //
+
+   file->AddFrame(savedFrame);
+
+   free(savedFrame);
+
+   setCursor(Qt::ArrowCursor);
+
+   return;
 }
 
 void FrameList::darkFlatRgbMedian(FileWriter* file) {
+   int i,j;
+   unsigned char* savedFrame;
+   unsigned char* newFrame;
+   QListWidgetItem* current;
+   QProgressDialog* progress;
+
+   setCursor(Qt::BusyCursor);
+
+   savedFrame=(unsigned char*)malloc(codecContext->width*codecContext->height*3);
+   newFrame=(unsigned char*)malloc(codecContext->width*codecContext->height*3);
+
+   // setting progress dialog
+   progress = new QProgressDialog(QString("Compute dark/flat frame..."),QString(),0,frameNumber);
+   // loop
+   for(i=0;i<frameNumber;i++) {
+      // update progress bar
+      progress->setValue(i);
+      // if current frame checked...
+      current=item(i);
+      if(current->checkState()==Qt::Checked) {
+         // if we have a frame
+         if(getFrame(i)) {
+            // raw to rgb if needed
+            if(frameDisplay->getRawmode()==RAW_NONE)
+               memcpy(newFrame,frameRGB->data[0],codecContext->width*codecContext->height*3);
+            else
+               raw2rgb(newFrame,frameRGB->data[0],codecContext->width,codecContext->height,frameDisplay->getRawmode());
+            bgr2rgb(newFrame,codecContext->width,codecContext->height);
+            //
+            // build data table
+            //
+         }
+      }
+   }
+   // back to the beginning
+   seekFrame(0);
+   // init the first item
+   current=item(0);
+   current->setSelected(true);
+   // and display it
+   displayFrame(0);
+   // closing progress window
+   progress->close();
+   delete progress;
+
+   //
+   // build median frame
+   //
+
+   file->AddFrame(savedFrame);
+
+   free(savedFrame);
+   free(newFrame);
+
+   setCursor(Qt::ArrowCursor);
+
+   return;
 }
 
 int* FrameList::getAverage() {
