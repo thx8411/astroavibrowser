@@ -59,10 +59,10 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    quit = new QAction("&Quit", this);
    properties = new QAction("Get &Properties...",this);
    // dark/flat
-   darkFlatGreyMean=new QAction("Build dark/flat (mean mono)...",this);
-   darkFlatRGBMean=new QAction("Build dark/flat (mean rgb)...",this);
-   //darkFlatGreyMedian=new QAction("Build dark/flat (median mono)...",this);
-   //darkFlatRGBMedian=new QAction("Build dark/flat (median rgb)...",this);
+   darkFlatGreyMean=new QAction("Build mean frame (mono)...",this);
+   darkFlatRGBMean=new QAction("Build mean frame (rgb)...",this);
+   darkFlatGreyMedian=new QAction("Build median frame (mono)...",this);
+   darkFlatRGBMedian=new QAction("Build median frame (rgb)...",this);
    // save plans
    lPlan=new QAction("Save &Luminance...",this);
    rPlan= new QAction("Save &R plan...",this);
@@ -84,8 +84,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    file->addSeparator();
    file->addAction(darkFlatGreyMean);
    file->addAction(darkFlatRGBMean);
-   //file->addAction(darkFlatGreyMedian);
-   //file->addAction(darkFlatRGBMedian);
+   file->addAction(darkFlatGreyMedian);
+   file->addAction(darkFlatRGBMedian);
    file->addSeparator();
    file->addAction(quit);
    // input menu
@@ -109,8 +109,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    // dark / flat
    connect(darkFlatGreyMean, SIGNAL(triggered()), this, SLOT(MenuDarkFlatGreyMean()));
    connect(darkFlatRGBMean, SIGNAL(triggered()), this, SLOT(MenuDarkFlatRGBMean()));
-   //connect(darkFlatGreyMedian, SIGNAL(triggered()), this, SLOT(MenuDarkFlatGreyMedian()));
-   //connect(darkFlatRGBMedian, SIGNAL(triggered()), this, SLOT(MenuDarkFlatRGBMedian()));
+   connect(darkFlatGreyMedian, SIGNAL(triggered()), this, SLOT(MenuDarkFlatGreyMedian()));
+   connect(darkFlatRGBMedian, SIGNAL(triggered()), this, SLOT(MenuDarkFlatRGBMedian()));
    // plans
    connect(lPlan, SIGNAL(triggered()), this, SLOT(MenuSaveL()));
    connect(rPlan, SIGNAL(triggered()), this, SLOT(MenuSaveR()));
@@ -148,8 +148,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    // dark/flat
    darkFlatGreyMean->setEnabled(false);
    darkFlatRGBMean->setEnabled(false);
-   //darkFlatGreyMedian->setEnabled(false);
-   //darkFlatRGBMedian->setEnabled(false);
+   darkFlatGreyMedian->setEnabled(false);
+   darkFlatRGBMedian->setEnabled(false);
    // plan
    lPlan->setEnabled(false);
    rPlan->setEnabled(false);
@@ -249,8 +249,8 @@ void MainWindow::freeFile() {
    // dark/flat
    darkFlatGreyMean->setEnabled(false);
    darkFlatRGBMean->setEnabled(false);
-   //darkFlatGreyMedian->setEnabled(false);
-   //darkFlatRGBMedian->setEnabled(false);
+   darkFlatGreyMedian->setEnabled(false);
+   darkFlatRGBMedian->setEnabled(false);
    // plan
    lPlan->setEnabled(false);
    rPlan->setEnabled(false);
@@ -349,8 +349,8 @@ void MainWindow::MenuOpen() {
    // dark/flat
    darkFlatGreyMean->setEnabled(true);
    darkFlatRGBMean->setEnabled(true);
-   //darkFlatGreyMedian->setEnabled(true);
-   //darkFlatRGBMedian->setEnabled(true);
+   darkFlatGreyMedian->setEnabled(true);
+   darkFlatRGBMedian->setEnabled(true);
    // plan
    lPlan->setEnabled(true);
    rPlan->setEnabled(true);

@@ -21,6 +21,7 @@
 #include <string.h>
 #include <iostream>
 
+#include <Qt/qmessagebox.h>
 #include <QtGui/QProgressDialog>
 
 #include "Qframelist.moc"
@@ -283,7 +284,7 @@ void FrameList::darkFlatGreyMean(FileWriter* file) {
    memset(datas,0,codecContext->width*codecContext->height*sizeof(long));
 
    // setting progress dialog
-   progress = new QProgressDialog(QString("Compute dark/flat frame..."),QString(),0,frameNumber);
+   progress = new QProgressDialog(QString("Compute mean frame..."),QString(),0,frameNumber);
    // loop
    for(i=0;i<frameNumber;i++) {
       // update progress bar
@@ -349,7 +350,7 @@ void FrameList::darkFlatRgbMean(FileWriter* file) {
    memset(datas,0,codecContext->width*codecContext->height*sizeof(long));
 
    // setting progress dialog
-   progress = new QProgressDialog(QString("Compute dark/flat frame..."),QString(),0,frameNumber);
+   progress = new QProgressDialog(QString("Compute mean frame..."),QString(),0,frameNumber);
    // loop
    for(i=0;i<frameNumber;i++) {
       // update progress bar
@@ -407,17 +408,26 @@ void FrameList::darkFlatRgbMean(FileWriter* file) {
 }
 
 void FrameList::darkFlatGreyMedian(FileWriter* file) {
-   int i,j;
+   int i,j,counter;
    unsigned char* savedFrame;
+   unsigned short* datas;
    QListWidgetItem* current;
    QProgressDialog* progress;
+
+   counter=0;
 
    setCursor(Qt::BusyCursor);
 
    savedFrame=(unsigned char*)malloc(codecContext->width*codecContext->height*3);
+   datas=(unsigned short*)malloc(codecContext->width*codecContext->height*256*sizeof(unsigned short));
+   if(datas==NULL) {
+      QMessageBox::critical(this, tr("AstroAviBrowser"),tr("Not enough memory, leaving"));
+      exit(1);
+   }
+   memset(datas,0,codecContext->width*codecContext->height*256*sizeof(unsigned short));
 
    // setting progress dialog
-   progress = new QProgressDialog(QString("Compute dark/flat frame..."),QString(),0,frameNumber);
+   progress = new QProgressDialog(QString("Compute median frame..."),QString(),0,frameNumber);
    // loop
    for(i=0;i<frameNumber;i++) {
       // update progress bar
@@ -427,9 +437,11 @@ void FrameList::darkFlatGreyMedian(FileWriter* file) {
       if(current->checkState()==Qt::Checked) {
          // if we have a frame
          if(getFrame(i)) {
-            //
+            counter++;
             // build data table
-            //
+            for(j=0;j<(codecContext->width*codecContext->height);j++) {
+               datas[j*256+(*(frameRGB->data[0]+j*3+1))]++;
+            }
          }
       }
    }
@@ -444,12 +456,22 @@ void FrameList::darkFlatGreyMedian(FileWriter* file) {
    progress->close();
    delete progress;
 
-   //
    // build median frame
-   //
+   for(j=0;j<(codecContext->width*codecContext->height);j++) {
+      int k=0;
+      int sum=0;
+      while((sum<(counter/2))&&(k<255)) {
+         sum+=datas[j*256+k];
+         k++;
+      }
+      savedFrame[j*3]=k;
+      savedFrame[j*3+1]=k;
+      savedFrame[j*3+2]=k;
+   }
 
    file->AddFrame(savedFrame);
 
+   free(datas);
    free(savedFrame);
 
    setCursor(Qt::ArrowCursor);
@@ -458,20 +480,30 @@ void FrameList::darkFlatGreyMedian(FileWriter* file) {
 }
 
 void FrameList::darkFlatRgbMedian(FileWriter* file) {
-   int i,j;
+   int i,j,counter;
    unsigned char* savedFrame;
    unsigned char* newFrame;
+   unsigned short* datas;
    QListWidgetItem* current;
    QProgressDialog* progress;
+
+   counter=0;
 
    setCursor(Qt::BusyCursor);
 
    savedFrame=(unsigned char*)malloc(codecContext->width*codecContext->height*3);
    newFrame=(unsigned char*)malloc(codecContext->width*codecContext->height*3);
 
+   datas=(unsigned short*)malloc(codecContext->width*codecContext->height*256*sizeof(unsigned short));
+   if(datas==NULL) {
+      QMessageBox::critical(this, tr("AstroAviBrowser"),tr("Not enough memory, leaving"));
+      exit(1);
+   }
    // setting progress dialog
-   progress = new QProgressDialog(QString("Compute dark/flat frame..."),QString(),0,frameNumber);
-   // loop
+   progress = new QProgressDialog(QString("Compute median frame..."),QString(),0,frameNumber*3);
+
+   // Red loop
+   memset(datas,0,codecContext->width*codecContext->height*256*sizeof(unsigned short));
    for(i=0;i<frameNumber;i++) {
       // update progress bar
       progress->setValue(i);
@@ -486,12 +518,98 @@ void FrameList::darkFlatRgbMedian(FileWriter* file) {
             else
                raw2rgb(newFrame,frameRGB->data[0],codecContext->width,codecContext->height,frameDisplay->getRawmode());
             bgr2rgb(newFrame,codecContext->width,codecContext->height);
-            //
             // build data table
-            //
+            counter++;
+            // build data table
+            for(j=0;j<(codecContext->width*codecContext->height);j++) {
+               datas[j*256+newFrame[j*3]]++;
+            }
          }
       }
    }
+   // build median frame (Red)
+   for(j=0;j<(codecContext->width*codecContext->height);j++) {
+      int k=0;
+      int sum=0;
+      while((sum<(counter/2))&&(k<255)) {
+         sum+=datas[j*256+k];
+         k++;
+      }
+      savedFrame[j*3]=k;
+   }
+   // back to the beginning
+   seekFrame(0);
+
+// Green loop
+   memset(datas,0,codecContext->width*codecContext->height*256*sizeof(unsigned short));
+   for(i=0;i<frameNumber;i++) {
+      // update progress bar
+      progress->setValue(i+frameNumber);
+      // if current frame checked...
+      current=item(i);
+      if(current->checkState()==Qt::Checked) {
+         // if we have a frame
+         if(getFrame(i)) {
+            // raw to rgb if needed
+            if(frameDisplay->getRawmode()==RAW_NONE)
+               memcpy(newFrame,frameRGB->data[0],codecContext->width*codecContext->height*3);
+            else
+               raw2rgb(newFrame,frameRGB->data[0],codecContext->width,codecContext->height,frameDisplay->getRawmode());
+            bgr2rgb(newFrame,codecContext->width,codecContext->height);
+            // build data table
+            for(j=0;j<(codecContext->width*codecContext->height);j++) {
+               datas[j*256+newFrame[j*3+1]]++;
+            }
+         }
+      }
+   }
+   // build median frame (Green)
+   for(j=0;j<(codecContext->width*codecContext->height);j++) {
+      int k=0;
+      int sum=0;
+      while((sum<(counter/2))&&(k<255)) {
+         sum+=datas[j*256+k];
+         k++;
+      }
+      savedFrame[j*3+1]=k;
+   }
+   // back to the beginning
+   seekFrame(0);
+
+// Blue loop
+   memset(datas,0,codecContext->width*codecContext->height*256*sizeof(unsigned short));
+   for(i=0;i<frameNumber;i++) {
+      // update progress bar
+      progress->setValue(i+frameNumber+frameNumber);
+      // if current frame checked...
+      current=item(i);
+      if(current->checkState()==Qt::Checked) {
+         // if we have a frame
+         if(getFrame(i)) {
+            // raw to rgb if needed
+            if(frameDisplay->getRawmode()==RAW_NONE)
+               memcpy(newFrame,frameRGB->data[0],codecContext->width*codecContext->height*3);
+            else
+               raw2rgb(newFrame,frameRGB->data[0],codecContext->width,codecContext->height,frameDisplay->getRawmode());
+            bgr2rgb(newFrame,codecContext->width,codecContext->height);
+            // build data table
+            for(j=0;j<(codecContext->width*codecContext->height);j++) {
+               datas[j*256+newFrame[j*3+2]]++;
+            }
+         }
+      }
+   }
+   // build median frame (Blue)
+   for(j=0;j<(codecContext->width*codecContext->height);j++) {
+      int k=0;
+      int sum=0;
+      while((sum<(counter/2))&&(k<255)) {
+         sum+=datas[j*256+k];
+         k++;
+      }
+      savedFrame[j*3+2]=k;
+   }
+
    // back to the beginning
    seekFrame(0);
    // init the first item
@@ -502,10 +620,6 @@ void FrameList::darkFlatRgbMedian(FileWriter* file) {
    // closing progress window
    progress->close();
    delete progress;
-
-   //
-   // build median frame
-   //
 
    file->AddFrame(savedFrame);
 

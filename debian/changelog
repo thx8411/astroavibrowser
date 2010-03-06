@@ -1,7 +1,8 @@
 astroavibrowser (0.4beta20100306) jaunty; urgency=low
 
   * buttons refresh bug fixed
-  * dark/flat frames computation (mean method)
+  * mean frame building
+  * median frame building
 
  -- Blaise-Florentin Collin <collin@eeepc901>  Sun, 22 Feb 2010 21:13:12 +0100
 
