@@ -322,7 +322,10 @@ void FrameList::darkFlatGreyMean(FileWriter* file) {
       savedFrame[j*3+2]=savedFrame[j*3];
    }
 
-   file->AddFrame(savedFrame);
+   if(counter<2)
+      QMessageBox::information(this, tr("AstroAviBrowser"),"Less than 2 frames selected, aborted");
+   else
+      file->AddFrame(savedFrame);
 
    free(datas);
    free(savedFrame);
@@ -396,7 +399,10 @@ void FrameList::darkFlatRgbMean(FileWriter* file) {
       savedFrame[j*3+2]=datas[j*3+2]/counter;
    }
 
-   file->AddFrame(savedFrame);
+   if(counter<2)
+      QMessageBox::information(this, tr("AstroAviBrowser"),"Less than 2 frames selected, aborted");
+   else
+      file->AddFrame(savedFrame);
 
    free(datas);
    free(savedFrame);
@@ -469,7 +475,10 @@ void FrameList::darkFlatGreyMedian(FileWriter* file) {
       savedFrame[j*3+2]=k;
    }
 
-   file->AddFrame(savedFrame);
+   if(counter<2)
+      QMessageBox::information(this, tr("AstroAviBrowser"),"Less than 2 frames selected, aborted");
+   else
+      file->AddFrame(savedFrame);
 
    free(datas);
    free(savedFrame);
@@ -621,7 +630,10 @@ void FrameList::darkFlatRgbMedian(FileWriter* file) {
    progress->close();
    delete progress;
 
-   file->AddFrame(savedFrame);
+   if(counter<2)
+      QMessageBox::information(this, tr("AstroAviBrowser"),"Less than 2 frames selected, aborted");
+   else
+      file->AddFrame(savedFrame);
 
    free(savedFrame);
    free(newFrame);
