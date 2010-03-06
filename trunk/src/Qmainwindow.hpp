@@ -52,10 +52,10 @@ class MainWindow : public QMainWindow
       void MenuOpen();
       void MenuSaveAll();
       // menu dark/flat
-      void MenuDarkGrey();
-      void MenuDarkRGB();
-      void MenuFlatGrey();
-      void MenuFlatRGB();
+      void MenuDarkFlatGreyMean();
+      void MenuDarkFlatRGBMean();
+      void MenuDarkFlatGreyMedian();
+      void MenuDarkFlatRGBMedian();
       // menu plans
       void MenuSaveL();
       void MenuSaveR();
@@ -90,10 +90,10 @@ class MainWindow : public QMainWindow
       QAction* openfile;
       QAction* save;
       // dark/flat
-      QAction* darkGrey;
-      QAction* darkRGB;
-      QAction* flatGrey;
-      QAction* flatRGB;
+      QAction* darkFlatGreyMean;
+      QAction* darkFlatRGBMean;
+      QAction* darkFlatGreyMedian;
+      QAction* darkFlatRGBMedian;
       // other plans
       QAction* lPlan;
       QAction* rPlan;

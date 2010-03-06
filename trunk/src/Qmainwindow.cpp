@@ -59,10 +59,10 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    quit = new QAction("&Quit", this);
    properties = new QAction("Get &Properties...",this);
    // dark/flat
-   darkGrey=new QAction("Build dark (mono)...",this);
-   darkRGB=new QAction("Build dark (rgb)...",this);
-   flatGrey=new QAction("Build flat (mono)...",this);
-   flatRGB=new QAction("Build flat (rgb)...",this);
+   darkFlatGreyMean=new QAction("Build dark/flat (mean mono)...",this);
+   darkFlatRGBMean=new QAction("Build dark/flat (mean rgb)...",this);
+   //darkFlatGreyMedian=new QAction("Build dark/flat (median mono)...",this);
+   //darkFlatRGBMedian=new QAction("Build dark/flat (median rgb)...",this);
    // save plans
    lPlan=new QAction("Save &Luminance...",this);
    rPlan= new QAction("Save &R plan...",this);
@@ -82,10 +82,10 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    file->addAction(gPlan);
    file->addAction(bPlan);
    file->addSeparator();
-   file->addAction(darkGrey);
-   file->addAction(darkRGB);
-   file->addAction(flatGrey);
-   file->addAction(flatRGB);
+   file->addAction(darkFlatGreyMean);
+   file->addAction(darkFlatRGBMean);
+   //file->addAction(darkFlatGreyMedian);
+   //file->addAction(darkFlatRGBMedian);
    file->addSeparator();
    file->addAction(quit);
    // input menu
@@ -107,10 +107,10 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    connect(openfile, SIGNAL(triggered()), this, SLOT(MenuOpen()));
    connect(save, SIGNAL(triggered()), this, SLOT(MenuSaveAll()));
    // dark / flat
-   connect(darkGrey, SIGNAL(triggered()), this, SLOT(MenuDarkGrey()));
-   connect(darkRGB, SIGNAL(triggered()), this, SLOT(MenuDarkRGB()));
-   connect(flatGrey, SIGNAL(triggered()), this, SLOT(MenuFlatGrey()));
-   connect(flatRGB, SIGNAL(triggered()), this, SLOT(MenuFlatRGB()));
+   connect(darkFlatGreyMean, SIGNAL(triggered()), this, SLOT(MenuDarkFlatGreyMean()));
+   connect(darkFlatRGBMean, SIGNAL(triggered()), this, SLOT(MenuDarkFlatRGBMean()));
+   //connect(darkFlatGreyMedian, SIGNAL(triggered()), this, SLOT(MenuDarkFlatGreyMedian()));
+   //connect(darkFlatRGBMedian, SIGNAL(triggered()), this, SLOT(MenuDarkFlatRGBMedian()));
    // plans
    connect(lPlan, SIGNAL(triggered()), this, SLOT(MenuSaveL()));
    connect(rPlan, SIGNAL(triggered()), this, SLOT(MenuSaveR()));
@@ -146,10 +146,10 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    properties->setEnabled(false);
    bayer->setEnabled(false);
    // dark/flat
-   darkGrey->setEnabled(false);
-   darkRGB->setEnabled(false);
-   flatGrey->setEnabled(false);
-   flatRGB->setEnabled(false);
+   darkFlatGreyMean->setEnabled(false);
+   darkFlatRGBMean->setEnabled(false);
+   //darkFlatGreyMedian->setEnabled(false);
+   //darkFlatRGBMedian->setEnabled(false);
    // plan
    lPlan->setEnabled(false);
    rPlan->setEnabled(false);
@@ -247,10 +247,10 @@ void MainWindow::freeFile() {
    properties->setEnabled(false);
    bayer->setEnabled(false);
    // dark/flat
-   darkGrey->setEnabled(false);
-   darkRGB->setEnabled(false);
-   flatGrey->setEnabled(false);
-   flatRGB->setEnabled(false);
+   darkFlatGreyMean->setEnabled(false);
+   darkFlatRGBMean->setEnabled(false);
+   //darkFlatGreyMedian->setEnabled(false);
+   //darkFlatRGBMedian->setEnabled(false);
    // plan
    lPlan->setEnabled(false);
    rPlan->setEnabled(false);
@@ -347,10 +347,10 @@ void MainWindow::MenuOpen() {
    properties->setEnabled(true);
    bayer->setEnabled(true);
    // dark/flat
-   darkGrey->setEnabled(true);
-   darkRGB->setEnabled(true);
-   flatGrey->setEnabled(true);
-   flatRGB->setEnabled(true);
+   darkFlatGreyMean->setEnabled(true);
+   darkFlatRGBMean->setEnabled(true);
+   //darkFlatGreyMedian->setEnabled(true);
+   //darkFlatRGBMedian->setEnabled(true);
    // plan
    lPlan->setEnabled(true);
    rPlan->setEnabled(true);
@@ -375,7 +375,7 @@ void MainWindow::MenuOpen() {
 
 // PRE-PROCESS DARK/FLAT
 
-void MainWindow::MenuDarkGrey() {
+void MainWindow::MenuDarkFlatGreyMean() {
    string extension;
    FileWriter*  file;
    // is there selected frames ?
@@ -405,14 +405,14 @@ void MainWindow::MenuDarkGrey() {
 
    // saving the new frame
    file=new BmpWriter(outputCodec,LUM_PLAN,outputFileName.toStdString().c_str(),inputFileCodecContext->width,inputFileCodecContext->height,0,false);
-   frameList->darkGreyMedian(file);
+   frameList->darkFlatGreyMean(file);
    delete file;
 
    // set cursor back
    setCursor(Qt::ArrowCursor);
 }
 
-void MainWindow::MenuDarkRGB() {
+void MainWindow::MenuDarkFlatRGBMean() {
    string extension;
    FileWriter*  file;
    // is there selected frames ?
@@ -442,14 +442,14 @@ void MainWindow::MenuDarkRGB() {
 
    // saving the new frame
    file=new BmpWriter(outputCodec,ALL_PLANS,outputFileName.toStdString().c_str(),inputFileCodecContext->width,inputFileCodecContext->height,0,false);
-   frameList->darkRgbMedian(file);
+   frameList->darkFlatRgbMean(file);
    delete file;
 
    // set cursor back
    setCursor(Qt::ArrowCursor);
 }
 
-void MainWindow::MenuFlatGrey() {
+void MainWindow::MenuDarkFlatGreyMedian() {
    string extension;
    FileWriter*  file;
    // is there selected frames ?
@@ -479,14 +479,14 @@ void MainWindow::MenuFlatGrey() {
 
    // saving the new frame
    file=new BmpWriter(outputCodec,LUM_PLAN,outputFileName.toStdString().c_str(),inputFileCodecContext->width,inputFileCodecContext->height,0,false);
-   frameList->flatGreyMedian(file);
+   frameList->darkFlatGreyMedian(file);
    delete file;
 
    // set cursor back
    setCursor(Qt::ArrowCursor);
 }
 
-void MainWindow::MenuFlatRGB() {
+void MainWindow::MenuDarkFlatRGBMedian() {
    string extension;
    FileWriter*  file;
    // is there selected frames ?
@@ -516,7 +516,7 @@ void MainWindow::MenuFlatRGB() {
 
    // saving the new frame
    file=new BmpWriter(outputCodec,ALL_PLANS,outputFileName.toStdString().c_str(),inputFileCodecContext->width,inputFileCodecContext->height,0,false);
-   frameList->flatRgbMedian(file);
+   frameList->darkFlatRgbMedian(file);
    delete file;
 
    // set cursor back

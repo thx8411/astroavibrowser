@@ -24,11 +24,11 @@ LD=gcc
 MOC=/usr/share/qt4/bin/moc
 
 # release
-CCFLAGS=-O3
-LDFLAGS=-O3
+#CCFLAGS=-O3
+#LDFLAGS=-O3
 # debug
-#CCFLAGS= -O0 -g
-#LDFLAGS= -O0 -g
+CCFLAGS= -O0 -g
+LDFLAGS= -O0 -g
 
 INCS=/usr/include/qt4
 LIBS=-lQtCore -lQtGui -lavformat -lavcodec -lswscale -laviplay

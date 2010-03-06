@@ -60,10 +60,10 @@ class FrameList : public QListWidget
       // dump selected frames in the given codec
       void dump(FileWriter* file);
       // save darks and flats
-      void darkGreyMedian(FileWriter* file);
-      void darkRgbMedian(FileWriter* file);
-      void flatGreyMedian(FileWriter* file);
-      void flatRgbMedian(FileWriter* file);
+      void darkFlatGreyMean(FileWriter* file);
+      void darkFlatRgbMean(FileWriter* file);
+      void darkFlatGreyMedian(FileWriter* file);
+      void darkFlatRgbMedian(FileWriter* file);
       // returns the total stream frame number
       // real number, no approx.
       int getFrameNumber();
