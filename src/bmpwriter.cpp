@@ -54,8 +54,8 @@ void BmpWriter::AddFrame(unsigned char* datas) {
       fileName.erase(extPos);
 
    // building file name
-   fileName+="-";
    if(count_) {
+      fileName+="-";
       sprintf(number,"%d",frameNumber);
       fileName+=number;
    }
