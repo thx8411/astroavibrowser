@@ -61,6 +61,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    // dark/flat
    sumGrey=new QAction("Build sum frame (mono)",this);
    sumRGB=new QAction("Build sum frame (rgb)",this);
+   maxGrey=new QAction("Build max frame (mono)",this);
+   maxRGB=new QAction("Build max frame (rgb)",this);
    darkFlatGreyMean=new QAction("Build mean frame (mono)...",this);
    darkFlatRGBMean=new QAction("Build mean frame (rgb)...",this);
    darkFlatGreyMedian=new QAction("Build median frame (mono)...",this);
@@ -86,6 +88,9 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    file->addSeparator();
    file->addAction(sumGrey);
    file->addAction(sumRGB);
+   file->addAction(maxGrey);
+   file->addAction(maxRGB);
+   file->addSeparator();
    file->addAction(darkFlatGreyMean);
    file->addAction(darkFlatRGBMean);
    file->addAction(darkFlatGreyMedian);
@@ -113,6 +118,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    // dark / flat
    connect(sumGrey, SIGNAL(triggered()), this, SLOT(MenuGreySum()));
    connect(sumRGB, SIGNAL(triggered()), this, SLOT(MenuRGBSum()));
+   connect(maxGrey, SIGNAL(triggered()), this, SLOT(MenuGreyMax()));
+   connect(maxRGB, SIGNAL(triggered()), this, SLOT(MenuRGBMax()));
    connect(darkFlatGreyMean, SIGNAL(triggered()), this, SLOT(MenuDarkFlatGreyMean()));
    connect(darkFlatRGBMean, SIGNAL(triggered()), this, SLOT(MenuDarkFlatRGBMean()));
    connect(darkFlatGreyMedian, SIGNAL(triggered()), this, SLOT(MenuDarkFlatGreyMedian()));
@@ -154,6 +161,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    // dark/flat
    sumGrey->setEnabled(false);
    sumRGB->setEnabled(false);
+   maxGrey->setEnabled(false);
+   maxRGB->setEnabled(false);
    darkFlatGreyMean->setEnabled(false);
    darkFlatRGBMean->setEnabled(false);
    darkFlatGreyMedian->setEnabled(false);
@@ -257,6 +266,8 @@ void MainWindow::freeFile() {
    // dark/flat
    sumGrey->setEnabled(false);
    sumRGB->setEnabled(false);
+   maxGrey->setEnabled(false);
+   maxRGB->setEnabled(false);
    darkFlatGreyMean->setEnabled(false);
    darkFlatRGBMean->setEnabled(false);
    darkFlatGreyMedian->setEnabled(false);
@@ -359,6 +370,8 @@ void MainWindow::MenuOpen() {
    // dark/flat
    sumGrey->setEnabled(true);
    sumRGB->setEnabled(true);
+   maxGrey->setEnabled(true);
+   maxRGB->setEnabled(true);
    darkFlatGreyMean->setEnabled(true);
    darkFlatRGBMean->setEnabled(true);
    darkFlatGreyMedian->setEnabled(true);
@@ -455,6 +468,80 @@ void MainWindow::MenuRGBSum() {
    // saving the new frame
    file=new BmpWriter(outputCodec,ALL_PLANS,outputFileName.toStdString().c_str(),inputFileCodecContext->width,inputFileCodecContext->height,0,false);
    frameList->sumRGB(file);
+   delete file;
+
+   // set cursor back
+   setCursor(Qt::ArrowCursor);
+}
+
+void MainWindow::MenuGreyMax() {
+   string extension;
+   FileWriter*  file;
+   // is there selected frames ?
+   if(frameList->getSelectedFrames()<=1) {
+      QMessageBox::critical(this, tr("AstroAviBrowser"),tr("No enough frames selected"));
+      return;
+   }
+
+   extension="Bmp Files (*.bmp *.BMP)";
+   // query file name
+   outputFileName = QFileDialog::getSaveFileName(this, tr("Save Video"),"/home",extension.c_str());
+
+   // is the name valid ?
+   if(outputFileName=="")
+      return;
+
+   // testing file access
+   int fd;
+   if(fd=open(outputFileName.toStdString().c_str(),O_WRONLY|O_CREAT,S_IWUSR)<0){
+      QMessageBox::critical(this, tr("AstroAviBrowser"),tr("Write access denied"));
+      return;
+   }
+   unlink(outputFileName.toStdString().c_str());
+
+   // it could be long...
+   setCursor(Qt::BusyCursor);
+
+   // saving the new frame
+   file=new BmpWriter(outputCodec,LUM_PLAN,outputFileName.toStdString().c_str(),inputFileCodecContext->width,inputFileCodecContext->height,0,false);
+   frameList->maxGrey(file);
+   delete file;
+
+   // set cursor back
+   setCursor(Qt::ArrowCursor);
+}
+
+void MainWindow::MenuRGBMax() {
+   string extension;
+   FileWriter*  file;
+   // is there selected frames ?
+   if(frameList->getSelectedFrames()<=1) {
+      QMessageBox::critical(this, tr("AstroAviBrowser"),tr("No enough frames selected"));
+      return;
+   }
+
+   extension="Bmp Files (*.bmp *.BMP)";
+   // query file name
+   outputFileName = QFileDialog::getSaveFileName(this, tr("Save Video"),"/home",extension.c_str());
+
+   // is the name valid ?
+   if(outputFileName=="")
+      return;
+
+   // testing file access
+   int fd;
+   if(fd=open(outputFileName.toStdString().c_str(),O_WRONLY|O_CREAT,S_IWUSR)<0){
+      QMessageBox::critical(this, tr("AstroAviBrowser"),tr("Write access denied"));
+      return;
+   }
+   unlink(outputFileName.toStdString().c_str());
+
+   // it could be long...
+   setCursor(Qt::BusyCursor);
+
+   // saving the new frame
+   file=new BmpWriter(outputCodec,ALL_PLANS,outputFileName.toStdString().c_str(),inputFileCodecContext->width,inputFileCodecContext->height,0,false);
+   frameList->maxRGB(file);
    delete file;
 
    // set cursor back

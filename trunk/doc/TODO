@@ -11,6 +11,6 @@ DONE - cerr redirection to avoid avifile and ffmpeg messages
 DONE - add histogram display (with the average movie value)
 - add help file
 DONE - add BMP output
-- generate grey/color dark master
-- generate grey/color falt master
+DONE - generate grey/color dark master
+DONE - generate grey/color falt master
 - use to native format RGB24 and YUV444

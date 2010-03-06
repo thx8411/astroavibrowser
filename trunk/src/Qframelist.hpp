@@ -62,6 +62,8 @@ class FrameList : public QListWidget
       // save darks and flats
       void sumGrey(FileWriter* file);
       void sumRGB(FileWriter* file);
+      void maxGrey(FileWriter* file);
+      void maxRGB(FileWriter* file);
       void darkFlatGreyMean(FileWriter* file);
       void darkFlatRgbMean(FileWriter* file);
       void darkFlatGreyMedian(FileWriter* file);
