@@ -41,8 +41,16 @@ using namespace std;
 #define	GREEN_OFFSET	1
 #define	BLUE_OFFSET	2
 
-// clip a value between 0 and 255
+// clips a value between 0 and 255
 unsigned char clip(double v) {
+   if(v>255)
+      return 255;
+   if(v<0)
+      return 0;
+   return((unsigned char)v);
+}
+
+unsigned char clip(long v) {
    if(v>255)
       return 255;
    if(v<0)

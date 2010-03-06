@@ -35,6 +35,12 @@
 #define RAW_RG          3
 #define RAW_GR          4
 
+// tools
+
+// clips a value between 0 and 255
+unsigned char clip(double v);
+unsigned char clip(long v);
+
 // vesta raw to rgb conversion
 void raw2rgb(unsigned char * dest, unsigned char * const data,
                int w, int h,int mode);

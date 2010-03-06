@@ -268,6 +268,139 @@ void FrameList::dump(FileWriter* file) {
 
 // save darks and flats
 
+void FrameList::sumGrey(FileWriter* file) {
+int i,j;
+   unsigned char* savedFrame;
+   long* datas;
+   QListWidgetItem* current;
+   QProgressDialog* progress;
+
+   setCursor(Qt::BusyCursor);
+
+   savedFrame=(unsigned char*)malloc(codecContext->width*codecContext->height*3);
+   datas=(long*)malloc(codecContext->width*codecContext->height*sizeof(long));
+   memset(datas,0,codecContext->width*codecContext->height*sizeof(long));
+
+   // setting progress dialog
+   progress = new QProgressDialog(QString("Compute frame sum..."),QString(),0,frameNumber);
+   // loop
+   for(i=0;i<frameNumber;i++) {
+      // update progress bar
+      progress->setValue(i);
+      // if current frame checked...
+      current=item(i);
+      if(current->checkState()==Qt::Checked) {
+         // if we have a frame
+         if(getFrame(i)) {
+            // add frames
+            for(j=0;j<(codecContext->width*codecContext->height);j++) {
+               datas[j]+=*(frameRGB->data[0]+j*3+1);
+            }
+         }
+      }
+   }
+   // back to the beginning
+   seekFrame(0);
+   // init the first item
+   current=item(0);
+   current->setSelected(true);
+   // and display it
+   displayFrame(0);
+   // closing progress window
+   progress->close();
+   delete progress;
+
+   //
+   // build mean frame
+   //
+   for(j=0;j<(codecContext->width*codecContext->height);j++) {
+      savedFrame[j*3]=clip(datas[j]);
+      savedFrame[j*3+1]=savedFrame[j*3];
+      savedFrame[j*3+2]=savedFrame[j*3];
+   }
+
+   file->AddFrame(savedFrame);
+
+   free(datas);
+   free(savedFrame);
+
+   setCursor(Qt::ArrowCursor);
+
+   return;
+}
+
+void FrameList::sumRGB(FileWriter* file) {
+   int i,j;
+   unsigned char* savedFrame;
+   unsigned char* newFrame;
+   long* datas;
+   QListWidgetItem* current;
+   QProgressDialog* progress;
+
+   setCursor(Qt::BusyCursor);
+
+   savedFrame=(unsigned char*)malloc(codecContext->width*codecContext->height*3);
+   newFrame=(unsigned char*)malloc(codecContext->width*codecContext->height*3);
+   datas=(long*)malloc(codecContext->width*codecContext->height*sizeof(long)*3);
+   memset(datas,0,codecContext->width*codecContext->height*sizeof(long));
+
+   // setting progress dialog
+   progress = new QProgressDialog(QString("Compute frame sum..."),QString(),0,frameNumber);
+   // loop
+   for(i=0;i<frameNumber;i++) {
+      // update progress bar
+      progress->setValue(i);
+      // if current frame checked...
+      current=item(i);
+      if(current->checkState()==Qt::Checked) {
+         // if we have a frame
+         if(getFrame(i)) {
+            // raw to rgb if needed
+            if(frameDisplay->getRawmode()==RAW_NONE)
+               memcpy(newFrame,frameRGB->data[0],codecContext->width*codecContext->height*3);
+            else
+               raw2rgb(newFrame,frameRGB->data[0],codecContext->width,codecContext->height,frameDisplay->getRawmode());
+            bgr2rgb(newFrame,codecContext->width,codecContext->height);
+            // add frames
+            for(j=0;j<(codecContext->width*codecContext->height);j++) {
+               datas[j*3]+=newFrame[j*3];
+               datas[j*3+1]+=newFrame[j*3+1];
+               datas[j*3+2]+=newFrame[j*3+2];
+            }
+         }
+      }
+   }
+   // back to the beginning
+   seekFrame(0);
+   // init the first item
+   current=item(0);
+   current->setSelected(true);
+   // and display it
+   displayFrame(0);
+   // closing progress window
+   progress->close();
+   delete progress;
+
+   //
+   // build mean frame
+   //
+   for(j=0;j<(codecContext->width*codecContext->height);j++) {
+      savedFrame[j*3]=clip(datas[j*3]);
+      savedFrame[j*3+1]=clip(datas[j*3+1]);
+      savedFrame[j*3+2]=clip(datas[j*3+2]);
+   }
+
+   file->AddFrame(savedFrame);
+
+   free(datas);
+   free(savedFrame);
+   free(newFrame);
+
+   setCursor(Qt::ArrowCursor);
+
+   return;
+}
+
 void FrameList::darkFlatGreyMean(FileWriter* file) {
    int i,j,counter;
    unsigned char* savedFrame;

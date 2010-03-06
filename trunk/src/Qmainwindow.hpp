@@ -56,6 +56,8 @@ class MainWindow : public QMainWindow
       void MenuDarkFlatRGBMean();
       void MenuDarkFlatGreyMedian();
       void MenuDarkFlatRGBMedian();
+      void MenuGreySum();
+      void MenuRGBSum();
       // menu plans
       void MenuSaveL();
       void MenuSaveR();
@@ -94,6 +96,8 @@ class MainWindow : public QMainWindow
       QAction* darkFlatRGBMean;
       QAction* darkFlatGreyMedian;
       QAction* darkFlatRGBMedian;
+      QAction* sumGrey;
+      QAction* sumRGB;
       // other plans
       QAction* lPlan;
       QAction* rPlan;
