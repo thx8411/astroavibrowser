@@ -60,6 +60,8 @@ class FrameList : public QListWidget
       // dump selected frames in the given codec
       void dump(FileWriter* file);
       // save darks and flats
+      void sumGrey(FileWriter* file);
+      void sumRGB(FileWriter* file);
       void darkFlatGreyMean(FileWriter* file);
       void darkFlatRgbMean(FileWriter* file);
       void darkFlatGreyMedian(FileWriter* file);
