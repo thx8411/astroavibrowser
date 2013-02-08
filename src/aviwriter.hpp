@@ -1,5 +1,5 @@
 /*
- * copyright (c) 2009-2010 Blaise-Florentin Collin
+ * copyright (c) 2009-2013 Blaise-Florentin Collin
  *
  * This file is part of AstroAviBrowser.
  *
@@ -21,9 +21,10 @@
 #ifndef _AVIWRITER_HPP_
 #define _AVIWRITER_HPP_
 
-#include <avifile/avifile.h>
-#include <avifile/image.h>
-#include <avifile/avm_fourcc.h>
+extern "C" {
+#include <libavformat/avformat.h>
+#include <libavcodec/avcodec.h>
+}
 
 #include "filewriter.hpp"
 
@@ -33,10 +34,14 @@ class AviWriter : public FileWriter {
       ~AviWriter();
       void AddFrame(unsigned char* datas);
    private:
-      avm::IWriteFile* aviFile_;
-      avm::IWriteStream* aviChunkStream_;
-      avm::IVideoWriteStream* aviFrameStream_;
-      unsigned char* temp_buffer;
+      AVOutputFormat* output_format;
+      AVFormatContext* output_format_cx;
+      AVCodec* output_codec;
+      AVCodecContext* output_codec_cx;
+      AVStream* output_video_stream;
+      AVFrame* picture;
+      uint8_t* video_outbuf;
+      int video_outbuf_size;
 };
 
 #endif

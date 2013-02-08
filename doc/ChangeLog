@@ -1,10 +1,13 @@
-Vers. 0.4beta20100306
+Vers. 0.4beta20100207
 
    - max frame building
    - sum frame building
    - median frame building
    - mean frame building
    - buttons refresh bug fixed
+   - libavifile not needed anymore
+   - ffmpeg deprecated APIs removed
+   - framerate bug fixed
 
 Vers. 0.3
 

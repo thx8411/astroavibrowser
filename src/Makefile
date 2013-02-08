@@ -1,4 +1,4 @@
-# copyright (c) 2009-2010 Blaise-Florentin Collin
+# copyright (c) 2009-2013 Blaise-Florentin Collin
 
 # This file is part of AstroAviBrowser.
 
@@ -19,7 +19,7 @@
 
 # VALUES
 
-CC=gcc -c
+CC=gcc -D__STDC_CONSTANT_MACROS -c 
 LD=gcc
 MOC=/usr/share/qt4/bin/moc
 
@@ -31,7 +31,7 @@ LDFLAGS=-O3
 #LDFLAGS= -O0 -g
 
 INCS=/usr/include/qt4
-LIBS=-lQtCore -lQtGui -lavformat -lavcodec -lswscale -laviplay
+LIBS=-lQtCore -lQtGui -lavformat -lavcodec -lswscale -lavutil
 BIN= AstroAviBrowser
 
 

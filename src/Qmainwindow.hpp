@@ -1,5 +1,5 @@
 /*
- * copyright (c) 2009-2010 Blaise-Florentin Collin
+ * copyright (c) 2009-2013 Blaise-Florentin Collin
  *
  * This file is part of AstroAviBrowser.
  *
@@ -33,6 +33,7 @@
 extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>
+#include <libavutil/pixdesc.h>
 }
 
 #include "Qframedisplay.hpp"
@@ -143,8 +144,6 @@ class MainWindow : public QMainWindow
       AVCodec* inputFileCodec;
       // video sequence frame number
       int inputStreamNumber;
-      // have we huffyuv.dll ?
-      bool useLossless;
 };
 
 #endif

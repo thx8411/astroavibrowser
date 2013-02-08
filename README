@@ -1,7 +1,6 @@
 Needed :
 
 	- ffmpeg 0.5 (libavformat, libavcodec, libswscale)
-	- avifile 0.7
         - Qt4
 
 Build :

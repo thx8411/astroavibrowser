@@ -1,5 +1,5 @@
 /*
- * copyright (c) 2009-2010 Blaise-Florentin Collin
+ * copyright (c) 2009-2013 Blaise-Florentin Collin
  *
  * This file is part of AstroAviBrowser.
  *
@@ -30,132 +30,167 @@
 using namespace std;
 
 AviWriter::AviWriter(int codec, int plans, const char* name, int width, int height, int frameRate) : FileWriter (codec,plans,name,width,height,frameRate) {
-   aviChunkStream_=NULL;
-   aviFrameStream_=NULL;
-   temp_buffer=(unsigned char*)malloc(w*h*2);
-   aviFile_=avm::CreateWriteFile(name);
+   uint8_t* picture_buffer;
 
-   // use lossless codec
-   if(codec_==CODEC_LOSSLESS) {
-      BITMAPINFOHEADER bi;
-      memset(&bi,0,sizeof(bi));
-      bi.biSize=sizeof(bi);
-      bi.biWidth=w;
-      bi.biHeight=h;
-      // RGB24
-      if(plans_==ALL_PLANS) {
-         bi.biSizeImage=w*h*3;
-         bi.biPlanes=1;
-         bi.biBitCount=24;
-         bi.biCompression=BI_RGB;
-      // 8 BITS (YUYV, U=V=zero)
-      } else {
-         bi.biSizeImage=w*h*2;
-         bi.biPlanes=3;
-         bi.biBitCount=16;
-         bi.biCompression=RIFFINFO_YUY2;
-      }
-      aviFrameStream_=aviFile_->AddVideoStream(RIFFINFO_HFYU, &bi, frameRate);
-      aviFrameStream_->SetQuality(10000);
-      aviFrameStream_->Start();
-   // use raw
-   } else {
-      if(plans_==ALL_PLANS) {
-         BITMAPINFOHEADER bi;
-         memset(&bi,0,sizeof(bi));
-         bi.biSize=sizeof(bi);
-         bi.biWidth=w;
-         bi.biHeight=h;
-         bi.biSizeImage=w*h*3;
-         bi.biPlanes=1;
-         bi.biBitCount=24;
-         bi.biCompression=BI_RGB;
-         aviChunkStream_=aviFile_->AddStream(AviStream::Video,&bi,sizeof(bi),BI_RGB,frameRate);
-      } else {
-         BITMAPINFO* bi;
-         bi=(BITMAPINFO*)malloc(sizeof(BITMAPINFOHEADER)+256*4);
-         memset(bi,0,sizeof(BITMAPINFOHEADER)+256*4);
-         bi->bmiHeader.biSize=sizeof(BITMAPINFOHEADER)+256*4;
-         bi->bmiHeader.biWidth=w;
-         bi->bmiHeader.biHeight=h;
-         bi->bmiHeader.biSizeImage=w*h;
-         bi->bmiHeader.biPlanes=1;
-         bi->bmiHeader.biBitCount=8;
-         bi->bmiHeader.biCompression=BI_RGB;
-         for(unsigned int i=0;i<256;i++)
-            bi->bmiColors[i]=(i<<16)+(i<<8)+i;
-         aviChunkStream_=aviFile_->AddStream(AviStream::Video,bi,sizeof(BITMAPINFOHEADER)+256*4,BI_RGB,frameRate);
-         free(bi);
-      }
+   // get output format
+   output_format=av_guess_format("avi", NULL, NULL );
+   if(!output_format) {
+      fprintf(stderr,"Can't get AVI format, leaving...\n");
+      exit(1);
    }
+
+   // allocate context
+   output_format_cx=avformat_alloc_context();
+   if(!output_format_cx) {
+      fprintf(stderr,"Can't allocate format context, leaving...\n");
+      exit(1);
+   }
+
+   // format context setting
+   output_format_cx->oformat=output_format;
+   snprintf(output_format_cx->filename,sizeof(output_format_cx->filename),"%s",name);
+
+   // getting the codec
+   if(codec_==CODEC_LOSSLESS) {
+      output_codec=avcodec_find_encoder(CODEC_ID_HUFFYUV);
+   } else {
+      output_codec=avcodec_find_encoder(CODEC_ID_RAWVIDEO);
+   }
+   if(!output_codec) {
+      fprintf(stderr,"Can't get codec, leaving...\n");
+      exit(1);
+   }
+
+   // add the video stream
+   output_video_stream=NULL;
+   output_video_stream=avformat_new_stream(output_format_cx,output_codec);
+   if(!output_video_stream) {
+      fprintf(stderr,"Can't add video stream, leaving...\n");
+      exit(1);
+   }
+
+   // setting codec context
+   output_codec_cx=output_video_stream->codec;
+   output_codec_cx->width=width;
+   output_codec_cx->height=height;
+   output_codec_cx->time_base.den=(int)frameRate;
+   output_codec_cx->time_base.num=1;
+
+   // setting codec pix format
+   if(codec_==CODEC_LOSSLESS)
+      if(plans_==ALL_PLANS)
+         output_codec_cx->pix_fmt=PIX_FMT_RGB32;
+      else
+         output_codec_cx->pix_fmt=PIX_FMT_YUV422P;
+   else if(plans_==ALL_PLANS)
+      output_codec_cx->pix_fmt=PIX_FMT_RGB24;
+   else
+      output_codec_cx->pix_fmt=PIX_FMT_GRAY8;
+
+   // opening codec
+   if(avcodec_open2(output_codec_cx,output_codec,NULL)<0) {
+      fprintf(stderr,"Can't open codec, leaving...\n");
+      exit(1);
+   }
+
+   // buffer allocations
+   if(codec_==CODEC_LOSSLESS)
+      /* worst case, RGB32 */
+      video_outbuf_size=height*width*4;
+   else if (plans_==ALL_PLANS)
+      video_outbuf_size=height*width*3;
+   else
+      video_outbuf_size=height*width;
+   video_outbuf=(uint8_t*)av_malloc(video_outbuf_size);
+
+   // picture allocation
+   picture=avcodec_alloc_frame();
+   if(!picture) {
+      fprintf(stderr,"Can't allocate picture, leaving...\n");
+      exit(1);
+   }
+   picture_buffer=(uint8_t*)av_malloc(avpicture_get_size(output_codec_cx->pix_fmt,width,height));
+   if(!picture_buffer) {
+      fprintf(stderr,"Can't allocate picture buffer, leaving...\n");
+      exit(1);
+   }
+   avpicture_fill((AVPicture*)picture,picture_buffer,output_codec_cx->pix_fmt,width,height);
+
+   // dump format
+   av_dump_format(output_format_cx, 0, name, 1);
+
+   // opening file
+   if(avio_open(&output_format_cx->pb,name,AVIO_FLAG_WRITE)<0) {
+      fprintf(stderr,"Can't open file, leaving...\n");
+      exit(1);
+   }
+
+   // write header
+   avformat_write_header(output_format_cx,NULL);
 }
 
 AviWriter::~AviWriter() {
-   if(codec_==CODEC_LOSSLESS)
-      aviFrameStream_->Stop();
-   delete aviFile_;
-   free(temp_buffer);
+   // write trailer
+   av_write_trailer(output_format_cx);
+   // close codec
+   avcodec_close(output_codec_cx);
+   // free picture and buffer
+   av_free(picture->data[0]);
+   av_free(picture);
+   av_free(video_outbuf);
+   // free code and stream
+   av_freep(&output_format_cx->streams[0]->codec);
+   av_freep(&output_format_cx->streams[0]);
+   // close file
+   avio_close(output_format_cx->pb);
+   // free format context
+   av_free(output_format_cx);
 }
 
 void AviWriter::AddFrame(unsigned char* datas) {
-   BITMAPINFOHEADER bi;
-   memset(&bi,0,sizeof(bi));
-   bi.biSize=sizeof(bi);
-   bi.biWidth=w;
-   bi.biHeight=h;
+   int out_size,i;
+   unsigned char* plan_buf;
 
    // lossless codec
    if(codec_==CODEC_LOSSLESS) {
-      // RGB24
+      // RGB32
       if(plans_==ALL_PLANS) {
-         bi.biSizeImage=w*h*3;
-         bi.biPlanes=1;
-         bi.biBitCount=24;
-         bi.biCompression=BI_RGB;
-         bi.biHeight=-bi.biHeight;
-         BitmapInfo info(bi);
-         CImage img(&info, datas, true);
-         aviFrameStream_->AddFrame(&img);
+      // setting alpha
+      memset(picture->data[0],0,h*w*4);
+      for(i=0;i<(w*h);i++) {
+         picture->data[0][i*4]=datas[i*3];
+         picture->data[0][i*4+1]=datas[i*3+1];
+         picture->data[0][i*4+2]=datas[i*3+2];
+      }
       // 8 BITS (YUYV U=V=zero)
       } else {
-         bi.biSizeImage=w*h*2;
-         bi.biPlanes=3;
-         bi.biBitCount=16;
-         bi.biCompression=RIFFINFO_YUY2;
-         unsigned char* tmp;
-         tmp=getPlan(w,h,datas,plans_);
-         if(tmp!=NULL) {
-            grey_to_yuy2(w,h,tmp,temp_buffer);
-            BitmapInfo info(bi);
-            CImage img(&info, temp_buffer, true);
-            aviFrameStream_->AddFrame(&img);
-         } else
-            cout << "Wrong plan : " << plans_ << endl;
-         free(tmp);
+         plan_buf=getPlan(w,h,datas,plans_);
+         memcpy(picture->data[0],plan_buf,h*w);
+         memset(picture->data[1],128,h*w/2);
+         memset(picture->data[2],128,h*w/2);
+         free(plan_buf);
       }
-   // raw
+   // RAW
    } else {
-      rgb24_vertical_swap(w,h,datas);
       // RGB24
       if(plans_==ALL_PLANS) {
-         bi.biSizeImage=w*h*3;
-         bi.biPlanes=1;
-         bi.biBitCount=24;
-         bi.biCompression=BI_RGB;
-         aviChunkStream_->AddChunk(datas,bi.biSizeImage,1);
-      // 8 BITS RAW
+         memcpy(picture->data[0],datas,w*h*3);
+      // 8 BITS GRAY
       } else {
-         bi.biSizeImage=w*h;
-         bi.biPlanes=1;
-         bi.biBitCount=8;
-         bi.biCompression=BI_RGB;
-         unsigned char* tmp;
-         tmp=getPlan(w,h,datas,plans_);
-         if(tmp!=NULL)
-            aviChunkStream_->AddChunk(tmp,bi.biSizeImage,1);
-         else
-            cout << "Wrong plan : " << plans_ << endl;
-         free(tmp);
+         plan_buf=getPlan(w,h,datas,plans_);
+         memcpy(picture->data[0],plan_buf,h*w);
+         free(plan_buf);
       }
+   }
+
+   out_size=avcodec_encode_video(output_codec_cx,video_outbuf,video_outbuf_size,picture);
+   if(out_size>0) {
+      AVPacket pkt;
+      av_init_packet(&pkt);
+      pkt.flags|=AV_PKT_FLAG_KEY;
+      pkt.stream_index=output_video_stream->index;
+      pkt.data=video_outbuf;
+      pkt.size=out_size;
+      av_write_frame(output_format_cx,&pkt);
    }
 }
