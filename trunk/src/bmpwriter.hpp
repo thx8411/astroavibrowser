@@ -1,5 +1,5 @@
 /*
- * copyright (c) 2009-2010 Blaise-Florentin Collin
+ * copyright (c) 2009-2013 Blaise-Florentin Collin
  *
  * This file is part of AstroAviBrowser.
  *
@@ -22,6 +22,8 @@
 #define _BMPWRITER_HPP_
 
 #include <stdint.h>
+#include <stdio.h>
+
 #include "filewriter.hpp"
 
 // works only on little endian archs

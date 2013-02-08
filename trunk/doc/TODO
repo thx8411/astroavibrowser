@@ -3,7 +3,7 @@ TODO :
 - code cleaning/reorganisation
 - better error detection
 - speed up frame seeking
-- add autoconf
+- add cmake
 DONE - cerr redirection to avoid avifile and ffmpeg messages
 - apply dark, flat and offset to the video
 - add cropping features

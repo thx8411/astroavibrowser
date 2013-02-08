@@ -1,5 +1,5 @@
 /*
- * copyright (c) 2009-2010 Blaise-Florentin Collin
+ * copyright (c) 2009-2013 Blaise-Florentin Collin
  *
  * This file is part of AstroAviBrowser.
  *
@@ -228,16 +228,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
 
    // register all formats and codecs
    av_register_all();
-
-   // looking for huffyuv.dll
-   FILE* fd=fopen("/usr/lib/win32/huffyuv.dll","r");
-   if(fd==NULL) {
-      QMessageBox::information(this, tr("AstroAviBrowser"),tr("'/usr/lib/win32/huffyuv.dll' not found\n AVI lossless format will be disabled"));
-      useLossless=false;
-   } else {
-      fclose(fd);
-      useLossless=true;
-   }
 }
 
 MainWindow::~MainWindow() {
@@ -256,7 +246,8 @@ void MainWindow::freeFile() {
    }
    // close file
    if(inputFileFormatContext!=NULL) {
-      av_close_input_file(inputFileFormatContext);
+      avformat_close_input(&inputFileFormatContext);
+      //av_close_input_file(inputFileFormatContext);
       inputFileFormatContext=NULL;
    }
    // disabling widgets (no more file opened)
@@ -305,14 +296,14 @@ void MainWindow::MenuOpen() {
    freeFile();
 
    // opening file
-   if(av_open_input_file(&inputFileFormatContext, inputFileName.toStdString().c_str(), NULL, 0, NULL)!=0) {
+   if(avformat_open_input(&inputFileFormatContext, inputFileName.toStdString().c_str(), NULL, NULL)!=0) {
       // Couldn't open file
       QMessageBox::critical(this, tr("AstroAviBrowser"),tr("Unable to open the file"));
       return;
    }
 
    // get streams
-   if(av_find_stream_info(inputFileFormatContext)<0) {
+   if(avformat_find_stream_info(inputFileFormatContext,NULL)<0) {
       // Couldn't find stream information
       QMessageBox::critical(this, tr("AstroAviBrowser"),tr("Unable to get file streams"));
       freeFile();
@@ -321,7 +312,7 @@ void MainWindow::MenuOpen() {
    // open stream
    inputStreamNumber=-1;
    for(int i=0;i<inputFileFormatContext->nb_streams;i++) {
-      if(inputFileFormatContext->streams[i]->codec->codec_type==CODEC_TYPE_VIDEO) {
+      if(inputFileFormatContext->streams[i]->codec->codec_type==AVMEDIA_TYPE_VIDEO) {
       inputStreamNumber=i;
       break;
       }
@@ -345,7 +336,7 @@ void MainWindow::MenuOpen() {
    // enable truncated codec
    if(inputFileCodec->capabilities & CODEC_CAP_TRUNCATED)
         inputFileCodecContext->flags|=CODEC_FLAG_TRUNCATED;
-   if(avcodec_open(inputFileCodecContext, inputFileCodec)<0) {
+   if(avcodec_open2(inputFileCodecContext, inputFileCodec, NULL)<0) {
       // could not open codec
       QMessageBox::critical(this, tr("AstroAviBrowser"),tr("Unable to load the codec"));
       freeFile();
@@ -382,8 +373,7 @@ void MainWindow::MenuOpen() {
    gPlan->setEnabled(true);
    bPlan->setEnabled(true);
    useBmp->setEnabled(true);
-   if(useLossless)
-      codec->setEnabled(true);
+   codec->setEnabled(true);
    selectAll->setEnabled(true);
    unSelectAll->setEnabled(true);
    invertSelection->setEnabled(true);
@@ -751,7 +741,7 @@ void MainWindow::MenuSaveImpl(int p) {
 
    // compute frame rate
    int frameRate;
-   frameRate=(float)inputFileFormatContext->streams[inputStreamNumber]->r_frame_rate.den/(float)inputFileFormatContext->streams[inputStreamNumber]->r_frame_rate.num*1000000;
+   frameRate=(float)inputFileFormatContext->streams[inputStreamNumber]->r_frame_rate.num/(float)inputFileFormatContext->streams[inputStreamNumber]->r_frame_rate.den;
 
    // saving the new avi
    if(outputFormat==BMP_FILE) {
@@ -796,7 +786,7 @@ void MainWindow::MenuProperties() {
    message+="\n";
    // picture format
    message+="Format : ";
-   tmp=avcodec_get_pix_fmt_name(inputFileCodecContext->pix_fmt);
+   tmp=av_get_pix_fmt_name(inputFileCodecContext->pix_fmt);
    message+=tmp;
    message+="\n";
    // stream framerate
@@ -818,8 +808,7 @@ void MainWindow::MenuBmp(bool v) {
       codec->setEnabled(false);
       outputFormat=BMP_FILE;
    } else {
-      if(useLossless)
-         codec->setEnabled(true);
+      codec->setEnabled(true);
       outputFormat=AVI_FILE;
    }
 }

@@ -1,5 +1,5 @@
 /*
- * copyright (c) 2009-2010 Blaise-Florentin Collin
+ * copyright (c) 2009-2013 Blaise-Florentin Collin
  *
  * This file is part of AstroAviBrowser.
  *
@@ -155,7 +155,7 @@ void FrameList::fill() {
    av_seek_frame(formatContext, -1, 0, AVSEEK_FLAG_ANY);
    res=av_read_frame(formatContext, pkt);
    while (res==0) {
-      if((avcodec_decode_video(codecContext, frame, &frameDecoded, pkt->data, pkt->size)!=0)&&(frameDecoded!=0)) {
+      if((avcodec_decode_video2(codecContext, frame, &frameDecoded, pkt)!=0)&&(frameDecoded!=0)) {
          i++;
          progress->setValue(i);
          // add item...
@@ -212,7 +212,7 @@ bool FrameList::seekFrame(int number) {
    framePosition++;
 
    // decode frame
-   res=avcodec_decode_video(codecContext, frame, &frameDecoded, pkt->data, pkt->size);
+   res=avcodec_decode_video2(codecContext, frame, &frameDecoded, pkt);
    //cerr << frameDecoded << endl;
    frameOk=(res>0)&&(frameDecoded!=0);
    return(frameOk);
