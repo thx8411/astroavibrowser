@@ -35,7 +35,7 @@
 #include "aviwriter.hpp"
 #include "bmpwriter.hpp"
 
-#include "Qmainwindow.moc"
+#include "Qmainwindow.hpp"
 
 using namespace std;
 

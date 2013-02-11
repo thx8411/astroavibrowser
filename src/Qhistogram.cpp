@@ -1,5 +1,5 @@
 /*
- * copyright (c) 2009-2010 Blaise-Florentin Collin
+ * copyright (c) 2009-2013 Blaise-Florentin Collin
  *
  * This file is part of AstroAviBrowser.
  *
@@ -18,7 +18,7 @@
  * MA 02110-1301 USA
  */
 
-#include "Qhistogram.moc"
+#include "Qhistogram.hpp"
 
 #define W_SIZE	134
 #define H_SIZE	120

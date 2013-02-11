@@ -1,5 +1,5 @@
 /*
- * copyright (c) 2009-2010 Blaise-Florentin Collin
+ * copyright (c) 2009-2013 Blaise-Florentin Collin
  *
  * This file is part of AstroAviBrowser.
  *
@@ -20,7 +20,7 @@
 
 #include "processing.hpp"
 
-#include "Qframedisplay.moc"
+#include "Qframedisplay.hpp"
 
 FrameDisplay::FrameDisplay(QWidget* parent) : QWidget(parent) {
    painter_ = new QPainter();

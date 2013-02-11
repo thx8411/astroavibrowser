@@ -1,4 +1,4 @@
-Vers. 0.4beta20100207
+Vers. 0.4beta20100211
 
    - max frame building
    - sum frame building
@@ -8,6 +8,7 @@ Vers. 0.4beta20100207
    - libavifile not needed anymore
    - ffmpeg deprecated APIs removed
    - framerate bug fixed
+   - now builds with cmake
 
 Vers. 0.3
 
