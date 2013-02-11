@@ -24,7 +24,7 @@
 #include <Qt/qmessagebox.h>
 #include <QtGui/QProgressDialog>
 
-#include "Qframelist.moc"
+#include "Qframelist.hpp"
 
 #include "processing.hpp"
 
