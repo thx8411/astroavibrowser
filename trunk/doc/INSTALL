@@ -44,10 +44,12 @@ INSTALLATION
 BUILDING PACKAGES
 -----------------
 
-   If you want to build binaries or source packages, use 'cpak' once
+   If you want to build binaries or source packages, we use 'cpak' once
 AstroAviBrowser builded.
 
-Example :
+   For source package building :
+
+      make package_source
 
 
 NOTES
