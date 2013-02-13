@@ -3,7 +3,7 @@ TODO :
 - code cleaning/reorganisation
 - better error detection
 - speed up frame seeking
-- add cmake
+DONE - add cmake
 DONE - cerr redirection to avoid avifile and ffmpeg messages
 - apply dark, flat and offset to the video
 - add cropping features
@@ -13,4 +13,4 @@ DONE - add histogram display (with the average movie value)
 DONE - add BMP output
 DONE - generate grey/color dark master
 DONE - generate grey/color falt master
-- use to native format RGB24 and YUV444
+- use native format RGB24 and YUV444

@@ -1,0 +1,65 @@
+CONTENTS
+--------
+
+ - CONTENTS
+ - REQUIREMENTS
+ - BUILDING
+ - INSTALLATION
+ - BUILDING PACKAGES
+ - NOTES
+
+
+REQUIREMENTS
+------------
+
+   AstroAviBrowser needs the 'Qt4' and 'ffmpeg/libav' libraries (0.5 or higher)
+In order to build AstroAviBrowser from sources, you will also need the develop-
+pement versions of these libraries and 'cmake' (version 2.8.6 or higer). RPM,
+Debian or sources tarballs can be build using 'cpak'.
+
+
+BUILDING
+--------
+
+   AstroAviBrowser use cmake for building. Just create a new directory for
+building files, go in this directory and use "cmake SOURCE_PATH". Then use
+"make".
+
+Example :
+
+   gzip -d astroavibrowser_xxxxxx_src.tar.gz
+   tar -xvfz astroavibrowser_xxxxxx_src.tar
+   mkdir astroavibrowser-build
+   cd astroavibrowser-build
+   cmake ../astroavibrowser-code
+   make
+
+
+INSTALLATION
+------------
+
+   Once AstroAviBrowser builded, log as root, or use sudo, and type
+"make install"
+
+BUILDING PACKAGES
+-----------------
+
+   If you want to build binaries or source packages, use 'cpak' once
+AstroAviBrowser builded.
+
+Example :
+
+
+NOTES
+-----
+ 
+ - The BMP output features just works on Little Endian architectures.
+
+ - If you want to report a bug, ask for new features or submit a patch,
+   just post a message on the project sourceforge support section :
+   "sourceforge.net/projects/astroavibrowser/", or send me an email at
+   thx8411@users.sourceforge.net
+
+  - This version is just a draft. Objects are mixed, code is really dirty,
+    not very stable, etc. The next version will give the same features, but
+    code will be much cleaner.

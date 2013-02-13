@@ -1,9 +1,0 @@
-Needed :
-
-	- ffmpeg 0.5 (libavformat, libavcodec, libswscale)
-        - Qt4
-
-Build :
-
-	- make
-        - make install
