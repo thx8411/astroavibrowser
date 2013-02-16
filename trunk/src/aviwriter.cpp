@@ -27,6 +27,17 @@
 
 #include "aviwriter.hpp"
 
+// libav stores raw video datas upside down, with
+// negative height in stream headers
+// old gstream versions can't handle this negative height
+// we change this height at offset 00b4 in the avi file
+#define GSTREAM_HEIGHT_TWEAK
+
+// gstream stream height tweak
+#ifdef GSTREAM_HEIGHT_TWEAK
+#include <fcntl.h>
+#endif
+
 using namespace std;
 
 AviWriter::AviWriter(int codec, int plans, const char* name, int width, int height, int frameRate) : FileWriter (codec,plans,name,width,height,frameRate) {
@@ -130,6 +141,11 @@ AviWriter::AviWriter(int codec, int plans, const char* name, int width, int heig
 }
 
 AviWriter::~AviWriter() {
+// gstream stream height tweak
+#ifdef GSTREAM_HEIGHT_TWEAK
+   int fd;
+#endif
+
    // write trailer
    av_write_trailer(output_format_cx);
    // close codec
@@ -145,6 +161,24 @@ AviWriter::~AviWriter() {
    avio_close(output_format_cx->pb);
    // free format context
    av_free(output_format_cx);
+
+// gstream stream height tweak
+#ifdef GSTREAM_HEIGHT_TWEAK
+   fd=open(name_.c_str(),O_WRONLY);
+   if(fd<0) {
+      fprintf(stderr,"Can't open output file, leaving...\n");
+      exit(1);
+   }
+   if(lseek(fd,0x00b4,SEEK_SET)!=0x00b4) {
+      fprintf(stderr,"Can't seek to stream height offset, leaving...\n");
+      exit(1);
+   }
+   if(write(fd,&h,4)!=4) {
+      fprintf(stderr,"Can't write new stream height, leaving...\n");
+      exit(1);
+   }
+   close(fd);
+#endif
 }
 
 void AviWriter::AddFrame(unsigned char* datas) {
@@ -174,10 +208,21 @@ void AviWriter::AddFrame(unsigned char* datas) {
    } else {
       // RGB24
       if(plans_==ALL_PLANS) {
+
+// gstream stream height tweak
+#ifndef GSTREAM_HEIGHT_TWEAK
+         rgb24_vertical_swap(w,h,datas);
+#endif
          memcpy(picture->data[0],datas,w*h*3);
       // 8 BITS GRAY
       } else {
          plan_buf=getPlan(w,h,datas,plans_);
+
+// gstream stream height tweak
+#ifndef GSTREAM_HEIGHT_TWEAK
+         grey_vertical_swap(w,h,plan_buf);
+#endif
+
          memcpy(picture->data[0],plan_buf,h*w);
          free(plan_buf);
       }

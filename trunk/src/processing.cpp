@@ -1,5 +1,5 @@
 /*
- * copyright (c) 2009-2010 Blaise-Florentin Collin
+ * copyright (c) 2009-2013 Blaise-Florentin Collin
  *
  * This file is part of AstroAviBrowser.
  *
@@ -217,6 +217,18 @@ void rgb24_vertical_swap(int w, int h, unsigned char* data){
    memcpy(tmp,data,w*h*3);
    for(int i=0;i<h;i++) {
       memcpy(&data[i*w*3],&tmp[(h-i-1)*w*3],w*3);
+   }
+   free(tmp);
+}
+
+// swap 8 bit gray (upside down)
+void grey_vertical_swap(int w, int h, unsigned char* data){
+   unsigned char* tmp;
+   static int i;
+   tmp=(unsigned char*)malloc(w*h);
+   memcpy(tmp,data,w*h);
+   for(i=0;i<h;i++) {
+      memcpy(&data[i*w],&tmp[(h-i-1)*w],w);
    }
    free(tmp);
 }
