@@ -1,5 +1,5 @@
 /*
- * copyright (c) 2009-2010 Blaise-Florentin Collin
+ * copyright (c) 2009-2013 Blaise-Florentin Collin
  *
  * This file is part of AstroAviBrowser.
  *
@@ -42,14 +42,16 @@ unsigned char clip(double v);
 unsigned char clip(long v);
 
 // vesta raw to rgb conversion
-void raw2rgb(unsigned char * dest, unsigned char * const data,
-               int w, int h,int mode);
+void raw2rgb(unsigned char * dest, unsigned char * const data, int w, int h,int mode);
 
 // bgr to rgb plan swap
 void bgr2rgb(unsigned char * datas, int w, int h);
 
 // swap rgb24 (upside down)
 void rgb24_vertical_swap(int w, int h, unsigned char* data);
+
+// swap 8 bits gray (upside down)
+void grey_vertical_swap(int w, int h, unsigned char* data);
 
 // return R, G, B or luminance plan from rgb24
 unsigned char* getPlan(int w, int h, unsigned char* data, int plan);
