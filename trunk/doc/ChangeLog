@@ -12,6 +12,7 @@ Vers. 0.4
    - source package can be build with cpack
    - output can be forced to RGB24 instead of Y800
    - tweak added for gstream raw DIB negative height bug
+   - binary name changed
 
 Vers. 0.3
 
