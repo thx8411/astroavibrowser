@@ -30,6 +30,7 @@
 // codecs
 #define CODEC_RAW	1
 #define CODEC_LOSSLESS	2
+#define CODEC_RAW_FORCE_RGB24	3
 
 using namespace std;
 

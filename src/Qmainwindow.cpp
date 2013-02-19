@@ -43,6 +43,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    // basic init
    outputCodec=CODEC_RAW;
    outputFormat=AVI_FILE;
+   RGB24forced=false;
 
    // ffmpeg datas init
    inputFileFormatContext=NULL;
@@ -69,11 +70,13 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    darkFlatRGBMedian=new QAction("Build median frame (rgb)...",this);
    // save plans
    lPlan=new QAction("Save &Luminance...",this);
-   rPlan= new QAction("Save &R plan...",this);
-   gPlan= new QAction("Save &G plan...",this);
-   bPlan= new QAction("Save &B plan...",this);
+   rPlan=new QAction("Save &R plan...",this);
+   gPlan=new QAction("Save &G plan...",this);
+   bPlan=new QAction("Save &B plan...",this);
    useBmp=new QAction("BMP sequence",this);
    useBmp->setCheckable(true);
+   forceRGB24=new QAction("Force RGB24 output",this);
+   forceRGB24->setCheckable(true);
    about = new QAction("&About...",this);
    // file menu
    QMenu* file;
@@ -108,6 +111,10 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    output = menuBar()->addMenu("O&utput");
    output->addAction(useBmp);
    codec= output->addMenu("Avi movie");
+   // settings menu
+   QMenu* settings;
+   settings = menuBar()->addMenu("Settings");
+   settings->addAction(forceRGB24);
    // help menu
    QMenu* help;
    help = menuBar()->addMenu("&Help");
@@ -130,8 +137,10 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    connect(gPlan, SIGNAL(triggered()), this, SLOT(MenuSaveG()));
    connect(bPlan, SIGNAL(triggered()), this, SLOT(MenuSaveB()));
    connect(quit, SIGNAL(triggered()), qApp, SLOT(quit()));
+   // menus
    connect(properties, SIGNAL(triggered()), this, SLOT(MenuProperties()));
    connect(useBmp,SIGNAL(toggled(bool)),this,SLOT(MenuBmp(bool)));
+   connect(forceRGB24,SIGNAL(toggled(bool)),this,SLOT(MenuForceRGB24(bool)));
    connect(about, SIGNAL(triggered()), this, SLOT(MenuAbout()));
 
    // CENTRAL ZONE
@@ -813,6 +822,15 @@ void MainWindow::MenuBmp(bool v) {
    }
 }
 
+// force RGB24
+void MainWindow::MenuForceRGB24(bool v) {
+   RGB24forced=v;
+   if(v&&outputCodec==CODEC_RAW)
+         outputCodec=CODEC_RAW_FORCE_RGB24;
+   if(!v&&outputCodec==CODEC_RAW_FORCE_RGB24)
+         outputCodec=CODEC_RAW;
+}
+
 // ABOUT...
 void MainWindow::MenuAbout() {
    QString message;
@@ -945,7 +963,10 @@ void MainWindow::setRaw() {
    codecLossless->setChecked(false);
 
    // update codec
-   outputCodec=CODEC_RAW;
+   if(RGB24forced)
+      outputCodec=CODEC_RAW_FORCE_RGB24;
+   else
+      outputCodec=CODEC_RAW;
 }
 
 void MainWindow::setLossless() {
