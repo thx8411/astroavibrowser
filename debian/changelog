@@ -11,6 +11,7 @@ astroavibrowser (0.4beta20130219) jaunty; urgency=low
   * now builds with cmake
   * RGB24 can be forced instead of Y800
   * tweak added for gstream raw DIB negative height bug
+  * binary name changed
 
  -- Blaise-Florentin Collin <collin@eeepc901>  Thu, 19 Feb 2013 21:13:12 +0100
 
