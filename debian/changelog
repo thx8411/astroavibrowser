@@ -1,4 +1,4 @@
-astroavibrowser (0.4beta20130211) jaunty; urgency=low
+astroavibrowser (0.4beta20130219) jaunty; urgency=low
 
   * buttons refresh bug fixed
   * mean frame building
@@ -9,8 +9,10 @@ astroavibrowser (0.4beta20130211) jaunty; urgency=low
   * ffmpeg deprecated APIs removed
   * framerate bug fixed
   * now builds with cmake
+  * RGB24 can be forced instead of Y800
+  * tweak added for gstream raw DIB negative height bug
 
- -- Blaise-Florentin Collin <collin@eeepc901>  Mon, 11 Feb 2013 21:13:12 +0100
+ -- Blaise-Florentin Collin <collin@eeepc901>  Thu, 19 Feb 2013 21:13:12 +0100
 
 astroavibrowser (0.3) jaunty; urgency=low
 
