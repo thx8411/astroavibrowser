@@ -93,7 +93,7 @@ AviWriter::AviWriter(int codec, int plans, const char* name, int width, int heig
          output_codec_cx->pix_fmt=PIX_FMT_RGB32;
       else
          output_codec_cx->pix_fmt=PIX_FMT_YUV422P;
-   else if(plans_==ALL_PLANS)
+   else if(plans_==ALL_PLANS||codec_==CODEC_RAW_FORCE_RGB24)
       output_codec_cx->pix_fmt=PIX_FMT_RGB24;
    else
       output_codec_cx->pix_fmt=PIX_FMT_GRAY8;
@@ -108,11 +108,15 @@ AviWriter::AviWriter(int codec, int plans, const char* name, int width, int heig
    if(codec_==CODEC_LOSSLESS)
       /* worst case, RGB32 */
       video_outbuf_size=height*width*4;
-   else if (plans_==ALL_PLANS)
+   else if (plans_==ALL_PLANS||codec_==CODEC_RAW_FORCE_RGB24)
       video_outbuf_size=height*width*3;
    else
       video_outbuf_size=height*width;
    video_outbuf=(uint8_t*)av_malloc(video_outbuf_size);
+   if(!video_outbuf) {
+      fprintf(stderr,"Can't allocate video buffer, leaving...\n");
+      exit(1);
+   }
 
    // picture allocation
    picture=avcodec_alloc_frame();
@@ -120,6 +124,7 @@ AviWriter::AviWriter(int codec, int plans, const char* name, int width, int heig
       fprintf(stderr,"Can't allocate picture, leaving...\n");
       exit(1);
    }
+
    picture_buffer=(uint8_t*)av_malloc(avpicture_get_size(output_codec_cx->pix_fmt,width,height));
    if(!picture_buffer) {
       fprintf(stderr,"Can't allocate picture buffer, leaving...\n");
@@ -141,6 +146,7 @@ AviWriter::AviWriter(int codec, int plans, const char* name, int width, int heig
 }
 
 AviWriter::~AviWriter() {
+
 // gstream stream height tweak
 #ifdef GSTREAM_HEIGHT_TWEAK
    int fd;
@@ -179,6 +185,7 @@ AviWriter::~AviWriter() {
    }
    close(fd);
 #endif
+
 }
 
 void AviWriter::AddFrame(unsigned char* datas) {
@@ -208,22 +215,21 @@ void AviWriter::AddFrame(unsigned char* datas) {
    } else {
       // RGB24
       if(plans_==ALL_PLANS) {
-
-// gstream stream height tweak
-#ifndef GSTREAM_HEIGHT_TWEAK
          rgb24_vertical_swap(w,h,datas);
-#endif
          memcpy(picture->data[0],datas,w*h*3);
       // 8 BITS GRAY
       } else {
          plan_buf=getPlan(w,h,datas,plans_);
-
-// gstream stream height tweak
-#ifndef GSTREAM_HEIGHT_TWEAK
-         grey_vertical_swap(w,h,plan_buf);
-#endif
-
-         memcpy(picture->data[0],plan_buf,h*w);
+         if(codec_==CODEC_RAW_FORCE_RGB24) {
+            grey_vertical_swap(w,h,plan_buf);
+            for(i=0;i<(h*w);i++) {
+               picture->data[0][i*3]=plan_buf[i];
+               picture->data[0][i*3+1]=plan_buf[i];
+               picture->data[0][i*3+2]=plan_buf[i];
+            }
+         } else {
+            memcpy(picture->data[0],plan_buf,h*w);
+         }
          free(plan_buf);
       }
    }

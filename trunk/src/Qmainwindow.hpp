@@ -68,6 +68,7 @@ class MainWindow : public QMainWindow
       void MenuSaveB();
       void MenuProperties();
       void MenuBmp(bool v);
+      void MenuForceRGB24(bool);
       void MenuAbout();
       // input mode slots
       void setNone();
@@ -123,6 +124,8 @@ class MainWindow : public QMainWindow
       // codec menu radio buttons
       QAction* codecRaw;
       QAction* codecLossless;
+      // settings menu
+      QAction* forceRGB24;
       // buttons
       QPushButton* selectAll;
       QPushButton* unSelectAll;
@@ -138,6 +141,7 @@ class MainWindow : public QMainWindow
       // file datas
       int outputFormat;
       int outputCodec;
+      bool RGB24forced;
       // ffmpeg datas
       AVFormatContext* inputFileFormatContext;
       AVCodecContext* inputFileCodecContext;
