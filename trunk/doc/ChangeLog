@@ -9,6 +9,9 @@ Vers. 0.4
    - ffmpeg deprecated APIs removed
    - framerate bug fixed
    - now builds with cmake
+   - source package can be build with cpack
+   - output can be forced to RGB24 instead of Y800
+   - tweak added for gstream raw DIB negative height bug
 
 Vers. 0.3
 
