@@ -9,7 +9,7 @@ DONE - cerr redirection to avoid avifile and ffmpeg messages
 - add cropping features
 - add frame auto selection
 DONE - add histogram display (with the average movie value)
-- add help file
+DONE - add help file
 DONE - add BMP output
 DONE - generate grey/color dark master
 DONE - generate grey/color falt master

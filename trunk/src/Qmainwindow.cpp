@@ -18,14 +18,24 @@
  * MA 02110-1301 USA
  */
 
+#define ICON_FILE "/usr/share/astroavibrowser/icons/astroavibrowser-icon.png"
+
+// temp file for tests
+//#define HELP_FILE "/usr/share/astroavibrowser/astroavibrowser_help.html"
+#define HELP_FILE "/home/collin/prog/astroavibrowser-code/doc/astroavibrowser_help.html"
+
 #include <unistd.h>
 #include <fcntl.h>
 #include <iostream>
+#include <stdio.h>
 
 #include <Qt/qmenu.h>
 #include <Qt/qmenubar.h>
 #include <Qt/qmessagebox.h>
 #include <Qt/qscrollarea.h>
+#include <Qt/qtextedit.h>
+#include <Qt/qdialog.h>
+#include <Qt/qtextstream.h>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QFileDialog>
@@ -77,7 +87,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    useBmp->setCheckable(true);
    forceRGB24=new QAction("Force RGB24 output",this);
    forceRGB24->setCheckable(true);
-   about = new QAction("&About...",this);
+   helpfile=new QAction("&Help...",this);
+   about=new QAction("&About...",this);
    // file menu
    QMenu* file;
    file = menuBar()->addMenu("&File");
@@ -118,6 +129,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    // help menu
    QMenu* help;
    help = menuBar()->addMenu("&Help");
+   help->addAction(helpfile);
    help->addAction(about);
    // signal connections
    connect(openfile, SIGNAL(triggered()), this, SLOT(MenuOpen()));
@@ -141,6 +153,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    connect(properties, SIGNAL(triggered()), this, SLOT(MenuProperties()));
    connect(useBmp,SIGNAL(toggled(bool)),this,SLOT(MenuBmp(bool)));
    connect(forceRGB24,SIGNAL(toggled(bool)),this,SLOT(MenuForceRGB24(bool)));
+   connect(helpfile, SIGNAL(triggered()), this, SLOT(MenuHelp()));
    connect(about, SIGNAL(triggered()), this, SLOT(MenuAbout()));
 
    // CENTRAL ZONE
@@ -220,7 +233,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    createCodecMenu();
    // set and display
    setCentralWidget(centralZone);
-   QPixmap* pixmap = new QPixmap("/usr/share/astroavibrowser/icons/astroavibrowser-icon.png");
+   QPixmap* pixmap = new QPixmap(ICON_FILE);
    setWindowIcon(*pixmap);
    delete pixmap;
    frameDisplay->show();
@@ -829,6 +842,37 @@ void MainWindow::MenuForceRGB24(bool v) {
          outputCodec=CODEC_RAW_FORCE_RGB24;
    if(!v&&outputCodec==CODEC_RAW_FORCE_RGB24)
          outputCodec=CODEC_RAW;
+}
+
+// help window
+void MainWindow::MenuHelp() {
+   QDialog helpwindow;
+   QTextEdit* helptext;
+   QTextStream* helpstream;
+   FILE* help_file;
+
+   // opening help file
+   help_file=fopen(HELP_FILE,"r");
+   if(help_file)
+      helpstream=new QTextStream(help_file);
+   else
+      helpstream=new QTextStream("Help file not found");
+
+   // html display widget
+   helptext=new QTextEdit(&helpwindow);
+   helptext->setReadOnly(true);
+   helptext->setHtml(helpstream->readAll());
+   helptext->setMinimumWidth(400);
+   helptext->setMinimumHeight(500);
+
+   // dialog box
+   helpwindow.setWindowTitle(tr("astroavibrowser help"));
+   helpwindow.exec();
+
+   // cleaning
+   delete helptext;
+   delete helpstream;
+   fclose(help_file);
 }
 
 // ABOUT...

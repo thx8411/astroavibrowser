@@ -58,6 +58,7 @@ target_link_libraries(astroavibrowser ${QT_LIBRARIES} ${LIBAV_LIBRARIES})
 install(TARGETS astroavibrowser RUNTIME DESTINATION /usr/bin)
 install(FILES icons/astroavibrowser-icon.png DESTINATION /usr/share/icons)
 install(FILES icons/astroavibrowser-icon.png DESTINATION /usr/share/astroavibrowser/icons)
+install(FILES doc/astroavibrowser_help.html DESTINATION /usr/share/astroavibrowser)
 install(FILES astroavibrowser-entry.desktop DESTINATION /usr/share/applications)
 
 ######################
