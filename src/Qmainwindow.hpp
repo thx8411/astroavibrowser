@@ -69,6 +69,7 @@ class MainWindow : public QMainWindow
       void MenuProperties();
       void MenuBmp(bool v);
       void MenuForceRGB24(bool);
+      void MenuHelp();
       void MenuAbout();
       // input mode slots
       void setNone();
@@ -114,6 +115,7 @@ class MainWindow : public QMainWindow
       QMenu* bayer;
       QAction* useBmp;
       QMenu* codec;
+      QAction* helpfile;
       QAction* about;
       // bayer menu radio buttons
       QAction* bayerNone;
