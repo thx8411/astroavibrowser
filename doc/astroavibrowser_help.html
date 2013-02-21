@@ -4,56 +4,92 @@
 </HEAD>
 <BODY>
 <H1>Astroavibrowser help</H1>
-<P>Blalalalalala blaalalalaa blalalalalal
-<P>Blalaaalalaaaaaaaaaaaaaaaaaaaalalalalal
-aalalaalalaaaaaaaaaaalalallalalalalaalalala
-Blalaaalalaaaaaaaaaaaaaaaaaaaalalalalal
-aalalaalalaaaaaaaaaaalalallalalalalaalalala
-Blalaaalalaaaaaaaaaaaaaaaaaaaalalalalal
-aalalaalalaaaaaaaaaaalalallalalalalaalalala
-Blalaaalalaaaaaaaaaaaaaaaaaaaalalalalal
-aalalaalalaaaaaaaaaaalalallalalalalaalalala
-Blalaaalalaaaaaaaaaaaaaaaaaaaalalalalal
-aalalaalalaaaaaaaaaaalalallalalalalaalalala
-Blalaaalalaaaaaaaaaaaaaaaaaaaalalalalal
-aalalaalalaaaaaaaaaaalalallalalalalaalalala
-Blalaaalalaaaaaaaaaaaaaaaaaaaalalalalal
-aalalaalalaaaaaaaaaaalalallalalalalaalalala
-Blalaaalalaaaaaaaaaaaaaaaaaaaalalalalal
-aalalaalalaaaaaaaaaaalalallalalalalaalalala
-Blalaaalalaaaaaaaaaaaaaaaaaaaalalalalal
-aalalaalalaaaaaaaaaaalalallalalalalaalalala
-Blalaaalalaaaaaaaaaaaaaaaaaaaalalalalal
-aalalaalalaaaaaaaaaaalalallalalalalaalalala
-Blalaaalalaaaaaaaaaaaaaaaaaaaalalalalal
-aalalaalalaaaaaaaaaaalalallalalalalaalalala
-Blalaaalalaaaaaaaaaaaaaaaaaaaalalalalal
-aalalaalalaaaaaaaaaaalalallalalalalaalalala
-Blalaaalalaaaaaaaaaaaaaaaaaaaalalalalal
-aalalaalalaaaaaaaaaaalalallalalalalaalalala
-Blalaaalalaaaaaaaaaaaaaaaaaaaalalalalal
-aalalaalalaaaaaaaaaaalalallalalalalaalalala
-Blalaaalalaaaaaaaaaaaaaaaaaaaalalalalal
-aalalaalalaaaaaaaaaaalalallalalalalaalalala
-Blalaaalalaaaaaaaaaaaaaaaaaaaalalalalal
-aalalaalalaaaaaaaaaaalalallalalalalaalalala
-Blalaaalalaaaaaaaaaaaaaaaaaaaalalalalal
-aalalaalalaaaaaaaaaaalalallalalalalaalalala
-Blalaaalalaaaaaaaaaaaaaaaaaaaalalalalal
-aalalaalalaaaaaaaaaaalalallalalalalaalalala
-Blalaaalalaaaaaaaaaaaaaaaaaaaalalalalal
-aalalaalalaaaaaaaaaaalalallalalalalaalalala
-Blalaaalalaaaaaaaaaaaaaaaaaaaalalalalal
-aalalaalalaaaaaaaaaaalalallalalalalaalalala
-Blalaaalalaaaaaaaaaaaaaaaaaaaalalalalal
-aalalaalalaaaaaaaaaaalalallalalalalaalalala
-Blalaaalalaaaaaaaaaaaaaaaaaaaalalalalal
-aalalaalalaaaaaaaaaaalalallalalalalaalalala
-Blalaaalalaaaaaaaaaaaaaaaaaaaalalalalal
-aalalaalalaaaaaaaaaaalalallalalalalaalalala
-Blalaaalalaaaaaaaaaaaaaaaaaaaalalalalal
-aalalaalalaaaaaaaaaaalalallalalalalaalalala
-Blalaaalalaaaaaaaaaaaaaaaaaaaalalalalal
-aalalaalalaaaaaaaaaaalalallalalalalaalalala
+
+<H2>Menus</H2>
+
+<H3>File Menu</H3>
+
+<H4>Open...</H4>
+<P>Opens a video file in any ffmpeg/libav supported
+format.
+<H4>Save...</H4>
+<P>Saves the frames you selected using either the
+BMP or the AVI output, depending on the output and the
+codec you choosed.
+<H4>Save &lt;plan&gt;...<></H4>
+<P>Saves the frames you selected like the usual 'save' menu,
+but only stores one of the color plans.
+<UL>
+<LI>Luminance : frames are converted to grey level pictures
+<LI>R plan : red frames components converted to grey level pictures
+<LI>G plan : green frames components converted to grey level pictures
+<LI>B plan : blue frames components converted to grey level pictures
+</UL>
+<H4>Build &lt;method&gt; &lt;colors&gt;</H4>
+<P>Saves the selected frames applying the selected method, either like
+a grey level picture or an RGB picture. Pictures are saved as BMP
+files.
+<H5>method</H5>
+<UL>
+<LI>sum : summing pixels of each frames
+<LI>max : just keep the bightest pixel values of all frames
+<LI>mean : resulting pixel is the mean of all the selected frames pixels
+<LI>median : resulting pixel is the mean of all the selected frames pixels
+</UL>
+<H5>colors</H5>
+<UL>
+<LI>(mono) : luminance only, 8bits picture
+<LI>(rgb) : RGB color picture
+</UL>
+<H4>Quit</H4>
+<P>Quit astroavibrowser
+
+<H3>Menu Input</H3>
+<H4>Properties...</H4>
+<P>Gives the input video properties
+<H4>Bayer Mode</H4>
+<P>If your input file is a raw capture from a camera using a Bayer pattern,
+select the Bayer pattern order to apply for de-Bayering.
+
+<H3>Menu Output</H3>
+<H4>BMP Sequence</H4>
+<P>Each frame is stored in a BMP numbered file.
+<H4>Avi movie</H4>
+<P>
+<UL>
+<LI>Raw : uncompressed raw
+<LI>Lossless Huffyuv : Huffyuv lossless codec
+</UL>
+
+<H3>Menu Settings</H3>
+<H4>Force RGB24 output</H4>
+<P>Some software doesn't support the AVI raw 8 bits format (Y800). Using this
+option, you may force every raw output to RGB24.
+
+<H3>Menu Help</H3>
+<H4>Help...</H4>
+<P>This help file.
+<H4>About...</H4>
+<P>About astroavibrowser.
+
+<H2>Main window</H2>
+<P>The current frame is diplayed on the right.
+<H3>The frame list</H3>
+<P>On the left, you can check or uncheck each frame.
+<P>The first en the second buttons checks or unchecks all the frame. The third
+button inverts the actual selection.
+<H3>The histogram</H3>
+<P>
+
+<H2>Notes</H2>
+<UL>
+<LI>In raw format, 'avi' files should be stored 
+upside-down, using a negative height. 'gstreamer' 0.10
+doesn't follows this specification. In order to be
+compatible with 'gstreamer', astrovaibrowser stores
+raw movies upside-up, with a positive height. Depending
+on the software you use, your output video may be verticaly
+fliped.
+</UL>
 </BODY>
 </HTML>
