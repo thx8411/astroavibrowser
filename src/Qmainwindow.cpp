@@ -36,6 +36,7 @@
 #include <Qt/qtextedit.h>
 #include <Qt/qdialog.h>
 #include <Qt/qtextstream.h>
+#include <Qt/qpushbutton.h>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QFileDialog>
@@ -862,16 +863,29 @@ void MainWindow::MenuHelp() {
    helptext=new QTextEdit(&helpwindow);
    helptext->setReadOnly(true);
    helptext->setHtml(helpstream->readAll());
-   helptext->setMinimumWidth(400);
-   helptext->setMinimumHeight(500);
+   helptext->resize(500,600);
+
+   // close button
+   QPushButton* close=new QPushButton("Close",&helpwindow);
+   connect(close,SIGNAL(released()),&helpwindow,SLOT(close()));
 
    // dialog box
    helpwindow.setWindowTitle(tr("astroavibrowser help"));
+
+   // layout and size
+   QVBoxLayout* vbox = new QVBoxLayout(&helpwindow);
+   vbox->addWidget(helptext);
+   vbox->addWidget(close);
+   helpwindow.resize(500,600);
+
+   // dialog display
    helpwindow.exec();
 
    // cleaning
    delete helptext;
    delete helpstream;
+   delete close;
+   delete vbox;
    fclose(help_file);
 }
 
