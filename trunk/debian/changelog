@@ -1,4 +1,4 @@
-astroavibrowser (0.4beta20130219) jaunty; urgency=low
+astroavibrowser (0.4beta20130222) jaunty; urgency=low
 
   * buttons refresh bug fixed
   * mean frame building
@@ -14,7 +14,7 @@ astroavibrowser (0.4beta20130219) jaunty; urgency=low
   * binary name changed
   * help file added
 
- -- Blaise-Florentin Collin <collin@eeepc901>  Thu, 19 Feb 2013 21:13:12 +0100
+ -- Blaise-Florentin Collin <collin@eeepc901>  Fri, 21 Feb 2013 21:13:12 +0100
 
 astroavibrowser (0.3) jaunty; urgency=low
 
