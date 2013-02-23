@@ -20,8 +20,6 @@
 
 #define ICON_FILE "/usr/share/astroavibrowser/icons/astroavibrowser-icon.png"
 
-// temp file for tests
-//#define HELP_FILE "/usr/share/astroavibrowser/astroavibrowser_help.html"
 #define HELP_FILE "/home/collin/prog/astroavibrowser-code/doc/astroavibrowser_help.html"
 
 #include <unistd.h>

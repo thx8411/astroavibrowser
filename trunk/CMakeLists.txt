@@ -4,15 +4,19 @@ cmake_minimum_required(VERSION 2.6.8)
 # BUILD DIRECTIVES #
 ####################
 
+# distribution detection
+find_file (DEBIAN_FOUND debian_version debconf.conf PATHS /etc)
+find_file (FEDORA_FOUND fedora-release PATHS /etc)
+
 # project name
 project(astroavibrowser)
 
 # version
 set(MAJOR_VERSION "0")
 set(MINOR_VERSION "4")
-set(PATCH_VERSION "beta20130222")
-set(BUILD_VERSION "31")
-set(FULL_VERSION "${MAJOR_VERSION}.${MINOR_VERSION}${PATCH_VERSION}")
+set(PATCH_VERSION "beta20130223")
+set(BUILD_VERSION "32")
+set(FULL_VERSION "${MAJOR_VERSION}.${MINOR_VERSION}-${PATCH_VERSION}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D BINARY_VERSION=\\\"${FULL_VERSION}\\\" -D BUILD_VERSION=${BUILD_VERSION}")
 
 # destir for binary packages
@@ -60,6 +64,13 @@ install(TARGETS astroavibrowser RUNTIME DESTINATION /usr/bin)
 install(FILES icons/astroavibrowser-icon.png DESTINATION /usr/share/icons)
 install(FILES icons/astroavibrowser-icon.png DESTINATION /usr/share/astroavibrowser/icons)
 install(FILES doc/astroavibrowser_help.html DESTINATION /usr/share/astroavibrowser)
+install(FILES doc/copyright DESTINATION /usr/share/astroavibrowser)
+install(FILES doc/BUGS DESTINATION /usr/share/astroavibrowser)
+install(FILES doc/TODO DESTINATION /usr/share/astroavibrowser)
+install(FILES doc/Contributors DESTINATION /usr/share/astroavibrowser)
+install(FILES doc/ChangeLog DESTINATION /usr/share/astroavibrowser)
+install(FILES doc/licence.txt DESTINATION /usr/share/astroavibrowser)
+install(FILES doc/INSTALL DESTINATION /usr/share/astroavibrowser)
 install(FILES astroavibrowser-entry.desktop DESTINATION /usr/share/applications)
 
 ######################
@@ -91,18 +102,29 @@ set(CPACK_PACKAGE_DESCRIPTION "Video editing tool for astronomy")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "astroavibrowser is a small tool for astronomy imaging capture/processing. With astroavibrowser, you may open a video file, select the good frames and save the new sequence in a new avi file. It also debayers your raw sequences.")
 set(CPACK_PACKAGE_VENDOR "Thx8411")
 set(CPACK_PACKAGE_CONTACT "thx8411@users.sourceforge.net")
+set(CPACK_STRIP_FILES astroavibrowser)
 
 # debian package
-set(CPACK_GENERATOR DEB)
-set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE ${ARCHITECTURE})
-set(CPACK_DEBIAN_PACKAGE_NAME "astroavibrowser_${FULL_VERSION}_${ARCHITECTURE}.deb")
-set(CPACK_DEBIAN_PACKAGE_DEPENDS "libavcodec52 (>= 3:0.svn20090303-1) | libavcodec-unstripped-52 (>= 3:0.svn20090303-1), libavformat52 (>= 3:0.svn20090303-1) | libavformat-unstripped-52 (>= 3:0.svn20090303-1), libavifile-0.7c2 (>= 1:0.7.47.20070718), libavutil49 (>= 3:0.svn20090303-1) | libavutil-unstripped-49 (>= 3:0.svn20090303-1), libc6 (>= 2.4), libgcc1 (>= 1:4.1.1), libqtcore4 (>= 4.5.0~+rc1), libqtgui4 (>= 4.5.0~+rc1), libstdc++6 (>= 4.1.1), libswscale0 (>= 3:0.svn20090303-1) | libswscale-unstripped-0 (>= 3:0.svn20090303-1)")
-set(CPACK_DEBIAN_PACKAGE_SECTION graphics)
+if(DEBIAN_FOUND)
+   set(CPACK_GENERATOR DEB)
+   set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE ${ARCHITECTURE})
+   set(CPACK_DEBIAN_PACKAGE_NAME "astroavibrowser")
+   set(CPACK_DEBIAN_PACKAGE_DEPENDS "libavcodec53 (>= 4:0.8-1~) | libavcodec-extra-53 (>= 4:0.8-1~)
+         , libavformat53 (>= 4:0.8-1~) | libavformat-extra-53 (>= 4:0.8-1~)
+         , libavutil51 (>= 4:0.8-1~) | libavutil-extra-51 (>= 4:0.8-1~)
+         , libc6 (>= 2.14), libgcc1 (>= 1:4.1.1), libqtcore4 (>= 4:4.5.3)
+         , libqtgui4 (>= 4:4.5.3), libstdc++6 (>= 4.1.1)
+         , libswscale2 (>= 4:0.8-1~) | libswscale-extra-2 (>= 4:0.8-1~)")
+   set(CPACK_DEBIAN_PACKAGE_SECTION graphics)
+   set(CPACK_PACKAGE_FILE_NAME ${CPACK_DEBIAN_PACKAGE_NAME}_${FULL_VERSION}_${ARCHITECTURE})
+endif(DEBIAN_FOUND)
 
 # rpm package
-#set(CPACK_GENERATOR RPM)
-#
-# to do...
-#
+if(FEDORA_FOUND)
+   set(CPACK_GENERATOR RPM)
+   #
+   # to do...
+   #
+endif(FEDORA_FOUND)
 
 include(CPack)
