@@ -1,3 +1,9 @@
+####################################
+# CMakeLists for astroavibrowser   #
+# (c) Blaise-Florentin Collin 2013 #
+#       under GPL v3 License       #
+####################################  
+
 cmake_minimum_required(VERSION 2.6.8)
 
 ####################
@@ -12,11 +18,14 @@ find_file (FEDORA_FOUND fedora-release PATHS /etc)
 project(astroavibrowser)
 
 # version
+set(DEB_EPOCH 0)
+set(DEB_REVISION 1)
+set(RPM_REVISION 1)
 set(MAJOR_VERSION "0")
 set(MINOR_VERSION "4")
-set(PATCH_VERSION "beta20130223")
-set(BUILD_VERSION "32")
-set(FULL_VERSION "${MAJOR_VERSION}.${MINOR_VERSION}-${PATCH_VERSION}")
+set(PATCH_VERSION "beta20130225")
+set(BUILD_VERSION "33")
+set(FULL_VERSION "${MAJOR_VERSION}.${MINOR_VERSION}${PATCH_VERSION}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D BINARY_VERSION=\\\"${FULL_VERSION}\\\" -D BUILD_VERSION=${BUILD_VERSION}")
 
 # destir for binary packages
@@ -64,12 +73,11 @@ install(TARGETS astroavibrowser RUNTIME DESTINATION /usr/bin)
 install(FILES icons/astroavibrowser-icon.png DESTINATION /usr/share/icons)
 install(FILES icons/astroavibrowser-icon.png DESTINATION /usr/share/astroavibrowser/icons)
 install(FILES doc/astroavibrowser_help.html DESTINATION /usr/share/astroavibrowser)
-install(FILES doc/copyright DESTINATION /usr/share/astroavibrowser)
 install(FILES doc/BUGS DESTINATION /usr/share/astroavibrowser)
 install(FILES doc/TODO DESTINATION /usr/share/astroavibrowser)
 install(FILES doc/Contributors DESTINATION /usr/share/astroavibrowser)
 install(FILES doc/ChangeLog DESTINATION /usr/share/astroavibrowser)
-install(FILES doc/licence.txt DESTINATION /usr/share/astroavibrowser)
+install(FILES doc/license.txt DESTINATION /usr/share/astroavibrowser)
 install(FILES doc/INSTALL DESTINATION /usr/share/astroavibrowser)
 install(FILES astroavibrowser-entry.desktop DESTINATION /usr/share/applications)
 
@@ -98,8 +106,11 @@ set(CPACK_SOURCE_IGNORE_FILES ".svn")
 set(CPACK_SOURCE_PACKAGE_FILE_NAME "astroavibrowser_${FULL_VERSION}_src" CACHE INTERNAL "tarball basename")
 
 # global directives for debian and rpm packages
-set(CPACK_PACKAGE_DESCRIPTION "Video editing tool for astronomy")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "astroavibrowser is a small tool for astronomy imaging capture/processing. With astroavibrowser, you may open a video file, select the good frames and save the new sequence in a new avi file. It also debayers your raw sequences.")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Video editing tool for astronomy")
+set(CPACK_PACKAGE_DESCRIPTION "astroavibrowser is a small tool for astronomy imaging capture/processing.")
+set(CPACK_PACKAGE_DESCRIPTION "${CPACK_PACKAGE_DESCRIPTION} With astroavibrowser, you may open a video file")
+set(CPACK_PACKAGE_DESCRIPTION "${CPACK_PACKAGE_DESCRIPTION}, select the good frames and save the new sequence")
+set(CPACK_PACKAGE_DESCRIPTION "${CPACK_PACKAGE_DESCRIPTION} in a new avi file. It also debayers your raw sequences.")
 set(CPACK_PACKAGE_VENDOR "Thx8411")
 set(CPACK_PACKAGE_CONTACT "thx8411@users.sourceforge.net")
 set(CPACK_STRIP_FILES astroavibrowser)
@@ -116,7 +127,9 @@ if(DEBIAN_FOUND)
          , libqtgui4 (>= 4:4.5.3), libstdc++6 (>= 4.1.1)
          , libswscale2 (>= 4:0.8-1~) | libswscale-extra-2 (>= 4:0.8-1~)")
    set(CPACK_DEBIAN_PACKAGE_SECTION graphics)
-   set(CPACK_PACKAGE_FILE_NAME ${CPACK_DEBIAN_PACKAGE_NAME}_${FULL_VERSION}_${ARCHITECTURE})
+   set(CPACK_DEBIAN_PACKAGE_VERSION ${DEB_EPOCH}:${FULL_VERSION}-${DEB_REVISION})
+   set(CPACK_PACKAGE_FILE_NAME ${CPACK_DEBIAN_PACKAGE_NAME}_${FULL_VERSION}-${DEB_REVISION}_${ARCHITECTURE})
+   set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "${CPACK_PACKAGE_DESCRIPTION_SUMMARY}\n ${CPACK_PACKAGE_DESCRIPTION}")
 endif(DEBIAN_FOUND)
 
 # rpm package
