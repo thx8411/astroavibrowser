@@ -51,6 +51,14 @@ AstroAviBrowser builded.
 
       make package_source
 
+   For binary package building :
+
+      make package
+
+   The binary package produced depends on the host's distribution. A
+debian distribution will produce a '.deb' package. An rpm based
+distribution will produce an '.rpm' package.
+
 
 NOTES
 -----
@@ -62,6 +70,6 @@ NOTES
    "sourceforge.net/projects/astroavibrowser/", or send me an email at
    thx8411@users.sourceforge.net
 
-  - This version is just a draft. Objects are mixed, code is really dirty,
-    not very stable, etc. The next version will give the same features, but
-    code will be much cleaner.
+ - This version is just a draft. Objects are mixed, code is really dirty,
+   not very stable, etc. The next version will give the same features, but
+   code will be much cleaner.
