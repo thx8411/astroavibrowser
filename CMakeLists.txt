@@ -85,14 +85,8 @@ install(FILES astroavibrowser-entry.desktop DESTINATION /usr/share/applications)
 # PACKAGE GENERATION #
 ######################
 
-# target architecture detection
-set(ARCHITECTURE "unknow")
-if(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
-   set(ARCHITECTURE "amd64")
-endif(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
-if(CMAKE_SYSTEM_PROCESSOR STREQUAL "i386")
-   set(ARCHITECTURE "i386")
-endif(CMAKE_SYSTEM_PROCESSOR STREQUAL "i386")
+# default arch
+set(ARCHITECTURE "unkown")
 
 # global directives
 set(CPACK_SET_DESTDIR "ON")
@@ -117,6 +111,18 @@ set(CPACK_STRIP_FILES astroavibrowser)
 
 # debian package
 if(DEBIAN_FOUND)
+
+   # arch detection
+   find_program(DPKG_PROGRAM dpkg DOC "dpkg program of Debian-based systems")
+   if(DPKG_PROGRAM)
+     execute_process(
+        COMMAND ${DPKG_PROGRAM} --print-architecture
+        OUTPUT_VARIABLE ARCHITECTURE
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+     )
+   endif(DPKG_PROGRAM)
+
+   # settings
    set(CPACK_GENERATOR DEB)
    set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE ${ARCHITECTURE})
    set(CPACK_DEBIAN_PACKAGE_NAME "astroavibrowser")
@@ -130,6 +136,7 @@ if(DEBIAN_FOUND)
    set(CPACK_DEBIAN_PACKAGE_VERSION ${DEB_EPOCH}:${FULL_VERSION}-${DEB_REVISION})
    set(CPACK_PACKAGE_FILE_NAME ${CPACK_DEBIAN_PACKAGE_NAME}_${FULL_VERSION}-${DEB_REVISION}_${ARCHITECTURE})
    set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "${CPACK_PACKAGE_DESCRIPTION_SUMMARY}\n ${CPACK_PACKAGE_DESCRIPTION}")
+
 endif(DEBIAN_FOUND)
 
 # rpm package
