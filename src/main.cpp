@@ -18,7 +18,7 @@
  * MA 02110-1301 USA
  */
 
-#include <sys/fcntl.h>
+#include <fcntl.h>
 
 #include <iostream>
 

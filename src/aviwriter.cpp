@@ -36,6 +36,8 @@
 // gstream stream height tweak
 #ifdef GSTREAM_HEIGHT_TWEAK
 #include <fcntl.h>
+#include <sys/types.h>
+#include <unistd.h>
 #endif
 
 using namespace std;
