@@ -11,8 +11,9 @@ cmake_minimum_required(VERSION 2.6.8)
 ####################
 
 # distribution detection
-find_file (DEBIAN_FOUND debian_version debconf.conf PATHS /etc)
-find_file (FEDORA_FOUND fedora-release PATHS /etc)
+find_file(DEBIAN_FOUND debian_version debconf.conf PATHS /etc)
+find_file(FEDORA_FOUND fedora-release PATHS /etc)
+find_file(MAGEIA_FOUND mageia-release PATHS /etc)
 
 # project name
 project(astroavibrowser)
@@ -23,8 +24,8 @@ set(DEB_REVISION 1)
 set(RPM_REVISION 1)
 set(MAJOR_VERSION "0")
 set(MINOR_VERSION "4")
-set(PATCH_VERSION "beta20130303")
-set(BUILD_VERSION "34")
+set(PATCH_VERSION "beta20130308")
+set(BUILD_VERSION "35")
 set(FULL_VERSION "${MAJOR_VERSION}.${MINOR_VERSION}${PATCH_VERSION}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D BINARY_VERSION=\\\"${FULL_VERSION}\\\" -D BUILD_VERSION=${BUILD_VERSION}")
 
@@ -126,12 +127,12 @@ if(DEBIAN_FOUND)
    set(CPACK_GENERATOR DEB)
    set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE ${ARCHITECTURE})
    set(CPACK_DEBIAN_PACKAGE_NAME "astroavibrowser")
-   set(CPACK_DEBIAN_PACKAGE_DEPENDS "libavcodec53 (>= 4:0.8-1~) | libavcodec-extra-53 (>= 4:0.8-1~)
-         , libavformat53 (>= 4:0.8-1~) | libavformat-extra-53 (>= 4:0.8-1~)
-         , libavutil51 (>= 4:0.8-1~) | libavutil-extra-51 (>= 4:0.8-1~)
-         , libc6 (>= 2.14), libgcc1 (>= 1:4.1.1), libqtcore4 (>= 4:4.5.3)
-         , libqtgui4 (>= 4:4.5.3), libstdc++6 (>= 4.1.1)
-         , libswscale2 (>= 4:0.8-1~) | libswscale-extra-2 (>= 4:0.8-1~)")
+   set(CPACK_DEBIAN_PACKAGE_DEPENDS "libavcodec53 | libavcodec-extra-53
+         , libavformat53 | libavformat-extra-53
+         , libavutil51 | libavutil-extra-51
+         , libc6, libgcc1, libqtcore4
+         , libqtgui4, libstdc++6
+         , libswscale2 | libswscale-extra-2")
    set(CPACK_DEBIAN_PACKAGE_SECTION graphics)
    set(CPACK_DEBIAN_PACKAGE_VERSION ${DEB_EPOCH}:${FULL_VERSION}-${DEB_REVISION})
    set(CPACK_PACKAGE_FILE_NAME ${CPACK_DEBIAN_PACKAGE_NAME}_${FULL_VERSION}-${DEB_REVISION}_${ARCHITECTURE})
@@ -140,11 +141,11 @@ if(DEBIAN_FOUND)
 endif(DEBIAN_FOUND)
 
 # rpm package
-if(FEDORA_FOUND)
+if(FEDORA_FOUND OR MAGEIA_FOUND)
    set(CPACK_GENERATOR RPM)
    #
    # to do...
    #
-endif(FEDORA_FOUND)
+endif(FEDORA_FOUND OR MAGEIA_FOUND)
 
 include(CPack)
