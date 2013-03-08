@@ -14,6 +14,8 @@ Vers. 0.4
    - tweak added for gstream raw DIB negative height bug
    - binary name changed
    - help file added
+   - deb package can be build with cpack
+   - rpm package can be build with cpack
 
 Vers. 0.3
 
