@@ -57,7 +57,8 @@ AstroAviBrowser builded.
 
    The binary package produced depends on the host's distribution. A
 debian distribution will produce a '.deb' package. An rpm based
-distribution will produce an '.rpm' package.
+distribution will produce an '.rpm' package. In order to build packages
+you will need the package builder helpers from your distribution.
 
 
 NOTES
@@ -73,3 +74,6 @@ NOTES
  - This version is just a draft. Objects are mixed, code is really dirty,
    not very stable, etc. The next version will give the same features, but
    code will be much cleaner.
+
+ - Negatives high for raw DIB avi aren't handled very well by all video tools,
+   thus you may encouter upside down pictures on video files.
