@@ -6,6 +6,7 @@
 
 cmake_minimum_required(VERSION 2.6.8)
 
+
 ####################
 # BUILD DIRECTIVES #
 ####################
@@ -22,8 +23,8 @@ project(astroavibrowser)
 set(DEB_EPOCH 0)
 set(MAJOR_VERSION "0")
 set(MINOR_VERSION "4")
-set(PATCH_VERSION "beta20130309")
-set(BUILD_VERSION "36")
+set(PATCH_VERSION "rc1")
+set(BUILD_VERSION "37")
 set(FULL_VERSION "${MAJOR_VERSION}.${MINOR_VERSION}${PATCH_VERSION}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D BINARY_VERSION=\\\"${FULL_VERSION}\\\" -D BUILD_VERSION=${BUILD_VERSION}")
 
@@ -80,6 +81,7 @@ install(FILES doc/license.txt DESTINATION /usr/share/astroavibrowser)
 install(FILES doc/INSTALL DESTINATION /usr/share/astroavibrowser)
 install(FILES astroavibrowser-entry.desktop DESTINATION /usr/share/applications)
 
+
 ######################
 # PACKAGE GENERATION #
 ######################
@@ -92,10 +94,20 @@ set(CPACK_PACKAGE_VERSION_MAJOR ${MAJOR_VERSION})
 set(CPACK_PACKAGE_VERSION_MINOR ${MINOR_VERSION})
 set(CPACK_PACKAGE_VERSION_PATCH ${PATCH_VERSION})
 
+
+##################
+# source package #
+##################
+
 # source package
 set(CPACK_SOURCE_GENERATOR TGZ)
 set(CPACK_SOURCE_IGNORE_FILES ".svn")
 set(CPACK_SOURCE_PACKAGE_FILE_NAME "astroavibrowser_${FULL_VERSION}_src" CACHE INTERNAL "tarball basename")
+
+
+#####################
+# binaries packages #
+#####################
 
 # global directives for debian and rpm packages
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Video editing tool for astronomy")
@@ -107,7 +119,11 @@ set(CPACK_PACKAGE_VENDOR "Thx8411")
 set(CPACK_PACKAGE_CONTACT "thx8411@users.sourceforge.net")
 set(CPACK_STRIP_FILES astroavibrowser)
 
-# debian package
+
+##################
+# debian package #
+##################
+
 if(DEBIAN_FOUND)
 
    # arch detection
@@ -125,6 +141,8 @@ if(DEBIAN_FOUND)
    set(CPACK_SET_DESTDIR "ON")
    set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE ${ARCHITECTURE})
    set(CPACK_DEBIAN_PACKAGE_NAME "astroavibrowser")
+
+   # dependencies
    set(CPACK_DEBIAN_PACKAGE_DEPENDS "libavcodec53 | libavcodec-extra-53
          , libavformat53 | libavformat-extra-53
          , libavutil51 | libavutil-extra-51
@@ -138,8 +156,13 @@ if(DEBIAN_FOUND)
 
 endif(DEBIAN_FOUND)
 
-# rpm package
+
+###############
+# rpm package #
+###############
+
 if(FEDORA_FOUND OR MAGEIA_FOUND)
+
    # arch detection
    execute_process(COMMAND  uname -m
       OUTPUT_VARIABLE ARCHITECTURE
