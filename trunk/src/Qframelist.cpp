@@ -42,6 +42,7 @@ FrameList::FrameList(QWidget* parent) : QListWidget(parent) {
    // buffer and frameRGB settings
    // packet mem alloc
    pkt=(AVPacket*)av_malloc(sizeof(AVPacket));
+   pkt->data=NULL;
    // set max list width
    setMaximumWidth(135);
    // init frame number
@@ -59,8 +60,11 @@ FrameList::~FrameList() {
    av_free(frame);
    av_free(frameRGB);
    // release packet
-   av_free_packet(pkt);
-   av_free(pkt);
+   if(pkt) {
+      if(pkt->data)
+         av_free_packet(pkt);
+      av_free(pkt);
+   }
    // release buffer
    av_free(buffer);
 }
@@ -93,6 +97,12 @@ void FrameList::invertSelection() {
       else
          current->setCheckState(Qt::Checked);
    }
+}
+
+void FrameList::autoSelection(int s) {
+   //
+   // TODO
+   //
 }
 
 void FrameList::setFormatContext(AVFormatContext* fc) {
