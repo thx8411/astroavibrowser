@@ -16,6 +16,8 @@ Vers. 0.4
    - help file added
    - deb package can be build with cpack
    - rpm package can be build with cpack
+   - memory release bug fixed
+   - autoselection added
 
 Vers. 0.3
 
