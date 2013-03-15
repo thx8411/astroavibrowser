@@ -47,6 +47,7 @@ class FrameList : public QListWidget
       void selectAll();
       void unSelectAll();
       void invertSelection();
+      void autoSelection(int s);
       // init the list with the stream handlers
       void setFormatContext(AVFormatContext* fc);
       void setCodecContext(AVCodecContext* cc);
