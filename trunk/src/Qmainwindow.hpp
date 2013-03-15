@@ -29,6 +29,7 @@
 #include <Qt/qmainwindow.h>
 #include <Qt/qpushbutton.h>
 #include <Qt/qradiobutton.h>
+#include <Qt/qlineedit.h>
 
 extern "C" {
 #include <libavcodec/avcodec.h>
@@ -133,6 +134,8 @@ class MainWindow : public QMainWindow
       QPushButton* unSelectAll;
       QPushButton* invertSelection;
       QPushButton* autoSelection;
+      // auto select value
+      QLineEdit* autoValue;
       // file names
       QString inputFileName;
       QString outputFileName;

@@ -35,6 +35,8 @@
 #include <Qt/qdialog.h>
 #include <Qt/qtextstream.h>
 #include <Qt/qpushbutton.h>
+#include <Qt/qlabel.h>
+#include <QIntValidator>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QFileDialog>
@@ -161,11 +163,23 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    QHBoxLayout* central = new QHBoxLayout;
    QVBoxLayout* left = new QVBoxLayout;
    QVBoxLayout* buttons = new QVBoxLayout;
+   QHBoxLayout* autolevel = new QHBoxLayout;
    // buttons
    selectAll = new QPushButton("Select All");
    unSelectAll = new QPushButton("Unselect All");
    invertSelection = new QPushButton("Invert Selection");
-   //autoSelection = new QPushButton("Auto Selection");
+   autoSelection = new QPushButton("Auto Selection");
+   // auto selection level entry
+   QLabel* autoLegend= new QLabel("Keep :");
+   autoValue= new QLineEdit("80");
+   autoValue->setAlignment(Qt::AlignRight);
+   QIntValidator* autoValid= new QIntValidator();
+   autoValid->setRange(1,99);
+   autoValue->setValidator(autoValid);
+   QLabel* autoLegend2= new QLabel("%");
+   autolevel->addWidget(autoLegend);
+   autolevel->addWidget(autoValue);
+   autolevel->addWidget(autoLegend2);
    // set buttons size (should be ok for 1024*600 with PAL format)
    selectAll->setMaximumWidth(135);
    selectAll->setMinimumWidth(135);
@@ -173,8 +187,10 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    unSelectAll->setMinimumWidth(135);
    invertSelection->setMaximumWidth(135);
    invertSelection->setMinimumWidth(135);
-   //autoSelection->setMaximumWidth(135);
-   //autoSelection->setMinimumWidth(135);
+   autoSelection->setMaximumWidth(135);
+   autoSelection->setMinimumWidth(135);
+   autoValue->setMaximumWidth(32);
+   autoValue->setMinimumWidth(32);
    // disabling widgets (no file loaded at this time)
    save->setEnabled(false);
    properties->setEnabled(false);
@@ -198,7 +214,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    selectAll->setEnabled(false);
    unSelectAll->setEnabled(false);
    invertSelection->setEnabled(false);
-   //autoSelection->setEnabled(false);
+   autoSelection->setEnabled(false);
+   autoValue->setEnabled(false);
    // scroll area
    QScrollArea* picture= new QScrollArea();
    // frame display and list
@@ -215,14 +232,15 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    connect(selectAll, SIGNAL(released()), this, SLOT(ButtonSelectAll()));
    connect(unSelectAll, SIGNAL(released()), this, SLOT(ButtonUnSelectAll()));
    connect(invertSelection, SIGNAL(released()), this, SLOT(ButtonInvert()));
-   //connect(autoSelection, SIGNAL(released()), this, SLOT(ButtonAuto()));
+   connect(autoSelection, SIGNAL(released()), this, SLOT(ButtonAuto()));
    // add widgets and layouts
    buttons->addWidget(selectAll);
    buttons->addWidget(unSelectAll);
    buttons->addWidget(invertSelection);
-   //buttons->addWidget(autoSelection);
+   buttons->addWidget(autoSelection);
    left->addWidget(frameList,10);
    left->addLayout(buttons,0);
+   left->addLayout(autolevel,0);
    left->addWidget(histogram,0);
    central->addLayout(left,0);
    central->addWidget(picture,10);
@@ -241,7 +259,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent) {
    centralZone->show();
    // fix size
    sizeHint();
-   //setFixedSize(sizeHint());
 
    //
    //   FFMPEG
@@ -294,7 +311,8 @@ void MainWindow::freeFile() {
    selectAll->setEnabled(false);
    unSelectAll->setEnabled(false);
    invertSelection->setEnabled(false);
-   //autoSelection->setEnabled(false);
+   autoSelection->setEnabled(false);
+   autoValue->setEnabled(false);
    histogram->setEnabled(false);
 }
 
@@ -304,8 +322,6 @@ void MainWindow::freeFile() {
 
 // OPEN
 void MainWindow::MenuOpen() {
-   //int* average;
-
    // open new file
    // getting file name
    inputFileName = QFileDialog::getOpenFileName(this,tr("Open Video"),"/home", tr("Video Files (*.avi *.mpg *.mpeg *.divx *.mkv *.mov *.wmv *.AVI *.MPG *.MPEG *.DIVX *.MKV *.MOV *.WMV)"));
@@ -371,9 +387,6 @@ void MainWindow::MenuOpen() {
    // it could be long...
    setCursor(Qt::BusyCursor);
    frameList->fill();
-   //average=frameList->getAverage();
-   //histogram->setAverage(average);
-   //free(average);
    setCursor(Qt::ArrowCursor);
    // enabling widgets
    save->setEnabled(true);
@@ -398,7 +411,8 @@ void MainWindow::MenuOpen() {
    selectAll->setEnabled(true);
    unSelectAll->setEnabled(true);
    invertSelection->setEnabled(true);
-   //autoSelection->setEnabled(true);
+   autoSelection->setEnabled(true);
+   autoValue->setEnabled(true);
    histogram->setEnabled(true);
    // fixing new size
    sizeHint();
@@ -933,7 +947,8 @@ void MainWindow::ButtonInvert() {
 
 void MainWindow::ButtonAuto() {
    // auto selects frames
-   //
+   QString val=autoValue->text();
+   frameList->autoSelection(val.toInt());
 }
 
 //
