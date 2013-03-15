@@ -7,13 +7,6 @@
 cmake_minimum_required(VERSION 2.6.8)
 
 
-#################
-# BUILD OPTIONS #
-#################
-
-# build options
-set(DEBUG OFF)
-
 ####################
 # BUILD DIRECTIVES #
 ####################
@@ -31,7 +24,7 @@ set(DEB_EPOCH 0)
 set(MAJOR_VERSION "0")
 set(MINOR_VERSION "4")
 set(PATCH_VERSION "rc2")
-set(BUILD_VERSION "38")
+set(BUILD_VERSION "39")
 set(FULL_VERSION "${MAJOR_VERSION}.${MINOR_VERSION}${PATCH_VERSION}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D BINARY_VERSION=\\\"${FULL_VERSION}\\\" -D BUILD_VERSION=${BUILD_VERSION}")
 
@@ -68,13 +61,6 @@ add_definitions(${LIBAV_DEFINITIONS})
 
 # add raw types for libav
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D __STDC_CONSTANT_MACROS")
-
-# debug flags if needed
-if(DEBUG)
-   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
-else(DEBUG)
-   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
-endif(DEBUG)
 
 # target
 add_executable(astroavibrowser ${astroavibrowser_SOURCES})
