@@ -37,6 +37,50 @@ extern "C" {
 
 #include "Qhistogram.hpp"
 
+/********************/
+/* FwhmTable object */
+/********************/
+
+typedef struct {
+   int frameIndex;
+   double frameFwhm;
+} FwhmNode;
+
+class FwhmTable
+{
+   public :
+      // build and fwhm table for 'size' elements
+      FwhmTable(int nsize);
+      // destructor
+      ~FwhmTable();
+      // sort the table (lower to higher)
+      void sort();
+      // set the node
+      // returns -1 if out of range
+      int setNode(int index, int frame, double value);
+      // get frame number at given index
+      // returns -1 if out of range
+      int getFrame(int index);
+      // get fwhm value at given index
+      // returns -1.à if out of range
+      double getFwhm(int index);
+      // returns the table size
+      int getSize();
+      // display, for debug purpose
+      void display();
+   private :
+      // node array
+      FwhmNode* table;
+      // table size
+      int size;
+      // checks if allready sorted
+      bool sorted;
+};
+
+/********************/
+/* FrameList object */
+/********************/
+
 class FrameList : public QListWidget
 {
       Q_OBJECT
@@ -110,6 +154,12 @@ class FrameList : public QListWidget
       AVPacket* pkt;
       // video buffer
       uint8_t* buffer;
+      // fwhm list
+      FwhmTable* fwhmList;
+      bool fwhmFeeded;
+
+      // methods
+
       // go to frame a given frame
       // exact number, no approx.
       bool seekFrame(int number);

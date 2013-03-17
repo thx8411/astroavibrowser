@@ -21,6 +21,7 @@
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #include <iostream>
 
@@ -273,7 +274,44 @@ int* getHistogram(int w, int h, unsigned char* data) {
    for(i=0;i<256;i++)
       if(tab[i]!=0)
          tab[i]=log2(tab[i])*log2(tab[i]);
+
+   free(buffer);
    return(tab);
+}
+
+// returns the fwhm based on the rgb frame luminance
+double getFwhm(int w, int h, unsigned char* data) {
+   int i,n;
+   unsigned char* buffer;
+   double fwhm_value,mean,x2_sum;
+
+   mean=0.0;
+   x2_sum=0.0;
+
+   if(data==NULL)
+      return(-1);
+
+   buffer=getPlan(w,h,data,LUM_PLAN);
+   // compute the fwhm
+   n=w*h;
+   // mean
+   for(i=0;i<n;i++)
+      mean+=(double)buffer[i];
+   // pow 2
+   mean/=(double)n;
+
+   for(i=0;i<n;i++)
+      x2_sum+=pow((double)buffer[i]-mean,2);
+   x2_sum/=(double)n;
+
+   // final value
+   fwhm_value=sqrt(x2_sum)*2.3548;
+   // this represents a surface, so we have to get half the diameter
+   fwhm_value=sqrt(fwhm_value/M_PI)*2;
+   // finished
+   free(buffer);
+
+   return(fwhm_value);
 }
 
 // 8 bits grey to yuyv
