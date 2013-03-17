@@ -948,7 +948,10 @@ void MainWindow::ButtonInvert() {
 void MainWindow::ButtonAuto() {
    // auto selects frames
    QString val=autoValue->text();
+
+   setCursor(Qt::BusyCursor);
    frameList->autoSelection(val.toInt());
+   setCursor(Qt::ArrowCursor);
 }
 
 //

@@ -18,6 +18,7 @@ Vers. 0.4
    - rpm package can be build with cpack
    - memory release bug fixed
    - autoselection added
+   - memory leak in processing module fixed
 
 Vers. 0.3
 

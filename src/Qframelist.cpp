@@ -30,6 +30,127 @@
 
 using namespace std;
 
+
+/********************/
+/* FwhmTable object */
+/********************/
+
+// build and fwhm table for 'size' elements
+FwhmTable::FwhmTable(int nsize) {
+   // sanity check
+   if(size<1) {
+      fprintf(stderr,"Fwhm table should contain at least 1 element, leaving...\n");
+      exit(1);
+   }
+
+   size=nsize;
+   // table allocation
+   table=(FwhmNode*)malloc(size*sizeof(FwhmNode));
+   if(!table) {
+      fprintf(stderr,"No more memory, leaving...\n");
+      exit(1);
+   }
+   // table init
+   memset(table,0,size*sizeof(FwhmNode));
+   // not sorted
+   sorted=false;
+}
+
+// destructor
+FwhmTable::~FwhmTable() {
+   // releaseing table
+   free(table);
+}
+
+// sort the table (lower to higher)
+void FwhmTable::sort() {
+   // basic sort at this time, will be changed
+
+   // checks if allready sorted
+   if(!sorted) {
+      // vars
+      int i,j;
+      int minIndex;
+      double min;
+      FwhmNode temp;
+      QProgressDialog* progress;
+
+      // setting progress dialog
+      progress = new QProgressDialog(QString("Frame sorting..."),QString(),0,size);
+
+      // for each element...
+      for(i=0;i<size;i++) {
+         // init
+         minIndex=i;
+         min=table[minIndex].frameFwhm;
+         // looking for the smallest
+         for(j=i+1;j<size;j++) {
+            if(table[j].frameFwhm<min) {
+               minIndex=j;
+               min=table[minIndex].frameFwhm;
+            }
+         }
+         // switching the current element with the smallest
+         temp.frameIndex=table[i].frameIndex;
+         temp.frameFwhm=table[i].frameFwhm;
+         table[i].frameIndex=table[minIndex].frameIndex;
+         table[i].frameFwhm=table[minIndex].frameFwhm;
+         table[minIndex].frameIndex=temp.frameIndex;
+         table[minIndex].frameFwhm=temp.frameFwhm;
+
+         // progress update
+         progress->setValue(i);
+      }
+
+      // closing progress bar
+      progress->close();
+      delete(progress);
+      sorted=true;
+   }
+}
+
+// set the node
+int FwhmTable::setNode(int index, int frame, double value) {
+   if((index<0)||(index>=size))
+      return(-1);
+   table[index].frameIndex=frame;
+   table[index].frameFwhm=value;
+   sorted=false;
+   return(0);
+}
+
+// get frame number at given index
+int FwhmTable::getFrame(int index) {
+   if((index<0)||(index>=size))
+      return(-1);
+   return(table[index].frameIndex);
+}
+
+// get fwhm value at given index
+double FwhmTable::getFwhm(int index) {
+   if((index<0)||(index>=size))
+      return(-1.0);
+   return(table[index].frameFwhm);
+}
+
+// returns the table size
+int FwhmTable::getSize() {
+   return(size);
+}
+
+// display, for debug purpose
+void FwhmTable::display() {
+   int i;
+
+   for(i=0;i<size;i++)
+      fprintf(stderr,"%i : %f\n",table[i].frameIndex,table[i].frameFwhm);
+   fprintf(stderr,"\n");
+}
+
+/********************/
+/* FrameList object */
+/********************/
+
 FrameList::FrameList(QWidget* parent) : QListWidget(parent) {
    // init
    img_convert_ctx=NULL;
@@ -51,6 +172,10 @@ FrameList::FrameList(QWidget* parent) : QListWidget(parent) {
    fileOpened=false;
    // no frame
    frameOk=false;
+
+   // fwhm init
+   fwhmList=NULL;
+   fwhmFeeded=false;
 }
 
 FrameList::~FrameList() {
@@ -67,6 +192,10 @@ FrameList::~FrameList() {
    }
    // release buffer
    av_free(buffer);
+
+   // fwhm release
+   if(fwhmList)
+      delete(fwhmList);
 }
 
 void FrameList::selectAll() {
@@ -100,9 +229,66 @@ void FrameList::invertSelection() {
 }
 
 void FrameList::autoSelection(int s) {
-   //
-   // TODO
-   //
+   // gets the sharpest frames based on an fwhm on each
+   // frame. 's' represents the percent of frame to keep
+   unsigned char* datas;
+   AVFrame* savedFrame;
+   QProgressDialog* progress;
+   int i,limit;
+   double fwhmValue=0.0;
+
+   // uncheck the list
+   unSelectAll();
+
+   // setting progress dialog
+   progress = new QProgressDialog(QString("Computing sharpness..."),QString(),0,frameNumber);
+
+   // feeds the fwhm list
+   if(!fwhmFeeded) {
+      // alloc datas if needed
+      datas=(unsigned char*)malloc(codecContext->width*codecContext->height*3);
+      // loop
+      for(i=0;i<frameNumber;i++) {
+         // if we have a frame
+         if(getFrame(i)) {
+            savedFrame=frameRGB;
+            // apply raw filter
+            if(frameDisplay->getRawmode()==RAW_NONE)
+               memcpy(datas,savedFrame->data[0],codecContext->width*codecContext->height*3);
+            else
+               raw2rgb(datas,savedFrame->data[0],codecContext->width,codecContext->height,frameDisplay->getRawmode());
+            bgr2rgb(datas,codecContext->width,codecContext->height);
+            // compute fwhm
+            fwhmValue=getFwhm(codecContext->width,codecContext->height,datas);
+         }
+         fwhmList->setNode(i,i,fwhmValue);
+
+         // progress update
+         progress->setValue(i);
+      }
+      fwhmFeeded=true;
+      // free datas
+      free(datas);
+      // back to the beginning
+      seekFrame(0);
+      // select it
+      item(0)->setSelected(true);
+      // and display it
+      displayFrame(0);
+   }
+
+   // closing progress dialog
+   progress->close();
+   delete(progress);
+
+   // sort the list
+   fwhmList->sort();
+
+   // checks the frame
+   limit=round((double)frameNumber/100.0*(double)s);
+   for(i=0;i<limit;i++) {
+      item(fwhmList->getFrame(i))->setCheckState(Qt::Checked);
+   }
 }
 
 void FrameList::setFormatContext(AVFormatContext* fc) {
@@ -194,12 +380,19 @@ void FrameList::fill() {
    displayFrame(0);
    // file is open
    fileOpened=true;
+
+   // create the fwhm list
+   fwhmList=new FwhmTable(frameNumber);
+   fwhmFeeded=false;
 }
 
 void FrameList::reset() {
    // remove all items
-   if(0!=count())
+   if(count()!=0)
       clear();
+   if(fwhmList)
+      delete(fwhmList);
+   fwhmFeeded=false;
 }
 
 bool FrameList::seekFrame(int number) {
@@ -228,13 +421,13 @@ bool FrameList::seekFrame(int number) {
    return(frameOk);
 }
 
-void getPlan(unsigned char* dest, unsigned char* source, int size, int colorPlan) {
+/*void getPlan(unsigned char* dest, unsigned char* source, int size, int colorPlan) {
    // red plan is RED=1
    colorPlan--;
    for(int i=0;i<size;i++) {
       dest[i]=source[(i*3)+colorPlan];
    }
-}
+}*/
 
 void FrameList::dump(FileWriter* file) {
    unsigned char* datas;

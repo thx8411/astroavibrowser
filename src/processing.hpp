@@ -62,4 +62,7 @@ void grey_to_yuy2(int w, int h, const unsigned char* src, unsigned char* dst);
 // returns an array of 256 ints, histograme of the rgb frame luminance
 int* getHistogram(int w, int h, unsigned char* data);
 
+// returns the fwhm based on the rgb frame luminance
+double getFwhm(int w, int h, unsigned char* data);
+
 #endif
