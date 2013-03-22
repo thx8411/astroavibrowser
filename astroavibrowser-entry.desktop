@@ -1,7 +1,7 @@
 [Desktop Entry]
 Version=1.0
 Encoding=UTF-8
-Name=AstroAviBrowser
+Name=astroavibrowser
 Comment=Video editing tool for astronomy
 Exec=astroavibrowser
 Terminal=false
