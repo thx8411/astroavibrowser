@@ -23,8 +23,8 @@ project(astroavibrowser)
 set(DEB_EPOCH 0)
 set(MAJOR_VERSION "0")
 set(MINOR_VERSION "4")
-set(PATCH_VERSION "rc2")
-set(BUILD_VERSION "39")
+set(PATCH_VERSION "rc3")
+set(BUILD_VERSION "40")
 set(FULL_VERSION "${MAJOR_VERSION}.${MINOR_VERSION}${PATCH_VERSION}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D BINARY_VERSION=\\\"${FULL_VERSION}\\\" -D BUILD_VERSION=${BUILD_VERSION}")
 
@@ -36,7 +36,14 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 # needed packages
 find_package(Qt4 REQUIRED)
+if(!QT4_FOUND)
+   message(FATAL_ERROR "Qt4 not found, generation stopped")
+endif(!QT4_FOUND)
+
 find_package(LibAV REQUIRED)
+if(!LIBAV_FOUND)
+   message(FATAL_ERROR "LibAv not found, generation stopped")
+endif(!LIBAV_FOUND)
 
 # source files
 set(astroavibrowser_SOURCES
