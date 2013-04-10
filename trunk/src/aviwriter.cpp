@@ -84,6 +84,8 @@ AviWriter::AviWriter(int codec, int plans, const char* name, int width, int heig
 
    // setting codec context
    output_codec_cx=output_video_stream->codec;
+   output_codec_cx->codec_type=AVMEDIA_TYPE_VIDEO;
+   output_codec_cx->codec_id=output_codec->id;
    output_codec_cx->width=width;
    output_codec_cx->height=height;
    output_codec_cx->time_base.den=(int)frameRate;
