@@ -42,9 +42,17 @@ int main(int argc, char *argv[])
 
    // qapp creation
    QApplication* app=new QApplication(argc, argv);
+
    MainWindow* w=new MainWindow();
    // display and loop
    w->show();
+
+   // testing parameters
+   if(argc>1) {
+      // if a file is passed, we open it
+      w->openFile(QString(argv[1]));
+   }
+
    app->exec();
 
    // finish

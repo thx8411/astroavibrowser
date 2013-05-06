@@ -390,8 +390,10 @@ void FrameList::reset() {
    // remove all items
    if(count()!=0)
       clear();
-   if(fwhmList)
+   if(fwhmList) {
       delete(fwhmList);
+      fwhmList=NULL;
+   }
    fwhmFeeded=false;
 }
 
