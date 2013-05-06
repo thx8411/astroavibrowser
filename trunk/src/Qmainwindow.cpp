@@ -285,9 +285,9 @@ void MainWindow::freeFile() {
    // close file
    if(inputFileFormatContext!=NULL) {
       avformat_close_input(&inputFileFormatContext);
-      //av_close_input_file(inputFileFormatContext);
       inputFileFormatContext=NULL;
    }
+
    // disabling widgets (no more file opened)
    save->setEnabled(false);
    properties->setEnabled(false);
@@ -1094,4 +1094,105 @@ void MainWindow::createCodecMenu() {
 
    connect(codecRaw,SIGNAL(triggered()),this,SLOT(setRaw()));
    connect(codecLossless,SIGNAL(triggered()),this,SLOT(setLossless()));
+}
+
+
+bool MainWindow::openFile(QString fileName) {
+   inputFileName=fileName;
+   // open new file
+   if(inputFileName=="")
+      return(false);
+
+   // release opened file
+   freeFile();
+
+   // opening file
+   if(avformat_open_input(&inputFileFormatContext, inputFileName.toStdString().c_str(), NULL, NULL)!=0) {
+      // Couldn't open file
+      QMessageBox::critical(this, tr("AstroAviBrowser"),tr("Unable to open the file"));
+      return(false);
+   }
+
+   // get streams
+   if(avformat_find_stream_info(inputFileFormatContext,NULL)<0) {
+      // Couldn't find stream information
+      QMessageBox::critical(this, tr("AstroAviBrowser"),tr("Unable to get file streams"));
+      freeFile();
+      return(false);
+   }
+   // open stream
+   inputStreamNumber=-1;
+   for(int i=0;i<inputFileFormatContext->nb_streams;i++) {
+      if(inputFileFormatContext->streams[i]->codec->codec_type==AVMEDIA_TYPE_VIDEO) {
+      inputStreamNumber=i;
+      break;
+      }
+   }
+   if(inputStreamNumber==-1) {
+      // no video stream
+      QMessageBox::critical(this, tr("AstroAviBrowser"),tr("No video stream found"));
+      freeFile();
+      return(false);
+   }
+
+   // load codec
+   inputFileCodecContext=inputFileFormatContext->streams[inputStreamNumber]->codec;
+   inputFileCodec=avcodec_find_decoder(inputFileCodecContext->codec_id);
+   if(inputFileCodec==NULL) {
+      // no codec found
+      QMessageBox::critical(this, tr("AstroAviBrowser"),tr("No codec found for this stream"));
+      freeFile();
+      return(false);
+   }
+   // enable truncated codec
+   if(inputFileCodec->capabilities & CODEC_CAP_TRUNCATED)
+        inputFileCodecContext->flags|=CODEC_FLAG_TRUNCATED;
+   if(avcodec_open2(inputFileCodecContext, inputFileCodec, NULL)<0) {
+      // could not open codec
+      QMessageBox::critical(this, tr("AstroAviBrowser"),tr("Unable to load the codec"));
+      freeFile();
+      return(false);
+   }
+
+   // frame list update
+   frameList->setFormatContext(inputFileFormatContext);
+   frameList->setCodecContext(inputFileCodecContext);
+   frameList->setStreamNumber(inputStreamNumber);
+   // it could be long...
+   setCursor(Qt::BusyCursor);
+   frameList->fill();
+   setCursor(Qt::ArrowCursor);
+   // enabling widgets
+   save->setEnabled(true);
+   properties->setEnabled(true);
+   bayer->setEnabled(true);
+   // dark/flat
+   sumGrey->setEnabled(true);
+   sumRGB->setEnabled(true);
+   maxGrey->setEnabled(true);
+   maxRGB->setEnabled(true);
+   darkFlatGreyMean->setEnabled(true);
+   darkFlatRGBMean->setEnabled(true);
+   darkFlatGreyMedian->setEnabled(true);
+   darkFlatRGBMedian->setEnabled(true);
+   // plan
+   lPlan->setEnabled(true);
+   rPlan->setEnabled(true);
+   gPlan->setEnabled(true);
+   bPlan->setEnabled(true);
+   useBmp->setEnabled(true);
+   codec->setEnabled(true);
+   selectAll->setEnabled(true);
+   unSelectAll->setEnabled(true);
+   invertSelection->setEnabled(true);
+   autoSelection->setEnabled(true);
+   autoValue->setEnabled(true);
+   histogram->setEnabled(true);
+   // fixing new size
+   sizeHint();
+
+   // set bayer
+   setNone();
+
+   repaint();
 }

@@ -1,3 +1,10 @@
+Vers. 0.4.3
+
+   - a video file can be passed via command line
+   - double free memory bug fixed
+   - fix on libav api usage
+   - fix in cmake file dependencies
+
 Vers. 0.4
 
    - max frame building

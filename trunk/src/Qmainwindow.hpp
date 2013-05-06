@@ -49,6 +49,7 @@ class MainWindow : public QMainWindow
    public :
       MainWindow(QWidget* parent=0);
       ~MainWindow();
+      bool openFile(QString fileName);
    public slots :
       // menu slots
       void MenuOpen();
