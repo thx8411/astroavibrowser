@@ -183,6 +183,12 @@ AviWriter::~AviWriter() {
       fprintf(stderr,"Can't seek to stream height offset, leaving...\n");
       exit(1);
    }
+
+// handling big endian archs
+#ifdef _BIG_ENDIAN_
+   byteswap((char*)&h,4);
+#endif
+
    if(write(fd,&h,4)!=4) {
       fprintf(stderr,"Can't write new stream height, leaving...\n");
       exit(1);
