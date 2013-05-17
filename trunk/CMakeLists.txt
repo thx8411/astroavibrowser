@@ -11,20 +11,29 @@ cmake_minimum_required(VERSION 2.8.6)
 # BUILD DIRECTIVES #
 ####################
 
+# project name
+project(astroavibrowser)
+
 # distribution detection
 find_file(DEBIAN_FOUND debian_version debconf.conf PATHS /etc)
 find_file(FEDORA_FOUND fedora-release PATHS /etc)
 find_file(MAGEIA_FOUND mageia-release PATHS /etc)
 
-# project name
-project(astroavibrowser)
+# endianness detection
+include(TestBigEndian)
+test_big_endian(BIGENDIAN)
+if(BIGENDIAN)
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_BIG_ENDIAN_")
+else(BIGENDIANS)
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_LITTLE_ENDIAN_")
+endif(BIGENDIAN)
 
 # version
 set(DEB_EPOCH 0)
 set(MAJOR_VERSION "0")
 set(MINOR_VERSION "4")
-set(PATCH_VERSION "3")
-set(BUILD_VERSION "43")
+set(PATCH_VERSION "4")
+set(BUILD_VERSION "44")
 set(FULL_VERSION "${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D BINARY_VERSION=\\\"${FULL_VERSION}\\\" -D BUILD_VERSION=${BUILD_VERSION}")
 
