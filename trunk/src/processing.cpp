@@ -40,6 +40,17 @@ using namespace std;
 #define	GREEN_OFFSET	1
 #define	BLUE_OFFSET	2
 
+// byte swap between big and little endian
+// size must be even
+void byteswap(char* buffer, int size) {
+   char tmp;
+   for(int i=0; i<size; i+=2) {
+      tmp=buffer[i];
+      buffer[i]=buffer[i+1];
+      buffer[i+1]=tmp;
+   }
+}
+
 // clips a value between 0 and 255
 unsigned char clip(double v) {
    if(v>255)
