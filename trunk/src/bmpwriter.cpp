@@ -87,25 +87,6 @@ void BmpWriter::AddFrame(unsigned char* datas) {
    }
    bi.total_size=bi.offset+bi.picture_size;
 
-// handling big endian archs
-#ifdef _BIG_ENDIAN_
-   byteswap((char*)&bi.type,2);
-   byteswap((char*)&bi.total_size,4);
-   byteswap((char*)&bi.reserved,4);
-   byteswap((char*)&bi.offset,4);
-   byteswap((char*)&bi.header_size,4);
-   byteswap((char*)&bi.width,4);
-   byteswap((char*)&bi.height,4);
-   byteswap((char*)&bi.plans,2);
-   byteswap((char*)&bi.depth,2);
-   byteswap((char*)&bi.compression,4);
-   byteswap((char*)&bi.picture_size,4);
-   byteswap((char*)&bi.hres,4);
-   byteswap((char*)&bi.vres,4);
-   byteswap((char*)&bi.palette_size,4);
-   byteswap((char*)&bi.important_colors,4);
-#endif
-
    res=write(fd,&bi.type,2);
    res=write(fd,&bi.total_size,4);
    res=write(fd,&bi.reserved,4);
