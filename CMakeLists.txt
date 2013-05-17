@@ -19,15 +19,6 @@ find_file(DEBIAN_FOUND debian_version debconf.conf PATHS /etc)
 find_file(FEDORA_FOUND fedora-release PATHS /etc)
 find_file(MAGEIA_FOUND mageia-release PATHS /etc)
 
-# endianness detection
-include(TestBigEndian)
-test_big_endian(BIGENDIAN)
-if(BIGENDIAN)
-   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_BIG_ENDIAN_")
-else(BIGENDIANS)
-   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_LITTLE_ENDIAN_")
-endif(BIGENDIAN)
-
 # version
 set(DEB_EPOCH 0)
 set(MAJOR_VERSION "0")

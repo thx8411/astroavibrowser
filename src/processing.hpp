@@ -37,10 +37,6 @@
 
 // tools
 
-// byte swap between big and little endian
-// size must be even
-void byteswap(char* buffer, int size);
-
 // clips a value between 0 and 255
 unsigned char clip(double v);
 unsigned char clip(long v);
