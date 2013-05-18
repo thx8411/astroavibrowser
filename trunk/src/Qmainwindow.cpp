@@ -862,7 +862,7 @@ void MainWindow::MenuHelp() {
    QDialog helpwindow;
    QTextEdit* helptext;
    QTextStream* helpstream;
-   FILE* help_file;
+   FILE* help_file=NULL;
 
    // opening help file
    help_file=fopen(HELP_FILE,"r");
@@ -898,7 +898,8 @@ void MainWindow::MenuHelp() {
    delete helpstream;
    delete close;
    delete vbox;
-   fclose(help_file);
+   if(help_file)
+      fclose(help_file);
 }
 
 // ABOUT...
