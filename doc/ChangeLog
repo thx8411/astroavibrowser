@@ -1,9 +1,10 @@
-Vers. 0.4.3
+Vers. 0.4.4
 
    - a video file can be passed via command line
    - double free memory bug fixed
    - fix on libav api usage
    - fix in cmake file dependencies
+   - seg fault if help file missing fixed
 
 Vers. 0.4
 
