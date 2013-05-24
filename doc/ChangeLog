@@ -1,3 +1,7 @@
+Vers. 0.4.5
+
+   - rpm package generation dependency bug fixed
+
 Vers. 0.4.4
 
    - a video file can be passed via command line
