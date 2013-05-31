@@ -27,19 +27,27 @@ building files, go in this directory and use "cmake SOURCE_PATH". Then use
 
 Example :
 
-   gzip -d astroavibrowser_xxxxxx_src.tar.gz
-   tar -xvfz astroavibrowser_xxxxxx_src.tar
-   mkdir astroavibrowser-build
-   cd astroavibrowser-build
-   cmake ../astroavibrowser-code
-   make
+   >gzip -d astroavibrowser_xxxxxx_src.tar.gz
+   >tar -xvfz astroavibrowser_xxxxxx_src.tar
+   >mkdir astroavibrowser-build
+   >cd astroavibrowser-build
+   >cmake ../astroavibrowser-code
+   >make
+
+   In order to help us to make astroavibrowser better, please use the
+command :
+
+   >make Experimental
+
+   It will send a build report to our dashboard
 
 
 INSTALLATION
 ------------
 
-   Once AstroAviBrowser builded, log as root, or use sudo, and type
-"make install"
+   Once AstroAviBrowser builded, log as root, or use sudo, and type :
+
+   >make install
 
 BUILDING PACKAGES
 -----------------
@@ -49,11 +57,11 @@ AstroAviBrowser builded.
 
    For source package building :
 
-      make package_source
+   >make package_source
 
    For binary package building :
 
-      make package
+   >make package
 
    The binary package produced depends on the host's distribution. A
 debian distribution will produce a '.deb' package. An rpm based

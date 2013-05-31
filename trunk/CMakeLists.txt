@@ -14,11 +14,6 @@ cmake_minimum_required(VERSION 2.8.6)
 # project name
 project(astroavibrowser)
 
-# distribution detection
-find_file(DEBIAN_FOUND debian_version debconf.conf PATHS /etc)
-find_file(FEDORA_FOUND fedora-release PATHS /etc)
-find_file(MAGEIA_FOUND mageia-release PATHS /etc)
-
 # version
 set(DEB_EPOCH 0)
 set(MAJOR_VERSION "0")
@@ -27,6 +22,12 @@ set(PATCH_VERSION "5")
 set(BUILD_VERSION "45")
 set(FULL_VERSION "${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D BINARY_VERSION=\\\"${FULL_VERSION}\\\" -D BUILD_VERSION=${BUILD_VERSION}")
+message(STATUS "Building astroavibrowser ${FULL_VERSION}")
+
+# distribution detection
+find_file(DEBIAN_FOUND debian_version debconf.conf PATHS /etc)
+find_file(FEDORA_FOUND fedora-release PATHS /etc)
+find_file(MAGEIA_FOUND mageia-release PATHS /etc)
 
 # destir for binary packages
 set($ENV{DESTDIR} "${CMAKE_BINARY_DIR}/fakeinstall")
@@ -207,3 +208,10 @@ if(FEDORA_FOUND OR MAGEIA_FOUND)
 endif(FEDORA_FOUND OR MAGEIA_FOUND)
 
 include(CPack)
+
+
+#########
+# TESTS #
+#########
+
+include(CTest)
