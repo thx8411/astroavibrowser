@@ -76,6 +76,16 @@ add_executable(astroavibrowser ${astroavibrowser_SOURCES})
 # target libs
 target_link_libraries(astroavibrowser ${QT_LIBRARIES} ${LIBAV_LIBRARIES})
 
+# add a target to generate API documentation with Doxygen
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+   add_custom_target(doc ALL ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      COMMENT "Generating API documentation with Doxygen" VERBATIM
+      )
+endif(DOXYGEN_FOUND)
+
 # installation
 install(TARGETS astroavibrowser RUNTIME DESTINATION /usr/bin)
 install(FILES icons/astroavibrowser-icon.png DESTINATION /usr/share/icons)
