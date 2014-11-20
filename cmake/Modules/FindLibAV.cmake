@@ -26,7 +26,7 @@ else (LIBAV_LIBRARIES AND LIBAV_INCLUDE_DIRS)
   message(STATUS "   libavcodec:   ${_LIBAV_CODEC_PREFIX}")
   message(STATUS "   libavformat:  ${_LIBAV_FORMAT_PREFIX}")
   message(STATUS "   libavutil:    ${_LIBAV_UTIL_PREFIX}")
-  message(STATUS "   libavswscale: ${_LIBAV_SWSCALE_PREFIX}")
+  message(STATUS "   libswscale: ${_LIBAV_SWSCALE_PREFIX}")
   
   find_path(LIBAV_CODEC_INCLUDE_DIR
     NAMES libavcodec/avcodec.h
