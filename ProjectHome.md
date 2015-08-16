@@ -1,0 +1,1 @@
+AstroAviBrowser is a small tool for astronomy imaging capture/processing. With AstroAviBrowser, you may open a video file, select the good frames and save the new sequence in a new avi file. It also debayer your raw sequences.
